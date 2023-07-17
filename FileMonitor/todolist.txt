@@ -1,9 +1,6 @@
 Todo:
-- Add option to exclude subfolders when monitoring a folder
-- Update UI to allow user to edit or delete and files that have been moved since being added 
-- If the user deletes a file that was added from a monitored folder, display a message informing them that the file will be removed from the monitored folder (Need a boolean value on SourceFile that 
-determines if a file was added from a source folder. If it was, then search for the monitored folder ID to remove it from the folder mapping)
-- Adding a folder should add new files when they are added to that folder / subfolders
+- Update UI to allow user to edit files that have been moved, deleted, or renamed
+- If the user deletes a file that was added from a monitored folder, display a message informing them that the file will be re-added. Offer option to ignore files instead.
 - No references to "RemoveRange()" in the Repository class. The service classes should use Remove for a single value, and RemoveRange for a range of values.
 - Set database IDs to reuse unused IDs?
 
