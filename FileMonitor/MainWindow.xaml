@@ -393,15 +393,6 @@
                                     </Style>
                                 </StackPanel.Resources>
 
-                                <Button x:Name="EditFilePath" 
-                                        Content="Edit File Path" 
-                                        Click="EditFilePath_Click"
-                                        IsEnabled="{
-                                            Binding ElementName=MovedOrRenamedFilesDisplayed, 
-                                            Path=SelectedIndex, 
-                                            Converter={StaticResource 
-                                            IntToBoolValueConverter}}" />
-
                                 <Button x:Name="RemovePossibleDeletedPaths" 
                                         Content="Remove"
                                         Click="RemovePossibleDeletedPaths_Click"
