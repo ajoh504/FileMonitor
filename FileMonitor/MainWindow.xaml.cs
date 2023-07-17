@@ -385,20 +385,22 @@ NOTE: Using this program to access critical system files is not recommended. Doi
             return MessageBox.Show(text, caption, button, image) == MessageBoxResult.Yes;
         }
 
-        // TODO
-        private void EditFilePath_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (object item in MovedOrRenamedFilesDisplayed.SelectedItems)
-            {
-                SourceFileDto dto = (SourceFileDto)item;
-                FileDialogWindow.GetPath();
-            }
-        }
-
-        // TODO
         private void RemovePossibleDeletedPaths_Click(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
+            if (ConfirmRemoveFiles())
+            {
+                using SourceFileService sourceFileService = new SourceFileService(RepositoryHelper.CreateSourceFileRepositoryInstance());
+                List<int> ids = new List<int>();
+                List<SourceFileDto> selectedFiles = new List<SourceFileDto>();
+                foreach (object item in MovedOrRenamedFilesDisplayed.SelectedItems)
+                {
+                    SourceFileDto dto = (SourceFileDto)item;
+                    selectedFiles.Add(dto);
+                    ids.Add(dto.Id);
+                }
+                sourceFileService.Remove(ids);
+                _viewModel.MovedOrRenamedFiles.RemoveRange<SourceFileDto>(selectedFiles);
+            }
         }
 
         private void OverwriteUpdatedFilesCheckBox_Click(object sender, RoutedEventArgs e)
