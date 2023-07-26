@@ -13,6 +13,8 @@ using Services.Dto;
 using Services.Extensions;
 using Services.Helpers;
 using System.Windows.Controls;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace FileMonitor
 {
@@ -106,21 +108,17 @@ NOTE: Using this program to access critical system files is not recommended. Doi
             {
                 string directory = FolderDialogWindow.GetPath();
                 if (directory.Equals("")) return;
+                if (VerifyAddFolder(directory, out List<string> paths))
                 {
-                    List<string>? paths = null;
-                    paths = Directory.GetFileSystemEntries(directory, "*", SearchOption.AllDirectories).ToList();
-                    if (VerifyAddFolder(directory, paths))
-                    {
-                        using SourceFolderService sourceFolderService = new SourceFolderService(
-                            RepositoryHelper.CreateSourceFolderRepositoryInstance(),
-                            RepositoryHelper.CreateFolderFileMappingInstance(),
-                            RepositoryHelper.CreateSourceFileRepositoryInstance()
-                        );
-                        AddFiles(paths, fromSourceFolder: true);
-                        SourceFolderDto dto = sourceFolderService.Add(directory, paths); // Must be called after adding paths to avoid an exception.
-                        _viewModel.SourceFolders.Add(dto);
-                        MessageBox.Show("The selected folders and their files have been added. You may close this window.", "Task Complete", MessageBoxButton.OK);
-                    }
+                    using SourceFolderService sourceFolderService = new SourceFolderService(
+                        RepositoryHelper.CreateSourceFolderRepositoryInstance(),
+                        RepositoryHelper.CreateFolderFileMappingInstance(),
+                        RepositoryHelper.CreateSourceFileRepositoryInstance()
+                    );
+                    AddFiles(paths, fromSourceFolder: true);
+                    SourceFolderDto dto = sourceFolderService.Add(directory, paths); // Must be called after adding paths to avoid an exception.
+                    _viewModel.SourceFolders.Add(dto);
+                    MessageBox.Show("The selected folders and their files have been added. You may close this window.", "Task Complete", MessageBoxButton.OK);
                 }
             }
             catch (UnauthorizedAccessException ex)
@@ -141,19 +139,35 @@ NOTE: Using this program to access critical system files is not recommended. Doi
         }
 
         // Verifies that the user wants to add an entire folder. Displays the number of files that will be added by doing so.
-        private bool VerifyAddFolder(string directory, List<string> paths)
+        private bool VerifyAddFolder(string directory, out List<string> paths)
         {
-            int numberOfDirectories = Directory.GetDirectories(directory, "*", SearchOption.AllDirectories).Length;
+            paths = GetPathsFromFolder(directory, out int numberOfDirectories);
             int numberOfFiles = paths.Count;
-            string text = $@"Do you wish to add the folder {directory}? 
 
-{numberOfFiles} file(s) from {numberOfDirectories} subfolders(s) will be monitored by the program.";
-            string caption = "Confirm Add Folder";
+            return MessageBox.Show(
+                $@"The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subfolders(s). Do you wish to continue?", 
+                "Confirm Add Folder", 
+                MessageBoxButton.YesNo, 
+                MessageBoxImage.Warning) == MessageBoxResult.Yes;
+        }
 
-            MessageBoxButton button = MessageBoxButton.YesNo;
-            MessageBoxImage image = MessageBoxImage.Warning;
-            MessageBoxResult result = MessageBox.Show(text, caption, button, image);
-            return result == MessageBoxResult.Yes;
+        private List<string> GetPathsFromFolder(string directory, out int numberOfDirectories)
+        {
+            if (JsonSettingsHelper.IncludeAllSubFolders)
+            {
+                if (MessageBox.Show(
+                    "Do you wish to monitor all files from all subfolders?\n\nSelect yes to to monitor all. Select no to only monitor the files within this folder.",
+                    "Include All Subfolders?",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question
+                    ) == MessageBoxResult.Yes)
+                {
+                    numberOfDirectories = Directory.GetFileSystemEntries(directory, "*", SearchOption.AllDirectories).Length;
+                    return Directory.GetFileSystemEntries(directory, "*", SearchOption.AllDirectories).ToList();
+                }
+            }
+            numberOfDirectories = 1;
+            return Directory.GetFiles(directory, "*", SearchOption.TopDirectoryOnly).ToList();
         }
 
         // A button click event handler to remove a file or files from the collection of monitored files. Deleted
