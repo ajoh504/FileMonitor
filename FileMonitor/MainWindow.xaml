@@ -352,7 +352,7 @@
                                             Click="OverwriteUpdatedFilesCheckBox_Click"/>
                                         <CheckBox 
                                             x:Name="IncludeAllSubfoldersCheckBox"  
-                                            Content="Include all subfolders when monitoring a folder?"
+                                            Content="Include all subfolders when monitoring a folder? (Choose per folder)"
                                             IsChecked="{Binding Mode=TwoWay, Path=IncludeAllSubfolders}"
                                             Click="IncludeAllSubfoldersCheckBox_Click"/>
                                     </StackPanel>
