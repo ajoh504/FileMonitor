@@ -9,6 +9,7 @@ Todo:
 - Set database IDs to reuse unused IDs?
 
 Fixes:
+- FilesAddedToFolder method checks all subfolders, instead of the monitored folder
 
 Features:
 - Offer setting for constant watch? Use the FileSystemWatcher class for this
