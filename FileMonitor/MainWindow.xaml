@@ -446,6 +446,71 @@
                             </ListView>
                         </Grid>
                     </Border>
+                        
+                        <Border BorderBrush="Black" 
+                                BorderThickness=".5" 
+                                Grid.Column="1"
+                                Grid.Row="1">
+                            <Grid>
+                                <Border BorderBrush="Black" 
+                                        BorderThickness=".4" 
+                                        Background="MediumPurple" 
+                                        Padding="9" 
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Top">
+
+                                    <TextBlock Text="Moved, Deleted, or Renamed Files:"
+                                               FontSize="16"
+                                               FontWeight="Bold"/>
+                                </Border>
+        
+                                <!-- Horizontal stack panel for button layout -->
+                                <StackPanel Orientation="Horizontal" 
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Top"
+                                            Height="25" 
+                                            Margin="10,53,0,10">
+
+                                    <StackPanel.Resources>
+                                        <Style TargetType="{x:Type Button}">
+                                            <Setter Property="Margin" 
+                                                    Value="0,0,10,0"/>
+                                            <Setter Property="Padding"
+                                                    Value="3"/>
+                                        </Style>
+                                    </StackPanel.Resources>
+
+                                    <Button x:Name="RemovePossibleDeletedBackupPaths" 
+                                            Content="Remove"
+                                            Click="RemovePossibleDeletedBackupPaths_Click"
+                                            IsEnabled="{
+                                                Binding ElementName=MovedOrRenamedFilesDisplayed, 
+                                                Path=SelectedIndex, 
+                                                Converter={StaticResource 
+                                                IntToBoolValueConverter}}" />
+                                </StackPanel>
+       
+                                <ListView x:Name="MovedOrRenamedBackupPathsDisplayed"  
+                                          Margin="0,90,0,0"
+                                          ItemsSource="{Binding MovedOrRenamedBackupPaths}" 
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Stretch"
+                                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                          ScrollViewer.VerticalScrollBarVisibility="Auto" >
+
+                                    <ListView.View>
+                                        <GridView AllowsColumnReorder="False">
+                                            <GridView.ColumnHeaderContainerStyle>
+                                                <Style TargetType="{x:Type GridViewColumnHeader}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </Style>
+                                            </GridView.ColumnHeaderContainerStyle>
+                                            <GridViewColumn DisplayMemberBinding="{Binding Path}" Width="{Binding ActualWidth, ElementName=MovedOrRenamedBackupPaths}"/>
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                            </Grid>
+                        </Border>
                     </Grid>
                 </ScrollViewer>
             </TabItem>
