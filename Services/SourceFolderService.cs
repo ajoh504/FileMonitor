@@ -76,12 +76,17 @@ namespace Services
         /// </summary>
         /// <param name="directoryPath"> The folder to add to the database. </param>
         /// <param name="filePaths"> A string list of all children files. </param>
+        /// <param name="MonitorAllSubDirectories"> Determines if the program should monitor all sub directories within the parent directory. </param>
         /// <returns> A source folder DTO object for updating the UI. </returns>
-        public SourceFolderDto Add(string directoryPath, List<string> filePaths)
+        public SourceFolderDto Add(
+            string directoryPath, 
+            List<string> filePaths,
+            bool MonitorAllSubFolders)
         {
             SourceFolder entity = new SourceFolder
             {
-                Path = directoryPath
+                Path = directoryPath,
+                MonitorAllSubDirectories = MonitorAllSubFolders
             };
             _sourceFolderRepository.Add(entity);
             _sourceFolderRepository.SaveChanges(); 
