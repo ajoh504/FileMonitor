@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.IO;
 using System;
-using System.Threading.Tasks;
 using FileMonitor.Dialogs;
 using FileMonitor.FileBackups;
 using FileMonitor.ViewModels;
@@ -13,8 +12,6 @@ using Services.Dto;
 using Services.Extensions;
 using Services.Helpers;
 using System.Windows.Controls;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace FileMonitor
 {
