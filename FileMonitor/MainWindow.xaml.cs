@@ -427,6 +427,21 @@ NOTE: Using this program to access critical system files is not recommended. Doi
             CheckBox checkBox = (CheckBox)sender;
             JsonSettingsHelper.IncludeAllSubFolders = (bool)checkBox.IsChecked;
         }
+
+        private void RemoveBackupPath_Click(object sender, RoutedEventArgs e)
+        {
+            using BackupPathService backupPathService = new BackupPathService(RepositoryHelper.CreateBackupPathRepositoryInstance());
+            List<int> ids = new List<int>();
+            List<BackupPathDto> selectedPaths = new List<BackupPathDto>();
+            foreach (object item in BackupPathsDisplayed.SelectedItems)
+            {
+                BackupPathDto dto = (BackupPathDto)item;
+                selectedPaths.Add(dto);
+                ids.Add(dto.Id);
+            }
+            backupPathService.Remove(ids);
+            _viewModel.BackupPaths.RemoveRange<BackupPathDto>(selectedPaths);
+        }
     }
 }
 
