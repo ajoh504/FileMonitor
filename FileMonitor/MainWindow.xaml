@@ -26,6 +26,32 @@
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="VerticalAlignment" Value="Top" />
         </Style>
+        
+        <Style x:Key="HeaderTextTemplate" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+        
+        <Style x:Key="ButtonStackPanelStyle" TargetType="StackPanel">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Height" Value="25" />
+            <Setter Property="Margin" Value="10,53,0,10" />
+        </Style>
+        
+        <Style x:Key="MultiButtonStyle" TargetType="Button">
+            <Setter Property="Margin" Value="0,0,10,0"/>
+            <Setter Property="Padding" Value="3"/>
+        </Style>
+        
+        <Style x:Key="SingleButtonStyle" TargetType="Button">
+            <Setter Property="Margin" Value="10,53,0,10" />
+            <Setter Property="Padding" Value="3" />
+            <Setter Property="Height" Value="25" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -54,29 +80,15 @@
                                     Background="Aquamarine" >
 
                                 <TextBlock Text="Monitored Files:"
-                                           FontSize="16"
-                                           FontWeight="Bold"/>
+                                           Style="{StaticResource HeaderTextTemplate}"/>
                             </Border>
 
-                            <!-- Horizontal stack panel for button layout -->
-                            <StackPanel Orientation="Horizontal" 
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Top"
-                                        Height="25" 
-                                        Margin="10,53,0,10">
-
-                                <StackPanel.Resources>
-                                    <Style TargetType="{x:Type Button}">
-                                        <Setter Property="Margin" 
-                                                Value="0,0,10,0"/>
-                                        <Setter Property="Padding"
-                                                Value="3"/>
-                                    </Style>
-                                </StackPanel.Resources>
+                            <StackPanel Style="{StaticResource ButtonStackPanelStyle}">
 
                                 <Button x:Name="AddNewFile" 
                                         Content="Add File" 
-                                        Click="AddNewFile_Click"/>
+                                        Click="AddNewFile_Click"
+                                        Style="{StaticResource MultiButtonStyle}"/>
 
                                 <Button x:Name="RemoveFiles" 
                                         Content="Remove File(s)" 
@@ -85,16 +97,19 @@
                                             Binding ElementName=FilesDisplayed, 
                                             Path=SelectedIndex, 
                                             Converter={StaticResource 
-                                            IntToBoolValueConverter}}" />
+                                            IntToBoolValueConverter}}" 
+                                        Style="{StaticResource MultiButtonStyle}"/>
                                 
                                 <Button x:Name="CopyAllFiles" 
                                         Content="Copy All Files" 
                                         Click="CopyAllFiles_Click" 
-                                        IsEnabled="{Binding BackupSelected}"/>
+                                        IsEnabled="{Binding BackupSelected}"
+                                        Style="{StaticResource MultiButtonStyle}"/>
                                 
                                 <Button x:Name="RefreshView" 
                                         Content="Refresh View" 
-                                        Click="RefreshView_Click"/>
+                                        Click="RefreshView_Click"
+                                        Style="{StaticResource MultiButtonStyle}"/>
 
                             </StackPanel>
 
@@ -129,29 +144,15 @@
                                     Background="Aquamarine" >
 
                                 <TextBlock Text="Monitored Folders:"
-                                           FontSize="16"
-                                           FontWeight="Bold"/>
+                                           Style="{StaticResource HeaderTextTemplate}"/>
                             </Border>
 
-                            <!-- Horizontal stack panel for button layout -->
-                            <StackPanel Orientation="Horizontal" 
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Top"
-                                        Height="25" 
-                                        Margin="10,53,0,10">
-
-                                <StackPanel.Resources>
-                                    <Style TargetType="{x:Type Button}">
-                                        <Setter Property="Margin" 
-                                                Value="0,0,10,0"/>
-                                        <Setter Property="Padding"
-                                                Value="3"/>
-                                    </Style>
-                                </StackPanel.Resources>
+                            <StackPanel Style="{StaticResource ButtonStackPanelStyle}">
 
                                 <Button x:Name="AddNewFolder" 
                                         Content="Add Folder" 
-                                        Click="AddNewFolder_Click"/>
+                                        Click="AddNewFolder_Click"
+                                        Style="{StaticResource MultiButtonStyle}"/>
 
                                 <Button x:Name="RemoveFolders" 
                                         Content="Remove Folder(s)" 
@@ -160,7 +161,9 @@
                                             Binding ElementName=FoldersDisplayed, 
                                             Path=SelectedIndex, 
                                             Converter={StaticResource 
-                                            IntToBoolValueConverter}}" />
+                                            IntToBoolValueConverter}}" 
+                                        Style="{StaticResource MultiButtonStyle}"/>
+                                
                             </StackPanel>
 
                             <ListView x:Name="FoldersDisplayed"  
@@ -194,34 +197,14 @@
                                     Background="Aquamarine" >
 
                                 <TextBlock Text="Updated Files:"
-                                           FontSize="16"
-                                           FontWeight="Bold"/>
+                                           Style="{StaticResource HeaderTextTemplate}"/>
                             </Border>
                             
-                            <!-- Horizontal stack panel for button layout -->
-                            <StackPanel Orientation="Horizontal" 
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Top"
-                                        Height="25" 
-                                        Margin="10,53,0,10">
-
-                                <StackPanel.Resources>
-                                    <Style TargetType="{x:Type Button}">
-                                        <Setter Property="Margin" 
-                                                Value="0,0,10,0"/>
-                                        <Setter Property="Padding"
-                                                Value="3"/>
-                                    </Style>
-                                </StackPanel.Resources>
-
-                                <Button x:Name="CopyUpdatedFiles" 
-                                        Content="Copy Updated Files" 
-                                        Click="CopyUpdatedFiles_Click" 
-                                        IsEnabled="{Binding BackupSelected}"/>
-                            
-                            </StackPanel>
-                            
-
+                            <Button x:Name="CopyUpdatedFiles" 
+                                    Content="Copy Updated Files" 
+                                    Click="CopyUpdatedFiles_Click" 
+                                    IsEnabled="{Binding BackupSelected}"
+                                    Style="{StaticResource SingleButtonStyle}"/>
 
                             <ListView x:Name="UpdatedFilesDisplayed" 
                                         Margin="0,90,0,0"
@@ -253,29 +236,15 @@
                                     Background="Orange" >
 
                                 <TextBlock Text="Backup Paths:"
-                                           FontSize="16"
-                                           FontWeight="Bold"/>
+                                           Style="{StaticResource HeaderTextTemplate}"/>
                             </Border>
                             
-                            <!-- Horizontal stack panel for button layout -->
-                            <StackPanel Orientation="Horizontal" 
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Top"
-                                        Height="25" 
-                                        Margin="10,53,0,10">
-
-                                <StackPanel.Resources>
-                                    <Style TargetType="{x:Type Button}">
-                                        <Setter Property="Margin" 
-                                                Value="0,0,10,0"/>
-                                        <Setter Property="Padding"
-                                                Value="3"/>
-                                    </Style>
-                                </StackPanel.Resources>
+                            <StackPanel Style="{StaticResource ButtonStackPanelStyle}">
 
                                 <Button x:Name="AddBackupPath" 
                                         Content="Add Path" 
-                                        Click="AddBackupPath_Click" />
+                                        Click="AddBackupPath_Click" 
+                                        Style="{StaticResource MultiButtonStyle}"/>
 
                                 <Button x:Name="RemoveBackupPath" 
                                         Content="Remove Backup Path(s)" 
@@ -284,7 +253,8 @@
                                             Binding ElementName=BackupPathsDisplayed, 
                                             Path=SelectedIndex, 
                                             Converter={StaticResource 
-                                            IntToBoolValueConverter}}" />
+                                            IntToBoolValueConverter}}" 
+                                        Style="{StaticResource MultiButtonStyle}"/>
                             </StackPanel>
 
                             <ListView x:Name="BackupPathsDisplayed" 
@@ -346,8 +316,7 @@
                                         Background="MediumPurple" >
 
                                     <TextBlock Text="User Settings:"
-                                                FontSize="16"
-                                                FontWeight="Bold"/>
+                                               Style="{StaticResource HeaderTextTemplate}"/>
                                 </Border>
                                 <ScrollViewer
                                         VerticalScrollBarVisibility="Auto" 
@@ -383,35 +352,18 @@
                                         Background="MediumPurple" >
 
                                     <TextBlock Text="Moved, Deleted, or Renamed Files:"
-                                               FontSize="16"
-                                               FontWeight="Bold"/>
+                                               Style="{StaticResource HeaderTextTemplate}"/>
                                 </Border>
                             
-                                <!-- Horizontal stack panel for button layout -->
-                                <StackPanel Orientation="Horizontal" 
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Top"
-                                            Height="25" 
-                                            Margin="10,53,0,10">
-
-                                    <StackPanel.Resources>
-                                        <Style TargetType="{x:Type Button}">
-                                            <Setter Property="Margin" 
-                                                    Value="0,0,10,0"/>
-                                            <Setter Property="Padding"
-                                                    Value="3"/>
-                                        </Style>
-                                    </StackPanel.Resources>
-
-                                    <Button x:Name="RemovePossibleDeletedPaths" 
-                                            Content="Remove"
-                                            Click="RemovePossibleDeletedPaths_Click"
-                                            IsEnabled="{
-                                                Binding ElementName=MovedOrRenamedFilesDisplayed, 
-                                                Path=SelectedIndex, 
-                                                Converter={StaticResource 
-                                                IntToBoolValueConverter}}" />
-                                </StackPanel>
+                                <Button x:Name="RemovePossibleDeletedPaths" 
+                                        Content="Remove"
+                                        Click="RemovePossibleDeletedPaths_Click"
+                                        IsEnabled="{
+                                            Binding ElementName=MovedOrRenamedFilesDisplayed, 
+                                            Path=SelectedIndex, 
+                                            Converter={StaticResource 
+                                            IntToBoolValueConverter}}" 
+                                        Style="{StaticResource SingleButtonStyle}"/>
                            
                                 <ListView x:Name="MovedOrRenamedFilesDisplayed"  
                                           Margin="0,90,0,0"
@@ -443,35 +395,18 @@
                                         Background="MediumPurple" >
 
                                     <TextBlock Text="Moved, Deleted, or Renamed Files:"
-                                               FontSize="16"
-                                               FontWeight="Bold"/>
+                                               Style="{StaticResource HeaderTextTemplate}"/>
                                 </Border>
-        
-                                <!-- Horizontal stack panel for button layout -->
-                                <StackPanel Orientation="Horizontal" 
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Top"
-                                            Height="25" 
-                                            Margin="10,53,0,10">
 
-                                    <StackPanel.Resources>
-                                        <Style TargetType="{x:Type Button}">
-                                            <Setter Property="Margin" 
-                                                    Value="0,0,10,0"/>
-                                            <Setter Property="Padding"
-                                                    Value="3"/>
-                                        </Style>
-                                    </StackPanel.Resources>
-
-                                    <Button x:Name="RemovePossibleDeletedBackupPaths" 
-                                            Content="Remove"
-                                            Click="RemovePossibleDeletedBackupPaths_Click"
-                                            IsEnabled="{
-                                                Binding ElementName=MovedOrRenamedFilesDisplayed, 
-                                                Path=SelectedIndex, 
-                                                Converter={StaticResource 
-                                                IntToBoolValueConverter}}" />
-                                </StackPanel>
+                                <Button x:Name="RemovePossibleDeletedBackupPaths" 
+                                        Content="Remove"
+                                        Click="RemovePossibleDeletedBackupPaths_Click"
+                                        IsEnabled="{
+                                            Binding ElementName=MovedOrRenamedFilesDisplayed, 
+                                            Path=SelectedIndex, 
+                                            Converter={StaticResource 
+                                            IntToBoolValueConverter}}" 
+                                        Style="{StaticResource SingleButtonStyle}"/>
        
                                 <ListView x:Name="MovedOrRenamedBackupPathsDisplayed"  
                                           Margin="0,90,0,0"
