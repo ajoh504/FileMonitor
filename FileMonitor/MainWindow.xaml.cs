@@ -43,6 +43,7 @@ namespace FileMonitor
                 new ObservableCollection<SourceFileDto>(sourceFileService.GetModifiedFiles()),
                 new ObservableCollection<SourceFolderDto>(sourceFolderService.GetFolders()),
                 new ObservableCollection<SourceFileDto>(sourceFileService.GetMovedOrRenamedFiles()),
+                new ObservableCollection<BackupPathDto>(backupPathService.GetMovedOrRenamedPaths()),
                 JsonSettingsHelper.OverwriteUpdatedFiles,
                 JsonSettingsHelper.IncludeAllSubFolders
             );
@@ -443,13 +444,18 @@ NOTE: Using this program to access critical system files is not recommended. Doi
             _viewModel.BackupPaths.RemoveRange<BackupPathDto>(selectedPaths);
         }
 
-        private void Window_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             // Clear all ListViews when the mouse is clicked anywhere in the main window.
             FilesDisplayed.SelectedItems.Clear();
             FoldersDisplayed.SelectedItems.Clear();
             UpdatedFilesDisplayed.SelectedItems.Clear();
             BackupPathsDisplayed.SelectedItems.Clear();
+        }
+
+        private void RemovePossibleDeletedBackupPaths_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
