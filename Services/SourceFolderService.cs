@@ -43,6 +43,7 @@ namespace Services
                 {
                     Id = sf.Id,
                     Path = sf.Path,
+                    MonitorAllSubDirectories = sf.MonitorAllSubDirectories
                 },
                 sf => sf.Path);
         }
