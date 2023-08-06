@@ -146,6 +146,7 @@ namespace Services
                         newFilesFromFolder.Add(sourceFile);
                     }
                 }
+                if (filesToMap.Count == 0) continue;
                 AddFolderFileMapping(filesToMap, folder.Id);
             }
             return filesAddedToFolders;
