@@ -115,7 +115,6 @@ NOTE: Using this program to access critical system files is not recommended. Doi
                     AddFiles(paths, fromSourceFolder: true);
                     SourceFolderDto dto = sourceFolderService.Add(directory, paths); // Must be called after adding paths to avoid an exception.
                     _viewModel.SourceFolders.Add(dto);
-                    MessageBox.Show("The selected folders and their files have been added. You may close this window.", "Task Complete", MessageBoxButton.OK);
                 }
             }
             catch (UnauthorizedAccessException ex)
