@@ -105,7 +105,7 @@ NOTE: Using this program to access critical system files is not recommended. Doi
             {
                 string directory = FolderDialogWindow.GetPath();
                 if (directory.Equals("")) return;
-                if (VerifyAddFolder(directory, out List<string> paths))
+                if (VerifyAddFolder(directory, out List<string> paths, out bool MonitorAllSubFolders))
                 {
                     using SourceFolderService sourceFolderService = new SourceFolderService(
                         RepositoryHelper.CreateSourceFolderRepositoryInstance(),
@@ -113,7 +113,7 @@ NOTE: Using this program to access critical system files is not recommended. Doi
                         RepositoryHelper.CreateSourceFileRepositoryInstance()
                     );
                     AddFiles(paths, fromSourceFolder: true);
-                    SourceFolderDto dto = sourceFolderService.Add(directory, paths); // Must be called after adding paths to avoid an exception.
+                    SourceFolderDto dto = sourceFolderService.Add(directory, paths, MonitorAllSubFolders); // Must be called after adding paths to avoid an exception.
                     _viewModel.SourceFolders.Add(dto);
                 }
             }
@@ -135,9 +135,10 @@ NOTE: Using this program to access critical system files is not recommended. Doi
         }
 
         // Verifies that the user wants to add an entire folder. Displays the number of files that will be added by doing so.
-        private bool VerifyAddFolder(string directory, out List<string> paths)
+        private bool VerifyAddFolder(string directory, out List<string> paths, out bool MonitorAllSubFolders)
         {
-            paths = GetPathsFromFolder(directory, out int numberOfDirectories);
+            paths = GetPathsFromFolder(directory, out int numberOfDirectories, out bool MonitorAll);
+            MonitorAllSubFolders = MonitorAll;
             int numberOfFiles = paths.Count;
 
             return MessageBox.Show(
@@ -147,7 +148,7 @@ NOTE: Using this program to access critical system files is not recommended. Doi
                 MessageBoxImage.Warning) == MessageBoxResult.Yes;
         }
 
-        private List<string> GetPathsFromFolder(string directory, out int numberOfDirectories)
+        private List<string> GetPathsFromFolder(string directory, out int numberOfDirectories, out bool MonitorAll)
         {
             if (JsonSettingsHelper.IncludeAllSubFolders)
             {
@@ -159,10 +160,12 @@ NOTE: Using this program to access critical system files is not recommended. Doi
                     ) == MessageBoxResult.Yes)
                 {
                     numberOfDirectories = Directory.GetFileSystemEntries(directory, "*", SearchOption.AllDirectories).Length;
+                    MonitorAll = true;
                     return Directory.GetFileSystemEntries(directory, "*", SearchOption.AllDirectories).ToList();
                 }
             }
             numberOfDirectories = 1;
+            MonitorAll = false;
             return Directory.GetFiles(directory, "*", SearchOption.TopDirectoryOnly).ToList();
         }
 
