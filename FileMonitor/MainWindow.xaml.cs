@@ -47,6 +47,7 @@ namespace FileMonitor
                 JsonSettingsHelper.OverwriteUpdatedFiles,
                 JsonSettingsHelper.IncludeAllSubFolders
             );
+            _viewModel.RemovePossibleRenamedFiles();
             DataContext = _viewModel;
             RefreshMonitoredFolders();
         }
