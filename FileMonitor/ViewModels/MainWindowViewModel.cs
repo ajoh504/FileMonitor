@@ -14,6 +14,7 @@ namespace FileMonitor.ViewModels
         private ObservableCollection<SourceFileDto> _updatedFiles;
         private ObservableCollection<SourceFolderDto> _sourceFolders;
         private ObservableCollection<SourceFileDto> _movedOrRenamedFiles;
+        private ObservableCollection<BackupPathDto> _movedOrRenamedBackupPaths;
         private bool _backupSelected;
 
         /// <summary>
@@ -60,6 +61,11 @@ namespace FileMonitor.ViewModels
         public ObservableCollection<SourceFileDto> MovedOrRenamedFiles { get { return _movedOrRenamedFiles; } }
 
         /// <summary>
+        /// An observable collection of <see cref="BackupPathDto"/> objects. This collection displays all backup paths whose names or paths have been moved, renamed, or deleted since being monitored by the program. This property is bound to the <see cref="MainWindow.MovedOrRenamedBackupPathsDisplayed"/> list view.
+        /// </summary>
+        public ObservableCollection<BackupPathDto> MovedOrRenamedBackupPaths { get { return _movedOrRenamedBackupPaths; } }
+
+        /// <summary>
         /// If false, the program will make copies of updated files whenever they are backed up. If true, the program will overwrite the previously copied file.
         /// </summary>
         public bool OverwriteUpdatedFiles { get; set; }
@@ -77,6 +83,7 @@ namespace FileMonitor.ViewModels
         /// <param name="updatedFiles"> Only the files that have been updated since the last time they were copied to a backup location, formatted as data transfer objects. </param>
         /// <param name="sourceFolders"> All folders monitored by the program, formatted as data transfer objects. </param>
         /// <param name="movedOrRenamedFiles"> All files that have been moved, renamed, or deleted in Windows since being added to the program. </param>
+        /// <param name="movedOrRenamedBackupPaths"> All backup paths that have been moved, renamed, or deleted in Windows since being added to the program. </param>
         /// <param name="overwriteUpdatedFiles"> Value from Settings.json, bound to a CheckBox. </param>
         /// <param name="includeAllSubfolders"> Value from Settings.json, bound to a CheckBox. </param>
         public MainWindowViewModel(
@@ -85,6 +92,7 @@ namespace FileMonitor.ViewModels
             ObservableCollection<SourceFileDto> updatedFiles,
             ObservableCollection<SourceFolderDto> sourceFolders,
             ObservableCollection<SourceFileDto> movedOrRenamedFiles,
+            ObservableCollection<BackupPathDto> movedOrRenamedBackupPaths,
             bool overwriteUpdatedFiles,
             bool includeAllSubfolders)
         {
@@ -93,6 +101,7 @@ namespace FileMonitor.ViewModels
             _updatedFiles = updatedFiles;
             _sourceFolders = sourceFolders;
             _movedOrRenamedFiles = movedOrRenamedFiles;
+            _movedOrRenamedBackupPaths = movedOrRenamedBackupPaths;
             RemovePossibleRenamedFiles();
             _backupSelected = IsAnyBackupSelected();
             OverwriteUpdatedFiles = overwriteUpdatedFiles;
