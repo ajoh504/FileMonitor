@@ -20,5 +20,10 @@ namespace DataAccessLayer.Entities
         /// The full path to where the folder is stored.
         /// </summary>
         public string? Path { get; set; }
+
+        /// <summary>
+        /// Determines whether or not the program should monitor every sub directory within this folder.
+        /// </summary>
+        public bool MonitorAllSubDirectories { get; set; }
     }
 }
