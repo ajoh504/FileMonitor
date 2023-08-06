@@ -1,15 +1,13 @@
 Todo:
-- Add option to delete backup paths
-- Check for broken/ deleted backup paths
 - Add setting to exclude certain directories
-- Lessen the amount of Windows that open while adding a folder
+- Add multiple folders at once?
 - Update UI to allow user to edit files that have been moved, deleted, or renamed
 - If the user deletes a file that was added from a monitored folder, display a message informing them that the file will be re-added. Offer option to ignore files instead.
 - No references to "RemoveRange()" in the Repository class. The service classes should use Remove for a single value, and RemoveRange for a range of values.
 - Set database IDs to reuse unused IDs?
 
 Fixes:
-- FilesAddedToFolder method checks all subfolders, instead of the monitored folder
+- Update XAML to use styles and templates
 
 Features:
 - Offer setting for constant watch? Use the FileSystemWatcher class for this
