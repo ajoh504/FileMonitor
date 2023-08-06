@@ -217,15 +217,25 @@ namespace Services
             => _sourceFolderRepository.FirstOrDefault(f => f.Path == directoryPath).Id;
         
 
-        // Get all current files (including subdirectories) from the provided folder.
+        // Get all current files from the provided folder. Check the "MonitorAllSubDirectories" 
+        // property to determine if the program monitors the top directory only, or all sub directories.
         private List<string> GetCurrentFilesFromFolder(SourceFolderDto folder)
         {
-            string[] fileSystemEntries = Directory.GetFileSystemEntries(folder.Path, "*", SearchOption.AllDirectories);
+            List<string> fileSystemEntries = new List<string>();
+            if (folder.MonitorAllSubDirectories)
+            {
+                fileSystemEntries = Directory.GetFileSystemEntries(folder.Path, "*", SearchOption.AllDirectories).ToList();
+            }
+            else
+            {
+                fileSystemEntries = Directory.GetFileSystemEntries(folder.Path, "*", SearchOption.TopDirectoryOnly).ToList();
+            }
+
             List<string> result = new List<string>();   
             foreach (string path in fileSystemEntries)
             {
                 FileAttributes attributes = File.GetAttributes(path);
-                // If the path is a directory, then continue
+                // If the path is a directory, do not add it to the result!
                 if (attributes.HasFlag(FileAttributes.Directory)) continue;
                 result.Add(path);
             }
