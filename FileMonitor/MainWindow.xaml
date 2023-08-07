@@ -300,11 +300,12 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Settings">
+            <TabItem Header="Settings" MouseDown="Window_MouseDown">
                 <ScrollViewer>
                     <Grid Background="#FFE5E5E5">
                         
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
@@ -358,7 +359,7 @@
                         </Border>
 
                         <Border Style="{StaticResource MainBorderStyle}"
-                                Grid.Column="1"
+                                Grid.Column="2"
                                 Grid.Row="0">
                             
                             <Grid>
@@ -401,7 +402,7 @@
                         </Border>
                         
                         <Border Style="{StaticResource MainBorderStyle}" 
-                                Grid.Column="1"
+                                Grid.Column="2"
                                 Grid.Row="1">
                             
                             <Grid>
@@ -409,7 +410,7 @@
                                 <Border Style="{StaticResource HeaderStyle}"
                                         Background="MediumPurple" >
 
-                                    <TextBlock Text="Moved, Deleted, or Renamed Files:"
+                                    <TextBlock Text="Moved, Deleted, or Renamed Backup Paths:"
                                                Style="{StaticResource HeaderTextStyle}"/>
                                 </Border>
 
@@ -417,7 +418,7 @@
                                         Content="Remove"
                                         Click="RemovePossibleDeletedBackupPaths_Click"
                                         IsEnabled="{
-                                            Binding ElementName=MovedOrRenamedFilesDisplayed, 
+                                            Binding ElementName=MovedOrRenamedBackupPathsDisplayed, 
                                             Path=SelectedIndex, 
                                             Converter={StaticResource 
                                             IntToBoolValueConverter}}" 
