@@ -370,7 +370,6 @@ NOTE: Using this program to access critical system files is not recommended. Doi
                 }
                 sourceFolderService.Remove(folderIds);
                 _viewModel.SourceFolders.RemoveRange<SourceFolderDto>(foldersToRemove);
-                MessageBox.Show("The selected folders and their files have been removed. You may close this window.", "Task Complete", MessageBoxButton.OK);
             }
         }
 
@@ -452,11 +451,23 @@ NOTE: Using this program to access critical system files is not recommended. Doi
             FoldersDisplayed.SelectedItems.Clear();
             UpdatedFilesDisplayed.SelectedItems.Clear();
             BackupPathsDisplayed.SelectedItems.Clear();
+            MovedOrRenamedBackupPathsDisplayed.SelectedItems.Clear();
+            MovedOrRenamedFilesDisplayed.SelectedItems.Clear();
         }
 
         private void RemovePossibleDeletedBackupPaths_Click(object sender, RoutedEventArgs e)
         {
-
+            using BackupPathService backupPathService = new BackupPathService(RepositoryHelper.CreateBackupPathRepositoryInstance());
+            List<int> ids = new List<int>();
+            List<BackupPathDto> selectedPaths = new List<BackupPathDto>();
+            foreach (object item in MovedOrRenamedBackupPathsDisplayed.SelectedItems)
+            {
+                BackupPathDto dto = (BackupPathDto)item;
+                selectedPaths.Add(dto);
+                ids.Add(dto.Id);
+            }
+            backupPathService.Remove(ids);
+            _viewModel.MovedOrRenamedBackupPaths.RemoveRange<BackupPathDto>(selectedPaths);
         }
     }
 }
