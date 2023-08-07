@@ -7,7 +7,8 @@ Todo:
 - Set database IDs to reuse unused IDs?
 
 Fixes:
-- Update XAML to use styles and templates
+- Window Mousedown only works in the Main tab, not the settings tab
+- The ListView item width breaks when the width is greater than the ListView itself
 
 Features:
 - Offer setting for constant watch? Use the FileSystemWatcher class for this
