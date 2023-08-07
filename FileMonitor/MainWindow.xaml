@@ -27,7 +27,7 @@
             <Setter Property="VerticalAlignment" Value="Top" />
         </Style>
         
-        <Style x:Key="HeaderTextTemplate" TargetType="TextBlock">
+        <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="16" />
             <Setter Property="FontWeight" Value="Bold" />
         </Style>
@@ -52,6 +52,14 @@
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="HorizontalAlignment" Value="Left" />
         </Style>
+        
+        <Style x:Key="ListViewStyle" TargetType="ListView">
+            <Setter Property="Margin" Value="0,90,0,0" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -75,12 +83,14 @@
                             Grid.Column="0"
                             Grid.Row="0"
                             Grid.RowSpan="2">
+                        
                         <Grid>
+                            
                             <Border Style="{StaticResource HeaderStyle}"
                                     Background="Aquamarine" >
 
                                 <TextBlock Text="Monitored Files:"
-                                           Style="{StaticResource HeaderTextTemplate}"/>
+                                           Style="{StaticResource HeaderTextStyle}"/>
                             </Border>
 
                             <StackPanel Style="{StaticResource ButtonStackPanelStyle}">
@@ -114,12 +124,8 @@
                             </StackPanel>
 
                             <ListView x:Name="FilesDisplayed"  
-                                      Margin="0,90,0,0"
-                                      ItemsSource="{Binding SourceFiles}" 
-                                      HorizontalAlignment="Stretch"
-                                      VerticalAlignment="Stretch"
-                                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                      ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                                      Style="{StaticResource ListViewStyle}"
+                                      ItemsSource="{Binding SourceFiles}" >
 
                                 <ListView.View>
                                     <GridView AllowsColumnReorder="False">
@@ -128,7 +134,9 @@
                                                 <Setter Property="Visibility" Value="Collapsed" />
                                             </Style>
                                         </GridView.ColumnHeaderContainerStyle>
-                                        <GridViewColumn DisplayMemberBinding="{Binding Path}" Width="{Binding ActualWidth, ElementName=FilesDisplayed}"/>
+                                        <GridViewColumn 
+                                            DisplayMemberBinding="{Binding Path}" 
+                                            Width="{Binding ActualWidth, ElementName=FilesDisplayed}"/>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
@@ -139,12 +147,14 @@
                             Grid.Column="1"
                             Grid.Row="0"
                             Grid.RowSpan="2">
+                        
                         <Grid>
+                            
                             <Border Style="{StaticResource HeaderStyle}"
                                     Background="Aquamarine" >
 
                                 <TextBlock Text="Monitored Folders:"
-                                           Style="{StaticResource HeaderTextTemplate}"/>
+                                           Style="{StaticResource HeaderTextStyle}"/>
                             </Border>
 
                             <StackPanel Style="{StaticResource ButtonStackPanelStyle}">
@@ -167,12 +177,8 @@
                             </StackPanel>
 
                             <ListView x:Name="FoldersDisplayed"  
-                                      Margin="0,90,0,0"
-                                      ItemsSource="{Binding SourceFolders}" 
-                                      HorizontalAlignment="Stretch"
-                                      VerticalAlignment="Stretch"
-                                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                      ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                                      Style="{StaticResource ListViewStyle}"
+                                      ItemsSource="{Binding SourceFolders}">
 
                                 <ListView.View>
                                     <GridView AllowsColumnReorder="False">
@@ -181,7 +187,9 @@
                                                 <Setter Property="Visibility" Value="Collapsed" />
                                             </Style>
                                         </GridView.ColumnHeaderContainerStyle>
-                                        <GridViewColumn DisplayMemberBinding="{Binding Path}" Width="{Binding ActualWidth, ElementName=FoldersDisplayed}"/>
+                                        <GridViewColumn 
+                                            DisplayMemberBinding="{Binding Path}" 
+                                            Width="{Binding ActualWidth, ElementName=FoldersDisplayed}"/>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
@@ -193,11 +201,12 @@
                             Grid.Row="0">
 
                         <Grid>
+                            
                             <Border Style="{StaticResource HeaderStyle}" 
                                     Background="Aquamarine" >
 
                                 <TextBlock Text="Updated Files:"
-                                           Style="{StaticResource HeaderTextTemplate}"/>
+                                           Style="{StaticResource HeaderTextStyle}"/>
                             </Border>
                             
                             <Button x:Name="CopyUpdatedFiles" 
@@ -207,12 +216,8 @@
                                     Style="{StaticResource SingleButtonStyle}"/>
 
                             <ListView x:Name="UpdatedFilesDisplayed" 
-                                        Margin="0,90,0,0"
-                                        ItemsSource="{Binding UpdatedFiles}" 
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch"
-                                        ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                        ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                                        Style="{StaticResource ListViewStyle}"
+                                        ItemsSource="{Binding UpdatedFiles}" >
 
                                 <ListView.View>
                                     <GridView AllowsColumnReorder="False">
@@ -221,7 +226,9 @@
                                                 <Setter Property="Visibility" Value="Collapsed" />
                                             </Style>
                                         </GridView.ColumnHeaderContainerStyle>
-                                        <GridViewColumn DisplayMemberBinding="{Binding Path}" Width="{Binding ActualWidth, ElementName=UpdatedFilesDisplayed}"/>
+                                        <GridViewColumn 
+                                            DisplayMemberBinding="{Binding Path}" 
+                                            Width="{Binding ActualWidth, ElementName=UpdatedFilesDisplayed}"/>
                                     </GridView>
                                 </ListView.View>
                             </ListView>
@@ -231,12 +238,14 @@
                     <Border Style="{StaticResource MainBorderStyle}"
                             Grid.Column="2"
                             Grid.Row="1">
+                        
                         <Grid>
+                            
                             <Border Style="{StaticResource HeaderStyle}"
                                     Background="Orange" >
 
                                 <TextBlock Text="Backup Paths:"
-                                           Style="{StaticResource HeaderTextTemplate}"/>
+                                           Style="{StaticResource HeaderTextStyle}"/>
                             </Border>
                             
                             <StackPanel Style="{StaticResource ButtonStackPanelStyle}">
@@ -258,12 +267,8 @@
                             </StackPanel>
 
                             <ListView x:Name="BackupPathsDisplayed" 
-                                        Margin="0,90,0,0"
-                                        ItemsSource="{Binding BackupPaths}" 
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch"
-                                        ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                        ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                                        Style="{StaticResource ListViewStyle}"
+                                        ItemsSource="{Binding BackupPaths}" >
 
                                 <ListView.View>
                                     <GridView AllowsColumnReorder="False">
@@ -282,7 +287,9 @@
                                                     </DataTemplate>
                                                 </GridViewColumn.CellTemplate>
                                             </GridViewColumn>
-                                            <GridViewColumn DisplayMemberBinding="{Binding Path}" Header="Path" Width="{Binding ActualWidth, ElementName=BackupPathsDisplayed}"/>
+                                            <GridViewColumn 
+                                                DisplayMemberBinding="{Binding Path}" 
+                                                Width="{Binding ActualWidth, ElementName=BackupPathsDisplayed}"/>
                                         </GridView.Columns>
                                     </GridView>
                                 </ListView.View>
@@ -312,28 +319,34 @@
                                 Grid.RowSpan="2">
 
                             <Grid>
+                                
                                 <Border Style="{StaticResource HeaderStyle}"
                                         Background="MediumPurple" >
 
                                     <TextBlock Text="User Settings:"
-                                               Style="{StaticResource HeaderTextTemplate}"/>
+                                               Style="{StaticResource HeaderTextStyle}"/>
                                 </Border>
+                                
                                 <ScrollViewer
                                         VerticalScrollBarVisibility="Auto" 
                                         HorizontalScrollBarVisibility="Auto">
+                                    
                                     <StackPanel Orientation="Vertical"
                                                 Grid.Column="0"
                                                 Margin="10,53,0,10">
+                                        
                                         <StackPanel.Resources>
                                             <Style TargetType="{x:Type CheckBox}">
                                                 <Setter Property="Margin" Value="0,10,0,0"/>
                                             </Style>
                                         </StackPanel.Resources>
+                                        
                                         <CheckBox 
                                                 x:Name="OverwriteUpdatedFilesCheckBox" 
                                                 Content="Overwrite updated files?" 
                                                 IsChecked="{Binding Mode=TwoWay, Path=OverwriteUpdatedFiles}"
                                                 Click="OverwriteUpdatedFilesCheckBox_Click"/>
+                                        
                                         <CheckBox 
                                                 x:Name="IncludeAllSubfoldersCheckBox"  
                                                 Content="Include all subfolders when monitoring a folder? (Choose per folder)"
@@ -347,12 +360,14 @@
                         <Border Style="{StaticResource MainBorderStyle}"
                                 Grid.Column="1"
                                 Grid.Row="0">
+                            
                             <Grid>
+                                
                                 <Border Style="{StaticResource HeaderStyle}"
                                         Background="MediumPurple" >
 
                                     <TextBlock Text="Moved, Deleted, or Renamed Files:"
-                                               Style="{StaticResource HeaderTextTemplate}"/>
+                                               Style="{StaticResource HeaderTextStyle}"/>
                                 </Border>
                             
                                 <Button x:Name="RemovePossibleDeletedPaths" 
@@ -366,12 +381,8 @@
                                         Style="{StaticResource SingleButtonStyle}"/>
                            
                                 <ListView x:Name="MovedOrRenamedFilesDisplayed"  
-                                          Margin="0,90,0,0"
-                                          ItemsSource="{Binding MovedOrRenamedFiles}" 
-                                          HorizontalAlignment="Stretch"
-                                          VerticalAlignment="Stretch"
-                                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                          ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                                          Style="{StaticResource ListViewStyle}"
+                                          ItemsSource="{Binding MovedOrRenamedFiles}"  >
 
                                     <ListView.View>
                                         <GridView AllowsColumnReorder="False">
@@ -380,7 +391,9 @@
                                                     <Setter Property="Visibility" Value="Collapsed" />
                                                 </Style>
                                             </GridView.ColumnHeaderContainerStyle>
-                                            <GridViewColumn DisplayMemberBinding="{Binding Path}" Width="{Binding ActualWidth, ElementName=MovedOrRenamedFilesDisplayed}"/>
+                                            <GridViewColumn 
+                                                DisplayMemberBinding="{Binding Path}" 
+                                                Width="{Binding ActualWidth, ElementName=MovedOrRenamedFilesDisplayed}"/>
                                         </GridView>
                                     </ListView.View>
                                 </ListView>
@@ -390,12 +403,14 @@
                         <Border Style="{StaticResource MainBorderStyle}" 
                                 Grid.Column="1"
                                 Grid.Row="1">
+                            
                             <Grid>
+                                
                                 <Border Style="{StaticResource HeaderStyle}"
                                         Background="MediumPurple" >
 
                                     <TextBlock Text="Moved, Deleted, or Renamed Files:"
-                                               Style="{StaticResource HeaderTextTemplate}"/>
+                                               Style="{StaticResource HeaderTextStyle}"/>
                                 </Border>
 
                                 <Button x:Name="RemovePossibleDeletedBackupPaths" 
@@ -409,12 +424,8 @@
                                         Style="{StaticResource SingleButtonStyle}"/>
        
                                 <ListView x:Name="MovedOrRenamedBackupPathsDisplayed"  
-                                          Margin="0,90,0,0"
-                                          ItemsSource="{Binding MovedOrRenamedBackupPaths}" 
-                                          HorizontalAlignment="Stretch"
-                                          VerticalAlignment="Stretch"
-                                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                          ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                                          Style="{StaticResource ListViewStyle}"
+                                          ItemsSource="{Binding MovedOrRenamedBackupPaths}" >
 
                                     <ListView.View>
                                         <GridView AllowsColumnReorder="False">
@@ -423,7 +434,9 @@
                                                     <Setter Property="Visibility" Value="Collapsed" />
                                                 </Style>
                                             </GridView.ColumnHeaderContainerStyle>
-                                            <GridViewColumn DisplayMemberBinding="{Binding Path}" Width="{Binding ActualWidth, ElementName=MovedOrRenamedBackupPaths}"/>
+                                            <GridViewColumn 
+                                                DisplayMemberBinding="{Binding Path}" 
+                                                Width="{Binding ActualWidth, ElementName=MovedOrRenamedBackupPaths}"/>
                                         </GridView>
                                     </ListView.View>
                                     
