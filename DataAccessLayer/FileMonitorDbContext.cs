@@ -31,6 +31,11 @@ namespace DataAccessLayer
         public DbSet<BackupPath> BackupPaths { get; set; }
 
         /// <summary>
+        /// Provides a <see cref="DbSet{TEntity}"/> for querying and saving changes to the <see cref="IgnorableFolder"/> Entity.
+        /// </summary>
+        public DbSet<IgnorableFolder> IgnorableFolders { get; set; }
+
+        /// <summary>
         /// The <see cref="FileMonitorDbContext"/> class constructor.
         /// </summary>
         /// <param name="connectionString"> A connection string for establishing a connection to the database. </param>
