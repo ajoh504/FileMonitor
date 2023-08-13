@@ -35,7 +35,8 @@ namespace FileMonitor
             using SourceFolderService sourceFolderService = new SourceFolderService(
                 RepositoryHelper.CreateSourceFolderRepositoryInstance(),
                 RepositoryHelper.CreateFolderFileMappingInstance(),
-                RepositoryHelper.CreateSourceFileRepositoryInstance());
+                RepositoryHelper.CreateSourceFileRepositoryInstance(),
+                RepositoryHelper.CreateIgnorableFolderRepositoryInstance());
 
             _viewModel = new MainWindowViewModel(
                 new ObservableCollection<BackupPathDto>(backupPathService.GetDirectories()),
@@ -112,7 +113,8 @@ NOTE: Using this program to access critical system files is not recommended. Doi
                     using SourceFolderService sourceFolderService = new SourceFolderService(
                         RepositoryHelper.CreateSourceFolderRepositoryInstance(),
                         RepositoryHelper.CreateFolderFileMappingInstance(),
-                        RepositoryHelper.CreateSourceFileRepositoryInstance()
+                        RepositoryHelper.CreateSourceFileRepositoryInstance(),
+                        RepositoryHelper.CreateIgnorableFolderRepositoryInstance()
                     );
                     AddFiles(paths, fromSourceFolder: true);
                     SourceFolderDto dto = sourceFolderService.Add(directory, paths, MonitorAllSubFolders); // Must be called after adding paths to avoid an exception.
@@ -311,7 +313,8 @@ NOTE: Using this program to access critical system files is not recommended. Doi
             using SourceFolderService sourceFolderService = new SourceFolderService(
                 RepositoryHelper.CreateSourceFolderRepositoryInstance(),
                 RepositoryHelper.CreateFolderFileMappingInstance(),
-                RepositoryHelper.CreateSourceFileRepositoryInstance()
+                RepositoryHelper.CreateSourceFileRepositoryInstance(),
+                RepositoryHelper.CreateIgnorableFolderRepositoryInstance()
             );
 
             if (sourceFolderService.FilesAddedToFolders(
@@ -354,7 +357,8 @@ NOTE: Using this program to access critical system files is not recommended. Doi
                 using SourceFolderService sourceFolderService = new SourceFolderService(
                     RepositoryHelper.CreateSourceFolderRepositoryInstance(),
                     RepositoryHelper.CreateFolderFileMappingInstance(),
-                    RepositoryHelper.CreateSourceFileRepositoryInstance()
+                    RepositoryHelper.CreateSourceFileRepositoryInstance(),
+                    RepositoryHelper.CreateIgnorableFolderRepositoryInstance()
                 );
                 List<SourceFolderDto> foldersToRemove = new List<SourceFolderDto>();
                 List<SourceFileDto> filesToRemove = new List<SourceFileDto>();
@@ -379,7 +383,8 @@ NOTE: Using this program to access critical system files is not recommended. Doi
             using SourceFolderService sourceFolderService = new SourceFolderService(
                 RepositoryHelper.CreateSourceFolderRepositoryInstance(),
                 RepositoryHelper.CreateFolderFileMappingInstance(),
-                RepositoryHelper.CreateSourceFileRepositoryInstance()
+                RepositoryHelper.CreateSourceFileRepositoryInstance(),
+                RepositoryHelper.CreateIgnorableFolderRepositoryInstance()
             );
             List<SourceFolderDto> folders = new List<SourceFolderDto>();
             int numberOfFiles = 0;
