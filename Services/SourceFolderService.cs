@@ -14,6 +14,7 @@ namespace Services
         ISourceFolderRepository _sourceFolderRepository;
         IFolderFileMappingRepository _folderFileMappingRepository;
         ISourceFileRepository _sourceFileRepository;
+        IIgnorableFolderRepository _ignorableFolderRepository;
 
         /// <summary>
         /// The <see cref="SourceFolderService"/> class constructor.
@@ -21,14 +22,18 @@ namespace Services
         /// <param name="sourceFolderRepository"> An instance of the <see cref="ISourceFolderRepository"/> which provides database access. </param>
         /// <param name="folderFileMappingRepository"> An instance of the <see cref="IFolderFileMappingRepository"/> which provides database access. </param>
         /// <param name="sourceFileRepository"> An instance of the <see cref="ISourceFileRepository"/> which provides database access. </param>
+        /// <param name="ignorableFolderRepository"> An instance of the <see cref="IIgnorableFolderRepository"/> which provides database access. </param>
         public SourceFolderService(
             ISourceFolderRepository sourceFolderRepository, 
             IFolderFileMappingRepository folderFileMappingRepository,
-            ISourceFileRepository sourceFileRepository)
+            ISourceFileRepository sourceFileRepository,
+            IIgnorableFolderRepository ignorableFolderRepository
+            )
         {
             _sourceFolderRepository = sourceFolderRepository;
             _folderFileMappingRepository = folderFileMappingRepository;
             _sourceFileRepository = sourceFileRepository;
+            _ignorableFolderRepository = ignorableFolderRepository;
         }
 
         /// <summary>
