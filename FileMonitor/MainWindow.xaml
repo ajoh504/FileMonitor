@@ -300,7 +300,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Settings" MouseDown="Window_MouseDown">
+            <TabItem Header="Settings" >
                 <ScrollViewer>
                     <Grid Background="#FFE5E5E5">
                         
