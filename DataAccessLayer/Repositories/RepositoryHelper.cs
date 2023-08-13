@@ -33,6 +33,12 @@ namespace Services.Helpers
         public static IFolderFileMappingRepository CreateFolderFileMappingInstance() 
             => new FolderFileMappingRepository(CreateDbContextInstance());
 
+        /// <summary>
+        /// Creates an instance of the IIgnorableFolderRepository.
+        /// </summary>
+        public static IIgnorableFolderRepository CreateIgnorableFolderRepositoryInstance()
+            => new IgnorableFolderRepository(CreateDbContextInstance());
+
         // A private method to create an instance of the program's database context.
         // The database context is required for construction of a repository instance.
         private static FileMonitorDbContext CreateDbContextInstance()
