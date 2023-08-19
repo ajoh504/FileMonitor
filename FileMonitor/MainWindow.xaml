@@ -357,6 +357,56 @@
                                 </ScrollViewer>
                             </Grid>
                         </Border>
+                        
+                        <Border Style="{StaticResource MainBorderStyle}"
+                                Grid.Column="1"
+                                Grid.Row="0">
+                            
+                            <Grid>
+                                <Border Style="{StaticResource HeaderStyle}"
+                                        Background="MediumPurple" >
+
+                                    <TextBlock Text="Ignorable Folders:"
+                                               Style="{StaticResource HeaderTextStyle}"/>
+                                </Border>
+                            
+                                <StackPanel Style="{StaticResource ButtonStackPanelStyle}">
+
+                                    <Button x:Name="AddIgnorableFolder" 
+                                            Content="Add" 
+                                            Click="AddIgnorableFolder_Click" 
+                                            Style="{StaticResource MultiButtonStyle}"/>
+
+                                    <Button x:Name="RemoveIgnorableFolder" 
+                                            Content="Remove" 
+                                            Click="RemoveIgnorableFolder_Click"
+                                            IsEnabled="{
+                                                Binding ElementName=BackupPathsDisplayed, 
+                                                Path=SelectedIndex, 
+                                                Converter={StaticResource 
+                                                IntToBoolValueConverter}}" 
+                                            Style="{StaticResource MultiButtonStyle}"/>
+                                </StackPanel>
+                           
+                                <ListView x:Name="IgnorableFoldersDisplayed"  
+                                          Style="{StaticResource ListViewStyle}"
+                                          ItemsSource="{Binding IgnorableFolders}"  >
+
+                                    <ListView.View>
+                                        <GridView AllowsColumnReorder="False">
+                                            <GridView.ColumnHeaderContainerStyle>
+                                                <Style TargetType="{x:Type GridViewColumnHeader}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </Style>
+                                            </GridView.ColumnHeaderContainerStyle>
+                                            <GridViewColumn 
+                                                DisplayMemberBinding="{Binding Path}" 
+                                                Width="{Binding ActualWidth, ElementName=IgnorableFoldersDisplayed}"/>
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                            </Grid>
+                        </Border>
 
                         <Border Style="{StaticResource MainBorderStyle}"
                                 Grid.Column="2"
