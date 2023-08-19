@@ -15,6 +15,7 @@ namespace FileMonitor.ViewModels
         private ObservableCollection<SourceFolderDto> _sourceFolders;
         private ObservableCollection<SourceFileDto> _movedOrRenamedFiles;
         private ObservableCollection<BackupPathDto> _movedOrRenamedBackupPaths;
+        private ObservableCollection<IgnorableFolderDto> _ignorableFolders;
         private bool _backupSelected;
 
         /// <summary>
@@ -66,6 +67,11 @@ namespace FileMonitor.ViewModels
         public ObservableCollection<BackupPathDto> MovedOrRenamedBackupPaths { get { return _movedOrRenamedBackupPaths; } }
 
         /// <summary>
+        /// An observable collection of <see cref="IgnorableFolderDto"/> objects. This collection displays all backup paths whose names or paths have been moved, renamed, or deleted since being monitored by the program. This property is bound to the <see cref="MainWindow.IgnorableFoldersDisplayed"/> list view.
+        /// </summary>
+        public ObservableCollection<IgnorableFolderDto> IgnorableFolders { get { return _ignorableFolders;  } }
+
+        /// <summary>
         /// If false, the program will make copies of updated files whenever they are backed up. If true, the program will overwrite the previously copied file.
         /// </summary>
         public bool OverwriteUpdatedFiles { get; set; }
@@ -93,6 +99,7 @@ namespace FileMonitor.ViewModels
             ObservableCollection<SourceFolderDto> sourceFolders,
             ObservableCollection<SourceFileDto> movedOrRenamedFiles,
             ObservableCollection<BackupPathDto> movedOrRenamedBackupPaths,
+            ObservableCollection<IgnorableFolderDto> ignorableFolders,
             bool overwriteUpdatedFiles,
             bool includeAllSubfolders)
         {
@@ -102,6 +109,7 @@ namespace FileMonitor.ViewModels
             _sourceFolders = sourceFolders;
             _movedOrRenamedFiles = movedOrRenamedFiles;
             _movedOrRenamedBackupPaths = movedOrRenamedBackupPaths;
+            _ignorableFolders = ignorableFolders;
             _backupSelected = IsAnyBackupSelected();
             OverwriteUpdatedFiles = overwriteUpdatedFiles;
             IncludeAllSubfolders = includeAllSubfolders;
