@@ -47,6 +47,7 @@ namespace FileMonitor
                 new ObservableCollection<SourceFolderDto>(sourceFolderService.GetFolders()),
                 new ObservableCollection<SourceFileDto>(sourceFileService.GetMovedOrRenamedFiles()),
                 new ObservableCollection<BackupPathDto>(backupPathService.GetMovedOrRenamedPaths()),
+                new ObservableCollection<IgnorableFolderDto>(ignorableFolderService.Get()),
                 JsonSettingsHelper.OverwriteUpdatedFiles,
                 JsonSettingsHelper.IncludeAllSubFolders
             );
@@ -471,6 +472,16 @@ NOTE: Using this program to access critical system files is not recommended. Doi
             }
             backupPathService.Remove(ids);
             _viewModel.MovedOrRenamedBackupPaths.RemoveRange<BackupPathDto>(selectedPaths);
+        }
+
+        private void AddIgnorableFolder_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void RemoveIgnorableFolder_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
