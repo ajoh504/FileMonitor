@@ -3,7 +3,8 @@
 namespace DataAccessLayer.Entities
 {
     /// <summary>
-    /// An Entity class for the source_file table. These records store paths to all files being monitored by the program.
+    /// An Entity class for the source_file table. These records store paths to all files being monitored by the 
+    /// program.
     /// </summary>
     [Table("source_file")]
     public class SourceFile
@@ -25,7 +26,8 @@ namespace DataAccessLayer.Entities
         /// A SHA1 hash for this instance of the file.
         /// </summary>
         /// <remarks>
-        /// The hash is generated when the file is copied to a backup location. If the current hash differs from the stored hash, then the file has changed and the new version needs to be backed up.
+        /// The hash is generated when the file is copied to a backup location. If the current hash differs from the 
+        /// stored hash, then the file has changed and the new version needs to be backed up.
         /// </remarks>
         public string Hash { get; set; }
 
@@ -35,7 +37,8 @@ namespace DataAccessLayer.Entities
         public bool IsModified { get; set; }
 
         /// <summary>
-        /// If set to true, the file was added from a source folder. If set to false, the file was added to the program individually.
+        /// If set to true, the file was added from a source folder. If set to false, the file was added to the program
+        /// individually.
         /// </summary>
         public bool FromSourceFolder { get; set; }
     }

@@ -7,7 +7,8 @@ using System.IO;
 namespace Services
 {
     /// <summary>
-    ///  A service class offering database access to the FolderFileMapping Entity. This class stores a repository, and creates the appropriate mapping between the folders and the files contained within them.
+    ///  A service class offering database access to the FolderFileMapping Entity. This class stores a repository, and
+    ///  creates the appropriate mapping between the folders and the files contained within them.
     /// </summary>
     public class SourceFolderService : DisposableService
     {
@@ -18,10 +19,15 @@ namespace Services
         /// <summary>
         /// The <see cref="SourceFolderService"/> class constructor.
         /// </summary>
-        /// <param name="sourceFolderRepository"> An instance of the <see cref="ISourceFolderRepository"/> which provides database access. </param>
-        /// <param name="folderFileMappingRepository"> An instance of the <see cref="IFolderFileMappingRepository"/> which provides database access. </param>
-        /// <param name="sourceFileRepository"> An instance of the <see cref="ISourceFileRepository"/> which provides database access. </param>
-        /// <param name="ignorableFolderRepository"> An instance of the <see cref="IIgnorableFolderRepository"/> which provides database access. </param>
+        /// <param name="sourceFolderRepository">
+        /// An instance of the <see cref="ISourceFolderRepository"/> which provides database access.
+        /// </param>
+        /// <param name="folderFileMappingRepository">
+        /// An instance of the <see cref="IFolderFileMappingRepository"/> which provides database access.
+        /// </param>
+        /// <param name="sourceFileRepository">
+        /// An instance of the <see cref="ISourceFileRepository"/> which provides database access.
+        /// </param>
         public SourceFolderService(
             ISourceFolderRepository sourceFolderRepository, 
             IFolderFileMappingRepository folderFileMappingRepository,
@@ -75,11 +81,16 @@ namespace Services
         }
 
         /// <summary>
-        /// Adds a monitored folder to the database. This method ensures appropriate mapping from the source folder to all children files contained within it. <see cref="SourceFileService.Add(string)"/> must be called first on all new file paths before this method is called. This ensures that the file IDs are created, allowing for the folders and files to be mapped appropriately.
+        /// Adds a monitored folder to the database. This method ensures appropriate mapping from the source folder to
+        /// all children files contained within it. <see cref="SourceFileService.Add(string)"/> must be called first on
+        /// all new file paths before this method is called. This ensures that the file IDs are created, allowing for
+        /// the folders and files to be mapped appropriately.
         /// </summary>
         /// <param name="directoryPath"> The folder to add to the database. </param>
         /// <param name="filePaths"> A string list of all children files. </param>
-        /// <param name="MonitorAllSubFolders"> Determines if the program should monitor all sub directories within the parent directory. </param>
+        /// <param name="MonitorAllSubFolders">
+        /// Determines if the program should monitor all sub directories within the parent directory.
+        /// </param>
         /// <returns> A source folder DTO object for updating the UI. </returns>
         public SourceFolderDto Add(
             string directoryPath, 
@@ -103,7 +114,8 @@ namespace Services
         }
 
         /// <summary>
-        /// Remove a range of source folders from the database. This method also removes any source files contained within that folder, as long as the files were not added individually.
+        /// Remove a range of source folders from the database. This method also removes any source files contained
+        /// within that folder, as long as the files were not added individually.
         /// </summary>
         /// <param name="ids"> The Ids for each source folder path to be removed. </param>
         public void Remove(IEnumerable<int> ids)
@@ -123,9 +135,12 @@ namespace Services
         }
 
         /// <summary>
-        /// Returns true if any monitored folder contains newly added files, false otherwise. If the method returns true, it will add the files to the database and provide an out parameter containing any files that were added to the database.
+        /// Returns true if any monitored folder contains newly added files, false otherwise. If the method returns
+        /// true, it will add the files to the database and provide an out parameter containing any files that were
+        /// added to the database.
         /// </summary>
-        /// <param name="newFilesFromFolder"> A list of data transfer objects for values. The values represent all files that have been added to the monitored folder. </param>
+        /// <param name="newFilesFromFolder"> A list of data transfer objects for values. The values represent all
+        /// files that have been added to the monitored folder. </param>
         public bool FilesAddedToFolders(
             out List<SourceFileDto>? newFilesFromFolder)
         {
@@ -228,11 +243,13 @@ namespace Services
             List<string> fileSystemEntries = new List<string>();
             if (folder.MonitorAllSubDirectories)
             {
-                fileSystemEntries = Directory.GetFileSystemEntries(folder.Path, "*", SearchOption.AllDirectories).ToList();
+                fileSystemEntries = Directory.GetFileSystemEntries(folder.Path, "*", SearchOption.AllDirectories)
+                    .ToList();
             }
             else
             {
-                fileSystemEntries = Directory.GetFileSystemEntries(folder.Path, "*", SearchOption.TopDirectoryOnly).ToList();
+                fileSystemEntries = Directory.GetFileSystemEntries(folder.Path, "*", SearchOption.TopDirectoryOnly)
+                    .ToList();
             }
 
             List<string> result = new List<string>();   
@@ -256,9 +273,12 @@ namespace Services
         }
 
         /// <summary>
-        /// Ensures that the service objects are properly disposed. Also calls <c>Dispose</c> on the repository objects.
+        /// Ensures that the service objects are properly disposed. Also calls <c>Dispose</c> on the repository
+        /// objects.
         /// </summary>
-        /// <param name="disposing"> Signifies that the object is not being disposed directly from the finalizer. </param>
+        /// <param name="disposing">
+        /// Signifies that the object is not being disposed directly from the finalizer.
+        /// </param>
         protected override void Dispose(bool disposing)
         {
             _sourceFileRepository.Dispose();

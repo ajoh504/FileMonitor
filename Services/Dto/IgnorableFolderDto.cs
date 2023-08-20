@@ -1,7 +1,8 @@
 ﻿namespace Services.Dto
 {
     /// <summary>
-    /// A data transfer object related to the IgnorableFolder entity. Provides a folder name to be ignored by the program.
+    /// A data transfer object related to the IgnorableFolder entity. Provides a folder name to be ignored by the
+    /// program.
     /// </summary>
     public class IgnorableFolderDto
     {

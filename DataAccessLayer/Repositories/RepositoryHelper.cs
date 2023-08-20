@@ -5,7 +5,8 @@ using System.Configuration;
 namespace Services.Helpers
 {
     /// <summary>
-    /// A helper class for instantiating the code repositories. Use this class to provide the service classes with the necessary repository.
+    /// A helper class for instantiating the code repositories. Use this class to provide the service classes with the \
+    /// necessary repository.
     /// </summary>
     public class RepositoryHelper
     {
@@ -42,6 +43,7 @@ namespace Services.Helpers
         // A private method to create an instance of the program's database context.
         // The database context is required for construction of a repository instance.
         private static FileMonitorDbContext CreateDbContextInstance()
-            => new FileMonitorDbContext(ConfigurationManager.ConnectionStrings[nameof(FileMonitorDbContext)].ConnectionString);
+            => new FileMonitorDbContext(
+                ConfigurationManager.ConnectionStrings[nameof(FileMonitorDbContext)].ConnectionString);
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.IO;
+using System.Windows.Controls;
 using System;
 using FileMonitor.Dialogs;
 using FileMonitor.FileBackups;
@@ -11,8 +12,6 @@ using Services;
 using Services.Dto;
 using Services.Extensions;
 using Services.Helpers;
-using System.Windows.Controls;
-using DataAccessLayer.Entities;
 
 namespace FileMonitor
 {
@@ -24,7 +23,9 @@ namespace FileMonitor
         private readonly MainWindowViewModel _viewModel;
 
         /// <summary>
-        /// Defines the <see cref="MainWindow"/> class constructor. Uses <see cref="SourceFileService"/> and <see cref="BackupPathService"/> to initialize the data bindings in the view model. ALso sets the data context for the UI.
+        /// Defines the <see cref="MainWindow"/> class constructor. Uses <see cref="SourceFileService"/> and <see cref=
+        /// "BackupPathService"/> to initialize the data bindings in the view model. ALso sets the data context for the
+        /// UI.
         /// </summary>
         public MainWindow()
         {
@@ -77,7 +78,8 @@ namespace FileMonitor
 3. The program does not have administrative privileges (Try running as admin) 
 4. A folder is being accessed as a file
 
-NOTE: Using this program to access critical system files is not recommended. Doing so may result in unintended consequences. This program is intended for use with the user's personal files.
+NOTE: Accessing critical system files is not recommended. This program is intended for use with the user's personal
+files.
 
 {ex}
 ");
@@ -94,7 +96,8 @@ NOTE: Using this program to access critical system files is not recommended. Doi
             {
                 FileAttributes attributes = File.GetAttributes(path);
                 // If the path is an empty string, if it exists in the database, or if it is a directory, then continue
-                if (path == "" || sourceFileService.PathExists(path) || attributes.HasFlag(FileAttributes.Directory)) continue;
+                if (path == "" || sourceFileService.PathExists(path) || attributes.HasFlag(FileAttributes.Directory))
+                    continue;
                 SourceFileDto dto = sourceFileService.Add(path, fromSourceFolder);
                 _viewModel.SourceFiles.Add(dto);
                 _viewModel.UpdatedFiles.Add(dto);
@@ -102,9 +105,9 @@ NOTE: Using this program to access critical system files is not recommended. Doi
         }
 
 
-        // A button click event handler for adding a folder, which effectively adds all files in any subfolders to the program.
-        // Newly added files are also added to the MainWindowViewModel.UpdatedFiles collection. This assumes that the file must
-        // first be copied to a backup location.
+        // A button click event handler for adding a folder, which effectively adds all files in any subfolders to the
+        // program. Newly added files are also added to the MainWindowViewModel.UpdatedFiles collection. This assumes
+        // that the file must first be copied to a backup location.
         private void AddNewFolder_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -119,7 +122,8 @@ NOTE: Using this program to access critical system files is not recommended. Doi
                         RepositoryHelper.CreateSourceFileRepositoryInstance()
                     );
                     AddFiles(paths, fromSourceFolder: true);
-                    SourceFolderDto dto = sourceFolderService.Add(directory, paths, MonitorAllSubFolders); // Must be called after adding paths to avoid an exception.
+                    // Directory must be added after adding "paths" to avoid an exception.
+                    SourceFolderDto dto = sourceFolderService.Add(directory, paths, MonitorAllSubFolders);
                     _viewModel.SourceFolders.Add(dto);
                 }
             }
@@ -132,15 +136,16 @@ NOTE: Using this program to access critical system files is not recommended. Doi
 3. The program does not have administrative privileges (Try running as admin) 
 4. A folder is being accessed as a file
 
-NOTE: Using this program to access critical system files is not recommended. Doing so may result in unintended consequences. This program is intended for use with the user's personal files.
-
+NOTE: Accessing critical system files is not recommended. This program is intended for use with the user's personal
+files.
 {ex}
 ");
                 return;
             }
         }
 
-        // Verifies that the user wants to add an entire folder. Displays the number of files that will be added by doing so.
+        // Verifies that the user wants to add an entire folder. Displays the number of files that will be added by
+        // doing so.
         private bool VerifyAddFolder(string directory, out List<string> paths, out bool MonitorAllSubFolders)
         {
             paths = GetPathsFromFolder(directory, out int numberOfDirectories, out bool MonitorAll);
@@ -148,7 +153,8 @@ NOTE: Using this program to access critical system files is not recommended. Doi
             int numberOfFiles = paths.Count;
 
             return MessageBox.Show(
-                $@"The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subfolders(s). Do you wish to continue?", 
+                $@"
+The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subfolders(s). Do you wish to continue?",
                 "Confirm Add Folder", 
                 MessageBoxButton.YesNo, 
                 MessageBoxImage.Warning) == MessageBoxResult.Yes;
@@ -159,13 +165,15 @@ NOTE: Using this program to access critical system files is not recommended. Doi
             if (JsonSettingsHelper.IncludeAllSubFolders)
             {
                 if (MessageBox.Show(
-                    "Do you wish to monitor all files from all subfolders?\n\nSelect yes to to monitor all. Select no to only monitor the files within this folder.",
+                    "Do you wish to monitor all files from all subfolders?\n\nSelect yes to to monitor all. Select no" +
+                    "to only monitor the files within this folder.",
                     "Include All Subfolders?",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Question
                     ) == MessageBoxResult.Yes)
                 {
-                    numberOfDirectories = Directory.GetFileSystemEntries(directory, "*", SearchOption.AllDirectories).Length;
+                    numberOfDirectories = Directory.GetFileSystemEntries(
+                        directory, "*", SearchOption.AllDirectories).Length;
                     MonitorAll = true;
                     return Directory.GetFileSystemEntries(directory, "*", SearchOption.AllDirectories).ToList();
                 }
@@ -181,7 +189,8 @@ NOTE: Using this program to access critical system files is not recommended. Doi
         {
             if (ConfirmRemoveFiles())
             {
-                using SourceFileService sourceFileService = new SourceFileService(RepositoryHelper.CreateSourceFileRepositoryInstance());
+                using SourceFileService sourceFileService = new SourceFileService(
+                    RepositoryHelper.CreateSourceFileRepositoryInstance());
                 List<int> ids = new List<int>();
                 List<SourceFileDto> selectedFiles = new List<SourceFileDto>();
                 foreach (object item in FilesDisplayed.SelectedItems)
@@ -248,11 +257,12 @@ NOTE: Using this program to access critical system files is not recommended. Doi
             MessageBox.Show("Backup complete.");
         }
 
-        // The main goal here is to reset the collection of updated files, both in the UI and in the database. To do so, the 
-        // method retrieves a list of Ids for each file in the UpdatedFiles collection. Then it resets the IsModified checkbox 
-        // to be false. Doing so informs the program that the copied version of the files is effectively the most up-to-date
-        // version. Finally, it updates the hash for each file to the current hash. Doing so ensures that the next time hashes
-        // are compared, these files will be ignored because they represent the latest version of the file.
+        // The main goal here is to reset the collection of updated files, both in the UI and in the database. To do
+        // so, the method retrieves a list of Ids for each file in the UpdatedFiles collection. Then it resets the
+        // IsModified checkbox to be false. Doing so informs the program that the copied version of the files is
+        // effectively the most up-to-date version. Finally, it updates the hash for each file to the current hash.
+        // Doing so ensures that the next time hashes are compared, these files will be ignored because they represent
+        // the latest version of the file.
         private void ResetUpdatedFiles()
         {
             List<int> ids = new List<int>();
@@ -275,13 +285,15 @@ NOTE: Using this program to access critical system files is not recommended. Doi
             _viewModel.BackupPaths.Add(backupPathDto);
         }
 
-        // An event handler to be called when the BackupPathCheckBox is checked in the UI. This method updates the IsSelected property
-        // in the database using a data transfer object. This ensures that the CheckBox remains selected even after the program exits. 
+        // An event handler to be called when the BackupPathCheckBox is checked in the UI. This method updates the
+        // IsSelected property in the database using a data transfer object. This ensures that the CheckBox remains
+        // selected even after the program exits. 
         private void BackupPathCheckBox_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Controls.CheckBox checkBox = (System.Windows.Controls.CheckBox)sender;
             BackupPathDto backupPathDto = (BackupPathDto)checkBox.DataContext;
-            using BackupPathService backupPathService = new BackupPathService(RepositoryHelper.CreateBackupPathRepositoryInstance());
+            using BackupPathService backupPathService = new BackupPathService(
+                RepositoryHelper.CreateBackupPathRepositoryInstance());
             backupPathService.Update(backupPathDto, updatePath: false, updateIsSelected: true);
             _viewModel.BackupSelected = _viewModel.IsAnyBackupSelected();
         }
@@ -348,7 +360,8 @@ NOTE: Using this program to access critical system files is not recommended. Doi
             }
         }
 
-        // An asynchronous button click event handler to remove monitored folders from the program, along with any files contained within them.
+        // An asynchronous button click event handler to remove monitored folders from the program, along with any
+        // files contained within them.
         private void RemoveFolders_Click(object sender, RoutedEventArgs e)
         {
             if (ConfirmRemoveFolders())
@@ -377,7 +390,8 @@ NOTE: Using this program to access critical system files is not recommended. Doi
             }
         }
 
-        // Confirms that the user wants to delete the selected folders, and informs the user that this cannot be undone.
+        // Confirms that the user wants to delete the selected folders, and informs the user that this cannot be
+        // undone.
         private bool ConfirmRemoveFolders()
         {
             using SourceFolderService sourceFolderService = new SourceFolderService(
@@ -395,7 +409,8 @@ NOTE: Using this program to access critical system files is not recommended. Doi
                 numberOfFiles += sourceFolderService.GetStoredFilesFromFolder(dto.Id).Count();
             }
             
-            string text = $"Do you wish to delete the selected folder(s) from the program? This cannot be undone.\nDoing so will delete {numberOfFiles} file(s) from {numberOfFolders} monitored folder(s)";
+            string text = $"Do you wish to delete the selected folder(s) from the program? This cannot be undone." +
+                $"\nDoing so will delete {numberOfFiles} file(s) from {numberOfFolders} monitored folder(s)";
             string caption = "Delete SourceFolders";
 
             MessageBoxButton button = MessageBoxButton.YesNo;
@@ -407,7 +422,8 @@ NOTE: Using this program to access critical system files is not recommended. Doi
         {
             if (ConfirmRemoveFiles())
             {
-                using SourceFileService sourceFileService = new SourceFileService(RepositoryHelper.CreateSourceFileRepositoryInstance());
+                using SourceFileService sourceFileService = new SourceFileService(
+                    RepositoryHelper.CreateSourceFileRepositoryInstance());
                 List<int> ids = new List<int>();
                 List<SourceFileDto> selectedFiles = new List<SourceFileDto>();
                 foreach (object item in MovedOrRenamedFilesDisplayed.SelectedItems)
@@ -435,7 +451,8 @@ NOTE: Using this program to access critical system files is not recommended. Doi
 
         private void RemoveBackupPath_Click(object sender, RoutedEventArgs e)
         {
-            using BackupPathService backupPathService = new BackupPathService(RepositoryHelper.CreateBackupPathRepositoryInstance());
+            using BackupPathService backupPathService = new BackupPathService(
+                RepositoryHelper.CreateBackupPathRepositoryInstance());
             List<int> ids = new List<int>();
             List<BackupPathDto> selectedPaths = new List<BackupPathDto>();
             foreach (object item in BackupPathsDisplayed.SelectedItems)
@@ -461,7 +478,8 @@ NOTE: Using this program to access critical system files is not recommended. Doi
 
         private void RemovePossibleDeletedBackupPaths_Click(object sender, RoutedEventArgs e)
         {
-            using BackupPathService backupPathService = new BackupPathService(RepositoryHelper.CreateBackupPathRepositoryInstance());
+            using BackupPathService backupPathService = new BackupPathService(
+                RepositoryHelper.CreateBackupPathRepositoryInstance());
             List<int> ids = new List<int>();
             List<BackupPathDto> selectedPaths = new List<BackupPathDto>();
             foreach (object item in MovedOrRenamedBackupPathsDisplayed.SelectedItems)

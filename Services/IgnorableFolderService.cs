@@ -5,7 +5,8 @@ using Services.Dto;
 namespace Services
 {
     /// <summary>
-    /// A service class offering database access to the IgnorableFolder Entity. This class stores a repository, and offers data transfer objects for updating the ViewModel.
+    /// A service class offering database access to the IgnorableFolder Entity. This class stores a repository, and
+    /// offers data transfer objects for updating the ViewModel.
     /// </summary>
     public class IgnorableFolderService : DisposableService
     {
@@ -14,7 +15,9 @@ namespace Services
         /// <summary>
         /// The <see cref="IgnorableFolderService"/> class constructor.
         /// </summary>
-        /// <param name="ignorableFolderRepository">An instance of <see cref="IIgnorableFolderRepository"/> which provides database access.</param>
+        /// <param name="ignorableFolderRepository">
+        /// An instance of <see cref="IIgnorableFolderRepository"/> which provides database access.
+        /// </param>
         public IgnorableFolderService(IIgnorableFolderRepository ignorableFolderRepository)
         {
             _ignorableFolderRepository = ignorableFolderRepository;
@@ -77,7 +80,9 @@ namespace Services
         /// <summary>
         /// Ensures that the service objects are properly disposed. Also calls <c>Dispose</c> on the repository objects.
         /// </summary>
-        /// <param name="disposing"> Signifies that the object is not being disposed directly from the finalizer. </param>
+        /// <param name="disposing">
+        /// Signifies that the object is not being disposed directly from the finalizer.
+        /// </param>
         protected override void Dispose(bool disposing)
         {
             _ignorableFolderRepository.Dispose();

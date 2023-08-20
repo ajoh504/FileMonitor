@@ -3,7 +3,8 @@
 namespace DataAccessLayer.Entities
 {
     /// <summary>
-    /// An Entity class for the source_folder table. These records store paths to all folders being monitored by the program.
+    /// An Entity class for the source_folder table. These records store paths to all folders being monitored by the
+    /// program.
     /// </summary>
     [Table("source_folder")]
     public class SourceFolder

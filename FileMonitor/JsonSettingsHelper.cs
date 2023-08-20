@@ -7,7 +7,9 @@ namespace FileMonitor
     internal static class JsonSettingsHelper
     {
         /// <summary>
-        /// Read from and write to the "overwriteUpdatedFiles" value from Settings.json. If set to false, the program will make copies of updated files whenever they are backed up. If set to true, the program will overwrite the previously copied file.
+        /// Read from and write to the "overwriteUpdatedFiles" value from Settings.json. If set to false, the program
+        /// will make copies of updated files whenever they are backed up. If set to true, the program will overwrite
+        /// the previously copied file.
         /// </summary>
         public static bool OverwriteUpdatedFiles
         {
@@ -26,7 +28,9 @@ namespace FileMonitor
         }
 
         /// <summary>
-        /// Read from and write to the "includeAllSubFolders" value from Settings.json. If set to false, the program will only monitor files contained within the monitored folder. If set to true, the program will monitor all files an sub-files contained within the monitored folder. 
+        /// Read from and write to the "includeAllSubFolders" value from Settings.json. If set to false, the program
+        /// will only monitor files contained within the monitored folder. If set to true, the program will monitor all
+        /// files an sub-files contained within the monitored folder. 
         /// </summary>
         public static bool IncludeAllSubFolders
         {

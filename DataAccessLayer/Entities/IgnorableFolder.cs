@@ -3,7 +3,8 @@
 namespace DataAccessLayer.Entities
 {
     /// <summary>
-    /// An Entity class for the ignorable_folder table. These records store folder names that should be ignored by the program.
+    /// An Entity class for the ignorable_folder table. These records store folder names that should be ignored by the
+    /// program.
     /// </summary>
     [Table("ignorable_folder")]
     public class IgnorableFolder

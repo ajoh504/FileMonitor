@@ -1,7 +1,8 @@
 ﻿namespace Services
 {
     /// <summary>
-    /// A class inheriting from <see cref="IDisposable"/>. Provides methods to properly dispose of any child service classes.
+    /// A class inheriting from <see cref="IDisposable"/>. Provides methods to properly dispose of any child service
+    /// classes.
     /// </summary>
     public class DisposableService: IDisposable
     {
@@ -34,7 +35,8 @@
         // }
 
         /// <summary>
-        /// The public <see cref="Dispose()"/> method which internally calls <see cref="DisposableService.Dispose(bool)"/> and suppresses the object finalizer.
+        /// The public <see cref="Dispose()"/> method which internally calls <see cref=
+        /// "DisposableService.Dispose(bool)"/> and suppresses the object finalizer.
         /// </summary>
         public void Dispose()
         {

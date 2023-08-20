@@ -3,7 +3,8 @@
 namespace DataAccessLayer.Entities
 {
     /// <summary>
-    /// An entity class for the backup_path table. These records store full directory paths for the backup location as selected by the user.
+    /// An entity class for the backup_path table. These records store full directory paths for the backup location as
+    /// selected by the user.
     /// </summary>
     [Table("backup_path")]
     public class BackupPath

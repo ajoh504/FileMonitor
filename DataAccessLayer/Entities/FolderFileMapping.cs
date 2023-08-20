@@ -3,7 +3,9 @@
 namespace DataAccessLayer.Entities
 {
     /// <summary>
-    /// An Entity class serving as a mapping table. This table establishes the relationship between the <c>SourceFolder</c> and <c>SourceFile</c> Entities. It stores a <c>SourceFolderId</c> and a <c>SourceFileId</c> to show that the file is contained within the folder.
+    /// An Entity class serving as a mapping table. This table establishes the relationship between the 
+    /// <c>SourceFolder</c> and <c>SourceFile</c> Entities. It stores a <c>SourceFolderId</c> and a <c>SourceFileId</c>
+    /// to show that the file is contained within the folder.
     /// </summary>
     /// <remarks>
     /// The file may be stored directly in the folder, or it may be contained within a subfolder of the parent folder.

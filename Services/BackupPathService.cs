@@ -5,7 +5,8 @@ using Services.Dto;
 namespace Services
 {
     /// <summary>
-    /// A service class offering database access to the BackupPath Entity. This class stores a repository, and offers data transfer objects for updating the ViewModel.
+    /// A service class offering database access to the BackupPath Entity. This class stores a repository, and offers
+    /// data transfer objects for updating the ViewModel.
     /// </summary>
     public class BackupPathService : DisposableService
     {
@@ -14,7 +15,9 @@ namespace Services
         /// <summary>
         /// The <see cref="BackupPathService"/> class constructor.
         /// </summary>
-        /// <param name="repository"> An instance of <see cref="IBackupPathRepository"/> which provides database access. </param>
+        /// <param name="repository">
+        /// An instance of <see cref="IBackupPathRepository"/> which provides database access.
+        /// </param>
         public BackupPathService(IBackupPathRepository repository)
         {
             _repository = repository;
@@ -89,7 +92,9 @@ namespace Services
         /// </summary>
         /// <param name="dto"> The DTO used to update the Entity. </param>
         /// <param name="updatePath"> This parameter must be set to true in order to update the Path property. </param>
-        /// <param name="updateIsSelected"> This parameter must be set to true in order to update the IsSelected property. </param>
+        /// <param name="updateIsSelected">
+        /// This parameter must be set to true in order to update the IsSelected property.
+        /// </param>
         public void Update(BackupPathDto dto, bool updatePath, bool updateIsSelected)
         {
             BackupPath entity = _repository.FirstOrDefault(f => f.Id == dto.Id, asNoTracking: false);
@@ -116,7 +121,9 @@ namespace Services
         /// <summary>
         /// Ensures that the service object is properly disposed. Also calls <c>Dispose</c> on the repository object.
         /// </summary>
-        /// <param name="disposing"> Signifies that the object is not being disposed directly from the finalizer. </param>
+        /// <param name="disposing">
+        /// Signifies that the object is not being disposed directly from the finalizer.
+        /// </param>
         protected override void Dispose(bool disposing)
         {
             _repository.Dispose();

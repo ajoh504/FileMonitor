@@ -175,7 +175,9 @@ namespace Services
         /// <summary>
         /// Ensures that the service object is properly disposed. Also calls <c>Dispose</c> on the repository object.
         /// </summary>
-        /// <param name="disposing"> Signifies that the object is not being disposed directly from the finalizer. </param>
+        /// <param name="disposing">
+        /// Signifies that the object is not being disposed directly from the finalizer.
+        /// </param>
         protected override void Dispose(bool disposing)
         {
             _sourceFileRepository.Dispose();

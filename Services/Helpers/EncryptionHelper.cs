@@ -4,10 +4,12 @@ using DataAccessLayer.Entities;
 namespace Services.Helpers
 {
     /// <summary>
-    /// A static helper class for generating a <see cref="SHA1"/> hash. The hash is stored as a database record with the <see cref="SourceFile"/> Entity. 
+    /// A static helper class for generating a <see cref="SHA1"/> hash. The hash is stored as a database record with
+    /// the <see cref="SourceFile"/> Entity. 
     /// </summary>
     /// <remarks>
-    /// The program compares the stored hash to the current hash to determine if the file has changed since the last time it was copied to a backup location.
+    /// The program compares the stored hash to the current hash to determine if the file has changed since the last
+    /// time it was copied to a backup location.
     /// </remarks>
     public static class EncryptionHelper
     {
