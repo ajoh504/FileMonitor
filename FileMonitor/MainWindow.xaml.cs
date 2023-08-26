@@ -494,7 +494,17 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
 
         private void AddIgnorableFolder_Click(object sender, RoutedEventArgs e)
         {
+            using IgnorableFolderService ignorableFolderService = new IgnorableFolderService(
+                RepositoryHelper.CreateIgnorableFolderRepositoryInstance());
 
+            string folderName = Microsoft.VisualBasic.Interaction.InputBox(
+                "Add the name of a folder to be ignored by the program, such as .git or .vs binary locations.",
+                "Add Ignorable Folder",
+                "",
+                -1,
+                -1);
+            IgnorableFolderDto dto = ignorableFolderService.Add(folderName);
+            _viewModel.IgnorableFolders.Add(dto);
         }
 
         private void RemoveIgnorableFolder_Click(object sender, RoutedEventArgs e)
