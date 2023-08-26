@@ -241,10 +241,16 @@ namespace Services
         private List<string> GetCurrentFilesFromFolder(SourceFolderDto folder)
         {
             List<string> fileSystemEntries = new List<string>();
+            using IgnorableFolderService ignorableFolderService = new IgnorableFolderService(
+                RepositoryHelper.CreateIgnorableFolderRepositoryInstance());
+
             if (folder.MonitorAllSubDirectories)
             {
                 fileSystemEntries = Directory.GetFileSystemEntries(folder.Path, "*", SearchOption.AllDirectories)
-                    .ToList();
+                    .Where(fse => IgnorableFolderHelper.NotIgnorable(
+                            fse, 
+                            ignorableFolderService.Get())
+                    ).ToList();
             }
             else
             {

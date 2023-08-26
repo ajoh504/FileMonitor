@@ -151,10 +151,25 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
                     MessageBoxImage.Question
                     ) == MessageBoxResult.Yes)
                 {
+                    // Filter results to exclude ignorable folders.
                     numberOfDirectories = Directory.GetFileSystemEntries(
-                        directory, "*", SearchOption.AllDirectories).Length;
+                        directory, "*", SearchOption.AllDirectories)
+                        .Where(fse => !_viewModel.IgnorableFolders.Contains(
+                            new IgnorableFolderDto
+                            {
+                                Name = fse
+                            })
+                        )
+                        .Count();
                     MonitorAll = true;
-                    return Directory.GetFileSystemEntries(directory, "*", SearchOption.AllDirectories).ToList();
+
+                    // Filter results to exclude files contained in ignorable folders
+                    return Directory.GetFileSystemEntries(directory, "*", SearchOption.AllDirectories)
+                        .Where(
+                            // Determine if path contains an entry from "ignorable"
+                            f => IgnorableFolderHelper.NotIgnorable(f, _viewModel.IgnorableFolders)
+                        )
+                        .ToList();
                 }
             }
             numberOfDirectories = 1;
