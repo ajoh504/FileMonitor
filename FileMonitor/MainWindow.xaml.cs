@@ -69,20 +69,9 @@ namespace FileMonitor
                 if (paths.Count == 0) return;
                 AddFiles(paths, fromSourceFolder: false);
             }
-            catch (UnauthorizedAccessException ex)
+            catch(Exception ex)
             {
-                MessageBox.Show($@"Access to files denied. One of the following issues may have occurred:
-
-1. The program attempted to access files that are in use
-2. The program attempted to access files that are read-only
-3. The program does not have administrative privileges (Try running as admin) 
-4. A folder is being accessed as a file
-
-NOTE: Accessing critical system files is not recommended. This program is intended for use with the user's personal
-files.
-
-{ex}
-");
+                MessageBox.Show($"{ex}");
                 return;
             }
         }
@@ -127,19 +116,9 @@ files.
                     _viewModel.SourceFolders.Add(dto);
                 }
             }
-            catch (UnauthorizedAccessException ex)
+            catch (Exception ex)
             {
-                MessageBox.Show($@"Access to files denied. One of the following issues may have occurred:
-
-1. The program attempted to access files that are in use
-2. The program attempted to access files that are read-only
-3. The program does not have administrative privileges (Try running as admin) 
-4. A folder is being accessed as a file
-
-NOTE: Accessing critical system files is not recommended. This program is intended for use with the user's personal
-files.
-{ex}
-");
+                MessageBox.Show($"{ex}");
                 return;
             }
         }
@@ -165,7 +144,7 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
             if (JsonSettingsHelper.IncludeAllSubFolders)
             {
                 if (MessageBox.Show(
-                    "Do you wish to monitor all files from all subfolders?\n\nSelect yes to to monitor all. Select no" +
+                    "Do you wish to monitor all files from all subfolders?\n\nSelect yes to monitor all. Select no " +
                     "to only monitor the files within this folder.",
                     "Include All Subfolders?",
                     MessageBoxButton.YesNo,
