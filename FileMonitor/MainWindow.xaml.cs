@@ -503,7 +503,20 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
 
         private void RemoveIgnorableFolder_Click(object sender, RoutedEventArgs e)
         {
+            using IgnorableFolderService ignorableFolderService = new IgnorableFolderService(
+                RepositoryHelper.CreateIgnorableFolderRepositoryInstance());
 
+            List<int> ids = new List<int>();
+            List<IgnorableFolderDto> ignorableFolders = new List<IgnorableFolderDto>();
+
+            foreach (object item in IgnorableFoldersDisplayed.SelectedItems)
+            {
+                IgnorableFolderDto dto = (IgnorableFolderDto)item;
+                ignorableFolders.Add(dto);
+                ids.Add(dto.Id);
+            }
+            ignorableFolderService.Remove(ids);
+            _viewModel.IgnorableFolders.RemoveRange<IgnorableFolderDto>(ignorableFolders);
         }
     }
 }
