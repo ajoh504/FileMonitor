@@ -453,6 +453,14 @@
                             </Grid>
                         </Border>
                         
+                        <TreeView x:Name="testTreeView"
+                                  Width="Auto"
+                                  Grid.Column="2"
+                                  Grid.Row="1">
+                            
+                        </TreeView>
+                        
+                        
                         <Border Style="{StaticResource MainBorderStyle}" 
                                 Grid.Column="2"
                                 Grid.Row="1">

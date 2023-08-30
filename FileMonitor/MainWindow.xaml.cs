@@ -518,6 +518,20 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
             ignorableFolderService.Remove(ids);
             _viewModel.IgnorableFolders.RemoveRange<IgnorableFolderDto>(ignorableFolders);
         }
+
+        //private void Window_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    foreach (var f in _viewModel.SourceFiles)
+        //    {
+        //        TreeViewItem item = new TreeViewItem();
+        //        item.Header = f.Path;
+        //        //item.Tag = s;
+        //        item.FontWeight = FontWeights.Normal;
+        //        //item.Items.Add(dummyNode);
+        //        //item.Expanded += new RoutedEventHandler(folder_Expanded);
+        //        testTreeView.Items.Add(item);
+        //    }
+        //}
     }
 }
 
