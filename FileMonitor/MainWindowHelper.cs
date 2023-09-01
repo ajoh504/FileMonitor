@@ -10,17 +10,17 @@ using System.Windows;
 namespace FileMonitor
 {
     /// <summary>
-    /// 
+    /// A helper class for the <see cref="MainWindow"/>.
     /// </summary>
-    public class MainWindowHelper
+    internal class MainWindowHelper
     {
         /// <summary>
-        /// Add all file paths to the database and update the view model.
+        /// Receive a list of file paths, add them to the database, and update the view model.
         /// </summary>
-        /// <param name="paths"></param>
-        /// <param name="fromSourceFolder"></param>
-        /// <param name="_viewModel"></param>
-        public void AddFiles(List<string> paths, bool fromSourceFolder, MainWindowViewModel _viewModel)
+        /// <param name="paths"> File paths to add. </param>
+        /// <param name="fromSourceFolder"> True if the file path is from a source folder, false otherwise. </param>
+        /// <param name="_viewModel"> An instance of the view model to update. </param>
+        internal void AddFiles(List<string> paths, bool fromSourceFolder, MainWindowViewModel _viewModel)
         {
             using SourceFileService sourceFileService = new SourceFileService(
                 RepositoryHelper.CreateSourceFileRepositoryInstance());
@@ -36,9 +36,17 @@ namespace FileMonitor
             }
         }
 
-        /// Verifies that the user wants to add an entire folder. Displays the number of files that will be added by
-        // doing so.
-        public bool VerifyAddFolder(string directory, 
+        /// <summary>
+        /// Verify that the user wants to add an entire folder, then display a Window with the number of files that 
+        /// will be added by doing so.
+        /// </summary>
+        /// <param name="directory"> The folder to add as a source folder. </param>
+        /// <param name="_viewModel"> An instance of the view model to update. </param>
+        /// <param name="paths"> The list of paths to be added as source files from the given source folder.  </param>
+        /// <param name="MonitorAllSubFolders"></param>
+        /// <returns></returns>
+        // 
+        internal bool VerifyAddFolder(string directory, 
             MainWindowViewModel _viewModel,
             out List<string> paths, 
             out bool MonitorAllSubFolders)
@@ -54,7 +62,6 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning) == MessageBoxResult.Yes;
         }
-
 
         private List<string> GetPathsFromFolder(
             string directory, 
@@ -98,7 +105,9 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
             return Directory.GetFiles(directory, "*", SearchOption.TopDirectoryOnly).ToList();
         }
 
-        // Confirms that the user wants to remove the selected files, and informs the user that this cannot be undone.
+        /// <summary>
+        /// Confirm that the user wants to remove the selected files, and inform the user that this cannot be undone.
+        /// </summary>
         internal bool ConfirmRemoveFiles()
         {
             string text = "Do you wish to remove the selected file(s) from the program? This cannot be undone.";
@@ -109,13 +118,18 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
             return MessageBox.Show(text, caption, button, image) == MessageBoxResult.Yes;
         }
 
-        // The main goal here is to reset the collection of updated files, both in the UI and in the database. To do
-        // so, the method retrieves a list of Ids for each file in the UpdatedFiles collection. Then it resets the
-        // IsModified checkbox to be false. Doing so informs the program that the copied version of the files is
-        // effectively the most up-to-date version. Finally, it updates the hash for each file to the current hash.
-        // Doing so ensures that the next time hashes are compared, these files will be ignored because they represent
-        // the latest version of the file.
-        public void ResetUpdatedFiles(MainWindowViewModel _viewModel)
+        /// <summary>
+        /// Reset the collection of updated files, both in the UI and in the database.
+        /// </summary>
+        /// <param name="_viewModel"> An instance of the view model to update. </param>
+        /// <remarks>
+        /// Retrieve a list of Ids for each file in the UpdatedFiles collection. Then reset the IsModified checkbox 
+        /// to false. Doing so informs the program that the copied version of the file is effectively the most 
+        /// up-to-date version. Finally, update the hash for each file to the current hash. Doing so ensures that 
+        /// the next time hashes are compared, these files will be ignored because they represent the latest version
+        /// of the file.
+        /// </remarks>
+        internal void ResetUpdatedFiles(MainWindowViewModel _viewModel)
         {
             List<int> ids = new List<int>();
             foreach (SourceFileDto dto in _viewModel.UpdatedFiles) ids.Add(dto.Id);
@@ -126,8 +140,11 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
             sourceFileService.UpdateHashesToCurrent(ids);
         }
 
-        // Check for files that have changed since the last backup
-        public void RefreshUpdatedFilesView(MainWindowViewModel _viewModel)
+        /// <summary>
+        /// Check for files that have changed since the last backup.
+        /// </summary>
+        /// <param name="_viewModel"> An instance of the view model to update. </param>
+        internal void RefreshUpdatedFilesView(MainWindowViewModel _viewModel)
         {
             using SourceFileService sourceFileService = new SourceFileService(
                 RepositoryHelper.CreateSourceFileRepositoryInstance());
@@ -140,9 +157,11 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
             }
         }
 
-        // Check for folders that have newly added files since the last backup, and add them to the database
-        // Also retrieves files that were removed from a monitored folder
-        public void RefreshMonitoredFolders(MainWindowViewModel _viewModel)
+        /// <summary>
+        /// Check for source folders that have newly added files since the last backup, and add them to the database.
+        /// </summary>
+        /// <param name="_viewModel"> An instance of the view model to update. </param>
+        internal void RefreshMonitoredFolders(MainWindowViewModel _viewModel)
         {
             using SourceFolderService sourceFolderService = new SourceFolderService(
                 RepositoryHelper.CreateSourceFolderRepositoryInstance(),
@@ -163,8 +182,11 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
             }
         }
 
-        // Check for files that have been moved, deleted, or renamed 
-        public void RefreshMovedOrRenamedFiles(MainWindowViewModel _viewModel)
+        /// <summary>
+        /// Check for files that have been moved, deleted, or renamed.
+        /// </summary>
+        /// <param name="_viewModel"> An instance of the view model to update. </param>
+        internal void RefreshMovedOrRenamedFiles(MainWindowViewModel _viewModel)
         {
             using SourceFileService sourceFileService = new SourceFileService(
                 RepositoryHelper.CreateSourceFileRepositoryInstance());
@@ -180,9 +202,11 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
             }
         }
 
-        // Confirms that the user wants to delete the selected folders, and informs the user that this cannot be
-        // undone.
-        public bool ConfirmRemoveFolders(MainWindow mw)
+        /// <summary>
+        /// Confirms that the user wants to delete the selected folders, and informs the user that this cannot be
+        /// undone.
+        /// </summary>
+        internal bool ConfirmRemoveFolders(MainWindow mw)
         {
             using SourceFolderService sourceFolderService = new SourceFolderService(
                 RepositoryHelper.CreateSourceFolderRepositoryInstance(),
