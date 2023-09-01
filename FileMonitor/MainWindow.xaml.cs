@@ -236,7 +236,7 @@ namespace FileMonitor
 
         private void RemovePossibleDeletedPaths_Click(object sender, RoutedEventArgs e)
         {
-            if (ConfirmRemoveFiles())
+            if (_helper.ConfirmRemoveFiles())
             {
                 using SourceFileService sourceFileService = new SourceFileService(
                     RepositoryHelper.CreateSourceFileRepositoryInstance());
