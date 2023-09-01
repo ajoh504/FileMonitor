@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.IO;
 using System.Windows.Controls;
 using System;
 using FileMonitor.Dialogs;
@@ -20,7 +19,8 @@ namespace FileMonitor
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly MainWindowViewModel _viewModel;
+        private MainWindowViewModel _viewModel;
+        private MainWindowHelper _helper;
 
         /// <summary>
         /// Defines the <see cref="MainWindow"/> class constructor. Uses <see cref="SourceFileService"/> and <see cref=
@@ -54,7 +54,8 @@ namespace FileMonitor
             );
             _viewModel.RemovePossibleRenamedFiles();
             DataContext = _viewModel;
-            RefreshMonitoredFolders();
+            _helper = new MainWindowHelper();
+            _helper.RefreshMonitoredFolders(_viewModel);
         }
 
 
@@ -67,29 +68,12 @@ namespace FileMonitor
             {
                 List<string> paths = FileDialogWindow.GetPath().ToList();
                 if (paths.Count == 0) return;
-                AddFiles(paths, fromSourceFolder: false);
+                _helper.AddFiles(paths, fromSourceFolder: false, _viewModel);
             }
             catch(Exception ex)
             {
                 MessageBox.Show($"{ex}");
                 return;
-            }
-        }
-
-        // This method adds all file paths to the database and updates the view models.
-        private void AddFiles(List<string> paths, bool fromSourceFolder)
-        {
-            using SourceFileService sourceFileService = new SourceFileService(
-                RepositoryHelper.CreateSourceFileRepositoryInstance());
-            foreach (string path in paths)
-            {
-                FileAttributes attributes = File.GetAttributes(path);
-                // If the path is an empty string, if it exists in the database, or if it is a directory, then continue
-                if (path == "" || sourceFileService.PathExists(path) || attributes.HasFlag(FileAttributes.Directory))
-                    continue;
-                SourceFileDto dto = sourceFileService.Add(path, fromSourceFolder);
-                _viewModel.SourceFiles.Add(dto);
-                _viewModel.UpdatedFiles.Add(dto);
             }
         }
 
@@ -103,14 +87,14 @@ namespace FileMonitor
             {
                 string directory = FolderDialogWindow.GetPath();
                 if (directory.Equals("")) return;
-                if (VerifyAddFolder(directory, out List<string> paths, out bool MonitorAllSubFolders))
+                if (_helper.VerifyAddFolder(directory, _viewModel, out List<string> paths, out bool MonitorAllSubFolders))
                 {
                     using SourceFolderService sourceFolderService = new SourceFolderService(
                         RepositoryHelper.CreateSourceFolderRepositoryInstance(),
                         RepositoryHelper.CreateFolderFileMappingInstance(),
                         RepositoryHelper.CreateSourceFileRepositoryInstance()
                     );
-                    AddFiles(paths, fromSourceFolder: true);
+                    _helper.AddFiles(paths, fromSourceFolder: true, _viewModel);
                     // Directory must be added after adding "paths" to avoid an exception.
                     SourceFolderDto dto = sourceFolderService.Add(directory, paths, MonitorAllSubFolders);
                     _viewModel.SourceFolders.Add(dto);
@@ -123,65 +107,12 @@ namespace FileMonitor
             }
         }
 
-        // Verifies that the user wants to add an entire folder. Displays the number of files that will be added by
-        // doing so.
-        private bool VerifyAddFolder(string directory, out List<string> paths, out bool MonitorAllSubFolders)
-        {
-            paths = GetPathsFromFolder(directory, out int numberOfDirectories, out bool MonitorAll);
-            MonitorAllSubFolders = MonitorAll;
-            int numberOfFiles = paths.Count;
-
-            return MessageBox.Show(
-                $@"
-The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subfolders(s). Do you wish to continue?",
-                "Confirm Add Folder", 
-                MessageBoxButton.YesNo, 
-                MessageBoxImage.Warning) == MessageBoxResult.Yes;
-        }
-
-        private List<string> GetPathsFromFolder(string directory, out int numberOfDirectories, out bool MonitorAll)
-        {
-            if (JsonSettingsHelper.IncludeAllSubFolders)
-            {
-                if (MessageBox.Show(
-                    "Do you wish to monitor all files from all subfolders?\n\nSelect yes to monitor all. Select no " +
-                    "to only monitor the files within this folder.",
-                    "Include All Subfolders?",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Question
-                    ) == MessageBoxResult.Yes)
-                {
-                    // Filter results to exclude ignorable folders.
-                    numberOfDirectories = Directory.GetFileSystemEntries(
-                        directory, "*", SearchOption.AllDirectories)
-                        .Where(fse => !_viewModel.IgnorableFolders.Contains(
-                            new IgnorableFolderDto
-                            {
-                                Name = fse
-                            })
-                        )
-                        .Count();
-                    MonitorAll = true;
-
-                    // Filter results to exclude files contained in ignorable folders
-                    return Directory.GetFileSystemEntries(directory, "*", SearchOption.AllDirectories)
-                        .Where(
-                            // Determine if path contains an entry from "ignorable"
-                            f => IgnorableFolderHelper.NotIgnorable(f, _viewModel.IgnorableFolders)
-                        )
-                        .ToList();
-                }
-            }
-            numberOfDirectories = 1;
-            MonitorAll = false;
-            return Directory.GetFiles(directory, "*", SearchOption.TopDirectoryOnly).ToList();
-        }
 
         // A button click event handler to remove a file or files from the collection of monitored files. Deleted
         // files are also removed from the MainWindowViewModel.UpdatedFiles collection.
         private void RemoveFiles_Click(object sender, RoutedEventArgs e)
         {
-            if (ConfirmRemoveFiles())
+            if (_helper.ConfirmRemoveFiles())
             {
                 using SourceFileService sourceFileService = new SourceFileService(
                     RepositoryHelper.CreateSourceFileRepositoryInstance());
@@ -197,17 +128,6 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
                 _viewModel.SourceFiles.RemoveRange<SourceFileDto>(selectedFiles);
                 _viewModel.UpdatedFiles.RemoveRange<SourceFileDto>(selectedFiles);
             }
-        }
-
-        // Confirms that the user wants to remove the selected files, and informs the user that this cannot be undone.
-        private bool ConfirmRemoveFiles()
-        {
-            string text = "Do you wish to remove the selected file(s) from the program? This cannot be undone.";
-            string caption = "Remove SourceFiles";
-
-            MessageBoxButton button = MessageBoxButton.YesNo;
-            MessageBoxImage image = MessageBoxImage.Warning;
-            return MessageBox.Show(text, caption, button, image) == MessageBoxResult.Yes;
         }
 
         // A button click event handler to create a full backup of all files monitored by the program. The full backup
@@ -247,25 +167,8 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
                     backup.CopyUpdated(_viewModel.UpdatedFiles.Select(f => f.Path));
                 }
             }
-            ResetUpdatedFiles();
+            _helper.ResetUpdatedFiles(_viewModel);
             MessageBox.Show("Backup complete.");
-        }
-
-        // The main goal here is to reset the collection of updated files, both in the UI and in the database. To do
-        // so, the method retrieves a list of Ids for each file in the UpdatedFiles collection. Then it resets the
-        // IsModified checkbox to be false. Doing so informs the program that the copied version of the files is
-        // effectively the most up-to-date version. Finally, it updates the hash for each file to the current hash.
-        // Doing so ensures that the next time hashes are compared, these files will be ignored because they represent
-        // the latest version of the file.
-        private void ResetUpdatedFiles()
-        {
-            List<int> ids = new List<int>();
-            foreach (SourceFileDto dto in _viewModel.UpdatedFiles) ids.Add(dto.Id);
-            _viewModel.UpdatedFiles.Clear();
-            using SourceFileService sourceFileService = new SourceFileService(
-                RepositoryHelper.CreateSourceFileRepositoryInstance());
-            sourceFileService.ResetIsModifiedFlag(ids);
-            sourceFileService.UpdateHashesToCurrent(ids);
         }
 
         // A button click event handler for adding a backup folder path. 
@@ -295,70 +198,17 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
         // A button click event handler to refresh all ListViews in the UI.
         private void RefreshView_Click(object sender, RoutedEventArgs e)
         {
-            RefreshUpdatedFilesView();
-            RefreshMonitoredFolders();
-            RefreshMovedOrRenamedFiles();
+            _helper.RefreshUpdatedFilesView(_viewModel);
+            _helper.RefreshMonitoredFolders(_viewModel);
+            _helper.RefreshMovedOrRenamedFiles(_viewModel);
         }
 
-        // Check for files that have changed since the last backup
-        private void RefreshUpdatedFilesView()
-        {
-            using SourceFileService sourceFileService = new SourceFileService(
-                RepositoryHelper.CreateSourceFileRepositoryInstance());
-            
-            List<SourceFileDto> sourceFileDtos = sourceFileService.GetModifiedFiles();
-            foreach (SourceFileDto sourceFileDto in sourceFileDtos)
-            {
-                if (!_viewModel.UpdatedFiles.Contains(sourceFileDto))
-                    _viewModel.UpdatedFiles.Add(sourceFileDto);
-            }
-        }
-
-        // Check for folders that have newly added files since the last backup, and add them to the database
-        // Also retrieves files that were removed from a monitored folder
-        private void RefreshMonitoredFolders()
-        {
-            using SourceFolderService sourceFolderService = new SourceFolderService(
-                RepositoryHelper.CreateSourceFolderRepositoryInstance(),
-                RepositoryHelper.CreateFolderFileMappingInstance(),
-                RepositoryHelper.CreateSourceFileRepositoryInstance()
-            );
-
-            if (sourceFolderService.FilesAddedToFolders(
-                out List<SourceFileDto>? newFilesFromFolder))
-            {
-                foreach (SourceFileDto file in newFilesFromFolder)
-                {
-                    if (!_viewModel.SourceFiles.Contains(file))
-                        _viewModel.SourceFiles.Add(file);
-                    if (!_viewModel.UpdatedFiles.Contains(file))
-                        _viewModel.UpdatedFiles.Add(file);
-                }
-            }
-        }
-
-        // Check for files that have been moved, deleted, or renamed 
-        private void RefreshMovedOrRenamedFiles()
-        {
-            using SourceFileService sourceFileService = new SourceFileService(
-                RepositoryHelper.CreateSourceFileRepositoryInstance());
-            List<SourceFileDto> files = sourceFileService.GetMovedOrRenamedFiles();
-            foreach (SourceFileDto file in files)
-            {
-                if (!_viewModel.MovedOrRenamedFiles.Contains(file))
-                    _viewModel.MovedOrRenamedFiles.Add(file);
-                if (_viewModel.UpdatedFiles.Contains(file))
-                    _viewModel.UpdatedFiles.Remove(file);
-                if (_viewModel.SourceFiles.Contains(file))
-                    _viewModel.SourceFiles.Remove(file);
-            }
-        }
 
         // An asynchronous button click event handler to remove monitored folders from the program, along with any
         // files contained within them.
         private void RemoveFolders_Click(object sender, RoutedEventArgs e)
         {
-            if (ConfirmRemoveFolders())
+            if (_helper.ConfirmRemoveFolders(this))
             {
                 using SourceFileService sourceFileService = new SourceFileService(
                     RepositoryHelper.CreateSourceFileRepositoryInstance());
@@ -382,34 +232,6 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
                 sourceFolderService.Remove(folderIds);
                 _viewModel.SourceFolders.RemoveRange<SourceFolderDto>(foldersToRemove);
             }
-        }
-
-        // Confirms that the user wants to delete the selected folders, and informs the user that this cannot be
-        // undone.
-        private bool ConfirmRemoveFolders()
-        {
-            using SourceFolderService sourceFolderService = new SourceFolderService(
-                RepositoryHelper.CreateSourceFolderRepositoryInstance(),
-                RepositoryHelper.CreateFolderFileMappingInstance(),
-                RepositoryHelper.CreateSourceFileRepositoryInstance()
-            );
-            List<SourceFolderDto> folders = new List<SourceFolderDto>();
-            int numberOfFiles = 0;
-            int numberOfFolders = FoldersDisplayed.SelectedItems.Count;
-            foreach (object item in FoldersDisplayed.SelectedItems)
-            {
-                SourceFolderDto dto = (SourceFolderDto)item;
-                folders.Add(dto);
-                numberOfFiles += sourceFolderService.GetStoredFilesFromFolder(dto.Id).Count();
-            }
-            
-            string text = $"Do you wish to delete the selected folder(s) from the program? This cannot be undone." +
-                $"\nDoing so will delete {numberOfFiles} file(s) from {numberOfFolders} monitored folder(s)";
-            string caption = "Delete SourceFolders";
-
-            MessageBoxButton button = MessageBoxButton.YesNo;
-            MessageBoxImage image = MessageBoxImage.Warning;
-            return MessageBox.Show(text, caption, button, image) == MessageBoxResult.Yes;
         }
 
         private void RemovePossibleDeletedPaths_Click(object sender, RoutedEventArgs e)
