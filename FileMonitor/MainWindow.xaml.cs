@@ -341,19 +341,23 @@ namespace FileMonitor
             _viewModel.IgnorableFolders.RemoveRange<IgnorableFolderDto>(ignorableFolders);
         }
 
-        //private void Window_Loaded(object sender, RoutedEventArgs e)
-        //{
-        //    foreach (var f in _viewModel.SourceFiles)
-        //    {
-        //        TreeViewItem item = new TreeViewItem();
-        //        item.Header = f.Path;
-        //        //item.Tag = s;
-        //        item.FontWeight = FontWeights.Normal;
-        //        //item.Items.Add(dummyNode);
-        //        //item.Expanded += new RoutedEventHandler(folder_Expanded);
-        //        testTreeView.Items.Add(item);
-        //    }
-        //}
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (true) return; // TODO: check settings.JSON for user configuration
+            var tree = new TreeView();
+            foreach (var f in _viewModel.SourceFiles)
+            {
+                TreeViewItem item = new TreeViewItem();
+                item.Header = f.Path;
+                //item.Tag = s;
+                item.FontWeight = FontWeights.Normal;
+                //item.Items.Add(dummyNode);
+                //item.Expanded += new RoutedEventHandler(folder_Expanded);
+                tree.Items.Add(item);
+            }
+            FilesDisplayedGrid.Children.Clear();
+            FilesDisplayedGrid.Children.Add(tree);
+        }
     }
 }
 
