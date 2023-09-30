@@ -11,6 +11,7 @@ using Services;
 using Services.Dto;
 using Services.Extensions;
 using Services.Helpers;
+using System.IO;
 
 namespace FileMonitor
 {
@@ -343,18 +344,45 @@ namespace FileMonitor
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (true) return; // TODO: check settings.JSON for user configuration
-            var tree = new TreeView();
-            foreach (var f in _viewModel.SourceFiles)
+            // TODO: check settings.JSON for user configuration
+
+            var paths = new List<string>
             {
-                TreeViewItem item = new TreeViewItem();
-                item.Header = f.Path;
-                //item.Tag = s;
-                item.FontWeight = FontWeights.Normal;
-                //item.Items.Add(dummyNode);
-                //item.Expanded += new RoutedEventHandler(folder_Expanded);
-                tree.Items.Add(item);
+                "C:\\TestDir\\TestDir2\\testFile1.txt",
+                "C:\\TestDir\\TestDir2\\testFile2.txt",
+                "C:\\TestDir3\\TestDir4\\test.txt",
+                "C:\\TestDir3\\TestDir4\\test.txt"
+            };
+
+
+            TreeView InitTreeView(List<string> paths)
+            {
+                var treeView = new TreeView();
+                foreach(var path in paths)
+                {
+                    var pathItems = path.Split(Path.DirectorySeparatorChar);
+                    foreach(var item in pathItems)
+                    {
+                        if (!treeView.Items.Contains(item))
+                            treeView.Items.Add(item);
+
+                    }
+                }
+                return treeView;
             }
+
+            var tree = InitTreeView(paths);
+
+            //foreach (var f in _viewModel.SourceFiles)
+            //{
+            //    TreeViewItem item = new TreeViewItem();
+            //    item.Header = f.Path;
+            //    //item.Tag = s;
+            //    item.FontWeight = FontWeights.Normal;
+            //    //item.Items.Add(dummyNode);
+            //    //item.Expanded += new RoutedEventHandler(folder_Expanded);
+            //    tree.Items.Add(item);
+            //}
             FilesDisplayedGrid.Children.Clear();
             FilesDisplayedGrid.Children.Add(tree);
         }
