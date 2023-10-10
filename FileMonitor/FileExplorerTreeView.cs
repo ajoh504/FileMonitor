@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
+using System.IO;
 
 namespace WpfApp1
 {
@@ -48,7 +49,7 @@ namespace WpfApp1
             TreeViewItem? match;
             first.Header = pathElements.Dequeue();
 
-            if (HasItem(childItems, first, out match))
+            if (TryGetMatch(childItems, first, out match))
             {
                 AddNodes(pathElements, match.Items);
             }
@@ -61,24 +62,25 @@ namespace WpfApp1
 
         // If the TreeViewItem is contained in childItems, return true and return the "item" object as an out
         // parameter.
-        private bool HasItem(ItemCollection childItems, TreeViewItem item, out TreeViewItem? match)
+        private bool TryGetMatch(ItemCollection childItems, TreeViewItem item, out TreeViewItem? match)
         {
+            bool result = false;
+            match = default;
+
             foreach (var childItem in childItems)
             {
-                var cast = childItem as TreeViewItem;
-                if (cast == null)
+                if(childItem is TreeViewItem treeViewItem)
                 {
-                    match = null;
-                    return false;
+                    if (!item.Header.Equals(treeViewItem.Header))
+                        continue;
+
+                    match = treeViewItem;
+                    result = true; 
                 }
-                if (item.Header.Equals(cast.Header))
-                {
-                    match = cast;
-                    return true;
-                }
+                break;
             }
-            match = null;
-            return false;
+
+            return result;
         }
     }
 }
