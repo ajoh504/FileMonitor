@@ -12,6 +12,7 @@ using Services.Dto;
 using Services.Extensions;
 using Services.Helpers;
 using System.IO;
+using WpfApp1;
 
 namespace FileMonitor
 {
@@ -354,37 +355,11 @@ namespace FileMonitor
                 "C:\\TestDir3\\TestDir4\\test.txt"
             };
 
+            var tree = new FileExplorerTreeView();
+            tree.AddPaths(paths);
 
-            TreeView InitTreeView(List<string> paths)
-            {
-                var treeView = new TreeView();
-                foreach(var path in paths)
-                {
-                    var pathItems = path.Split(Path.DirectorySeparatorChar);
-                    foreach(var item in pathItems)
-                    {
-                        if (!treeView.Items.Contains(item))
-                            treeView.Items.Add(item);
-
-                    }
-                }
-                return treeView;
-            }
-
-            var tree = InitTreeView(paths);
-
-            //foreach (var f in _viewModel.SourceFiles)
-            //{
-            //    TreeViewItem item = new TreeViewItem();
-            //    item.Header = f.Path;
-            //    //item.Tag = s;
-            //    item.FontWeight = FontWeights.Normal;
-            //    //item.Items.Add(dummyNode);
-            //    //item.Expanded += new RoutedEventHandler(folder_Expanded);
-            //    tree.Items.Add(item);
-            //}
             FilesDisplayedGrid.Children.Clear();
-            FilesDisplayedGrid.Children.Add(tree);
+            FilesDisplayedGrid.Children.Add(tree.FileTree);
         }
     }
 }
