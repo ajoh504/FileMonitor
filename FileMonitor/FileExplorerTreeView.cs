@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Windows.Controls;
 using System.IO;
@@ -10,10 +11,12 @@ namespace WpfApp1
     /// </summary>
     public class FileExplorerTreeView
     {
+        private TreeView FileTree { get; }
+
         /// <summary>
-        /// The public <see cref="TreeView"/> property to bind to the UI.
+        /// A public <see cref="IEnumerable"/> exposing an <see cref="ItemCollection"/> of <see cref="TreeViewItem"/>s.
         /// </summary>
-        public TreeView FileTree { get; }
+        public IEnumerable FileTreeItems => FileTree.Items;
 
         /// <summary>
         /// The <see cref="FileExplorerTreeView"/> class constructor. 
