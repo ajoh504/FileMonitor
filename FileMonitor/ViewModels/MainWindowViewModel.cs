@@ -1,6 +1,7 @@
 ﻿using Services.Dto;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 
 namespace FileMonitor.ViewModels
 {
@@ -9,7 +10,7 @@ namespace FileMonitor.ViewModels
     /// </summary>
     public class MainWindowViewModel : INotifyPropertyChanged
     {
-        private ObservableCollection<BackupPathDto> _backupPaths;
+        private FileExplorerTreeView _backupPaths;
         private ObservableCollection<SourceFileDto> _sourceFiles;
         private ObservableCollection<SourceFileDto> _updatedFiles;
         private ObservableCollection<SourceFolderDto> _sourceFolders;
@@ -38,12 +39,17 @@ namespace FileMonitor.ViewModels
             }
         }
 
+        ///// <summary>
+        ///// An observable collection of <see cref="BackupPathDto"/> objects. This collection displays all possible
+        ///// backup path locations for the user to select, add, or remove. This property is bound to the <see cref=
+        ///// "MainWindow.BackupPathsDisplayed"/> list view in the UI.
+        ///// </summary>
+        //public ObservableCollection<BackupPathDto> BackupPaths { get { return _backupPaths; } }
+
         /// <summary>
-        /// An observable collection of <see cref="BackupPathDto"/> objects. This collection displays all possible
-        /// backup path locations for the user to select, add, or remove. This property is bound to the <see cref=
-        /// "MainWindow.BackupPathsDisplayed"/> list view in the UI.
+        /// 
         /// </summary>
-        public ObservableCollection<BackupPathDto> BackupPaths { get { return _backupPaths; } }
+        public FileExplorerTreeView BackupPaths { get { return _backupPaths; } }
 
         /// <summary>
         /// An observable collection of <see cref="SourceFileDto"/> objects. This collection displays all files
@@ -125,7 +131,7 @@ namespace FileMonitor.ViewModels
         /// <param name="overwriteUpdatedFiles"> Value from Settings.json, bound to a CheckBox. </param>
         /// <param name="includeAllSubfolders"> Value from Settings.json, bound to a CheckBox. </param>
         public MainWindowViewModel(
-            ObservableCollection<BackupPathDto> backupPaths, 
+            FileExplorerTreeView backupPaths, 
             ObservableCollection<SourceFileDto> sourceFiles,
             ObservableCollection<SourceFileDto> updatedFiles,
             ObservableCollection<SourceFolderDto> sourceFolders,
@@ -162,7 +168,7 @@ namespace FileMonitor.ViewModels
         /// </summary>
         public bool IsAnyBackupSelected()
         {
-            foreach (BackupPathDto dto in  _backupPaths)
+            foreach (BackupPathDto dto in  _backupPaths.FileTreeItems)
             {
                 if (dto.IsSelected == true) return true;
             }
@@ -182,7 +188,7 @@ namespace FileMonitor.ViewModels
             }
             foreach(BackupPathDto path in _movedOrRenamedBackupPaths)
             {
-                if(_backupPaths.Contains(path)) _backupPaths.Remove(path);
+                //if(_backupPaths.FileTreeItems.Contains(p => p = path.Path)) _backupPaths.RemovePath(path.Path);
             }
         }
     }
