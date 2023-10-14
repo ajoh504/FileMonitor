@@ -11,8 +11,6 @@ using Services;
 using Services.Dto;
 using Services.Extensions;
 using Services.Helpers;
-using System.IO;
-using WpfApp1;
 
 namespace FileMonitor
 {
@@ -44,7 +42,7 @@ namespace FileMonitor
                 RepositoryHelper.CreateIgnorableFolderRepositoryInstance());
 
             _viewModel = new MainWindowViewModel(
-                new ObservableCollection<BackupPathDto>(backupPathService.GetDirectories()),
+                new FileExplorerTreeView(),
                 new ObservableCollection<SourceFileDto>(sourceFileService.GetFiles()),
                 new ObservableCollection<SourceFileDto>(sourceFileService.GetModifiedFiles()),
                 new ObservableCollection<SourceFolderDto>(sourceFolderService.GetFolders()),
@@ -54,6 +52,8 @@ namespace FileMonitor
                 JsonSettingsHelper.OverwriteUpdatedFiles,
                 JsonSettingsHelper.IncludeAllSubFolders
             );
+
+            _viewModel.BackupPaths.AddPaths(backupPathService.GetDirectories());
             _viewModel.RemovePossibleRenamedFiles();
             DataContext = _viewModel;
             _helper = new MainWindowHelper();
@@ -142,7 +142,7 @@ namespace FileMonitor
                 MessageBox.Show("Please add a backup path.");
                 return;
             }
-            foreach(BackupPathDto dto in _viewModel.BackupPaths)
+            foreach(BackupPathDto dto in _viewModel.BackupPaths.FileTreeItems)
             {
                 if(dto.IsSelected)
                 {
@@ -161,7 +161,7 @@ namespace FileMonitor
                 MessageBox.Show("Please add a backup path.");
                 return;
             }
-            foreach (BackupPathDto dto in _viewModel.BackupPaths)
+            foreach (BackupPathDto dto in _viewModel.BackupPaths.FileTreeItems)
             {
                 if (dto.IsSelected)
                 {
@@ -181,7 +181,7 @@ namespace FileMonitor
                 RepositoryHelper.CreateBackupPathRepositoryInstance());
             if (backupPath == "" || backupPathService.PathExists(backupPath)) return;
             BackupPathDto backupPathDto = backupPathService.Add(backupPath);
-            _viewModel.BackupPaths.Add(backupPathDto);
+            _viewModel.BackupPaths.AddPath(backupPathDto);
         }
 
         // An event handler to be called when the BackupPathCheckBox is checked in the UI. This method updates the
@@ -271,16 +271,25 @@ namespace FileMonitor
         {
             using BackupPathService backupPathService = new BackupPathService(
                 RepositoryHelper.CreateBackupPathRepositoryInstance());
-            List<int> ids = new List<int>();
-            List<BackupPathDto> selectedPaths = new List<BackupPathDto>();
-            foreach (object item in BackupPathsDisplayed.SelectedItems)
+
+            BackupPathDto dto = (BackupPathDto)BackupPathsDisplayed.SelectedItem;
+
+            if(dto != null)
             {
-                BackupPathDto dto = (BackupPathDto)item;
-                selectedPaths.Add(dto);
-                ids.Add(dto.Id);
+                backupPathService.Remove(ids: new List<int> { dto.Id });
+                _viewModel.BackupPaths.RemovePath(dto);
             }
-            backupPathService.Remove(ids);
-            _viewModel.BackupPaths.RemoveRange<BackupPathDto>(selectedPaths);
+
+            //List<int> ids = new List<int>();
+            //List<BackupPathDto> selectedPaths = new List<BackupPathDto>();
+            //foreach (object item in BackupPathsDisplayed.SelectedItems)
+            //{
+            //    BackupPathDto dto = (BackupPathDto)item;
+            //    selectedPaths.Add(dto);
+            //    ids.Add(dto.Id);
+            //}
+            //backupPathService.Remove(ids);
+            //_viewModel.BackupPaths.FileTreeItems.RemoveRange<BackupPathDto>(selectedPaths);
         }
 
         private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -289,7 +298,7 @@ namespace FileMonitor
             FilesDisplayed.SelectedItems.Clear();
             FoldersDisplayed.SelectedItems.Clear();
             UpdatedFilesDisplayed.SelectedItems.Clear();
-            BackupPathsDisplayed.SelectedItems.Clear();
+            //BackupPathsDisplayed.SelectedItems.Clear();
             MovedOrRenamedBackupPathsDisplayed.SelectedItems.Clear();
             MovedOrRenamedFilesDisplayed.SelectedItems.Clear();
         }
@@ -345,21 +354,23 @@ namespace FileMonitor
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            // BEGIN TEST CODE
             // TODO: check settings.JSON for user configuration
 
-            var paths = new List<string>
-            {
-                "C:\\TestDir\\TestDir2\\testFile1.txt",
-                "C:\\TestDir\\TestDir2\\testFile2.txt",
-                "C:\\TestDir3\\TestDir4\\test.txt",
-                "C:\\TestDir3\\TestDir4\\test.txt"
-            };
+            //var paths = new List<string>
+            //{
+            //    "C:\\TestDir\\TestDir2\\testFile1.txt",
+            //    "C:\\TestDir\\TestDir2\\testFile2.txt",
+            //    "C:\\TestDir3\\TestDir4\\test.txt",
+            //    "C:\\TestDir3\\TestDir4\\test.txt"
+            //};
 
-            var tree = new FileExplorerTreeView();
-            tree.AddPaths(paths);
+            //var tree = new FileExplorerTreeView();
+            //tree.AddPaths(paths);
 
-            FilesDisplayedGrid.Children.Clear();
-            FilesDisplayedGrid.Children.Add(tree.FileTree);
+            //FilesDisplayedGrid.Children.Clear();
+            //FilesDisplayedGrid.Children.Add(tree.FileTree);
+            // END TEST CODE
         }
     }
 }
