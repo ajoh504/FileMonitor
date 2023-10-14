@@ -20,6 +20,6 @@ namespace DataAccessLayer.Entities
         /// <summary>
         /// The name of the folder/directory to be ignored.
         /// </summary>
-        public string Name { get; set; }
+        public string Path { get; set; }
     }
 }

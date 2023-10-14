@@ -33,7 +33,7 @@ namespace Services
                 f => new IgnorableFolderDto
                 {
                     Id = f.Id,
-                    Name = f.Name
+                    Path = f.Path
                 },
                 f => f.Id
                 ); ;
@@ -44,11 +44,11 @@ namespace Services
         /// </summary>
         /// <param name="name"> The name of the ignorable folder to add. </param>
         /// <returns> An ignorable folder DTO object for updating the UI. </returns>
-        public IgnorableFolderDto Add(string name)
+        public IgnorableFolderDto Add(string path)
         {
             IgnorableFolder entity = new IgnorableFolder
             {
-                Name = name
+                Path = path
             };
 
             _ignorableFolderRepository.Add(entity);
@@ -56,7 +56,7 @@ namespace Services
 
             return new IgnorableFolderDto
             {
-                Name = name,
+                Path = path,
                 Id = entity.Id
             };
         }

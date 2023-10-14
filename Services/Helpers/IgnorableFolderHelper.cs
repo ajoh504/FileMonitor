@@ -14,7 +14,7 @@ namespace Services.Helpers
         {
             foreach (IgnorableFolderDto folder in ignorableFolders)
             {
-                if (path.Split(Path.DirectorySeparatorChar).Contains(folder.Name)) return false;
+                if (path.Split(Path.DirectorySeparatorChar).Contains(folder.Path)) return false;
             }
             return true;
         }
