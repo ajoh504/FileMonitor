@@ -61,6 +61,15 @@
             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
             <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         </Style>
+
+        <Style x:Key="TreeViewStyle" TargetType="TreeView">
+            <Setter Property="Margin" Value="0,90,0,0" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        </Style>
+        
     </Window.Resources>
 
     <Grid>
@@ -262,15 +271,10 @@
                                 <Button x:Name="RemoveBackupPath" 
                                         Content="Remove Backup Path(s)" 
                                         Click="RemoveBackupPath_Click"
-                                        IsEnabled="{
-                                            Binding ElementName=BackupPathsDisplayed, 
-                                            Path=SelectedIndex, 
-                                            Converter={StaticResource 
-                                            IntToBoolValueConverter}}" 
                                         Style="{StaticResource MultiButtonStyle}"/>
                             </StackPanel>
 
-                            <ListView x:Name="BackupPathsDisplayed" 
+                            <!--<ListView x:Name="BackupPathsDisplayed" 
                                         Style="{StaticResource ListViewStyle}"
                                         ItemsSource="{Binding BackupPaths}" >
 
@@ -297,7 +301,13 @@
                                         </GridView.Columns>
                                     </GridView>
                                 </ListView.View>
-                            </ListView>
+                            </ListView>-->
+                            <TreeView 
+                                x:Name="BackupPathsDisplayed"
+                                Style="{StaticResource TreeViewStyle}"
+                                ItemsSource="{Binding BackupPaths.FileTreeItems}">
+                                
+                            </TreeView>
                         </Grid>
                     </Border>
 
