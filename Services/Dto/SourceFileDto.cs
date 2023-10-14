@@ -3,7 +3,7 @@
     /// <summary>
     /// A data transfer object related to the SourceFile Entity. Provides a full file path for any file monitored by the program.
     /// </summary>
-    public class SourceFileDto
+    public class SourceFileDto : IPathDto
     {
         /// <summary>
         /// The database primary key. 
@@ -16,7 +16,7 @@
         /// <summary>
         /// The full path to where the file is stored.
         /// </summary>
-        public string Path { get; set; }
+        public string? Path { get; set; }
 
         /// <summary>
         /// An overridden version of <see cref="Equals(object?)"/>. This method does a value comparison for the 
