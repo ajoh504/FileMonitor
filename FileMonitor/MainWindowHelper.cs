@@ -85,7 +85,7 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
                         .Where(fse => !_viewModel.IgnorableFolders.Contains(
                             new IgnorableFolderDto
                             {
-                                Path = fse
+                                Name = fse
                             })
                         ) 
                         .Count();
