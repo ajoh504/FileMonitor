@@ -6,6 +6,7 @@ Todo:
 - Set database IDs to reuse unused IDs?
 
 Fixes:
+- TreeView does not add a parent folder when it is part of a monitored child folder
 - Window Mousedown only works in the Main tab, not the settings tab
 - The ListView item width breaks when the width is greater than the ListView itself
 
