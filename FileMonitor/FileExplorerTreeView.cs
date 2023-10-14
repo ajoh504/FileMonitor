@@ -3,8 +3,10 @@ using System.Collections;
 using System.Linq;
 using System.Windows.Controls;
 using System.IO;
+using System.Diagnostics;
+using Services.Dto;
 
-namespace WpfApp1
+namespace FileMonitor
 {
     /// <summary>
     /// A class for creating a Windows File Explorer tree view.
@@ -14,7 +16,7 @@ namespace WpfApp1
         private TreeView FileTree { get; }
 
         /// <summary>
-        /// A public <see cref="IEnumerable"/> exposing an <see cref="ItemCollection"/> of <see cref="TreeViewItem"/>s.
+        /// A public collection exposing an <see cref="ItemCollection"/> of <see cref="TreeViewItem"/>s.
         /// </summary>
         public IEnumerable FileTreeItems => FileTree.Items;
 
@@ -27,21 +29,39 @@ namespace WpfApp1
         }
 
         /// <summary>
-        /// Add a single path to the <see cref="TreeView"/>.
+        /// Add a single path to the tree view.
         /// </summary>
-        public void AddPath(string path)
+        public void AddPath(IPathDto dto)
         {
             // Split the file path components then add them to a Queue.
-            var pathElements = new Queue<string>(path.Split(Path.DirectorySeparatorChar).ToList());
+            var pathElements = new Queue<string>(dto.Path.Split(Path.DirectorySeparatorChar).ToList());
             AddNodes(pathElements, FileTree.Items);
         }
 
         /// <summary>
-        /// Add multiple paths to the <see cref="TreeView"/>.
+        /// Add multiple paths to the tree view.
         /// </summary>
-        public void AddPaths(IEnumerable<string> paths)
+        public void AddPaths(IEnumerable<IPathDto> dtos)
         {
-            foreach (var path in paths) AddPath(path);
+            foreach (var dto in dtos) AddPath(dto);
+        }
+
+        /// <summary>
+        /// Remove a single path from the tree view.
+        /// </summary>
+        public void RemovePath(IPathDto dto)
+        {
+            var pathElements = dto.Path.Split(Path.DirectorySeparatorChar);
+            if (PathExists(pathElements, FileTree.Items))
+                Debug.WriteLine("TEST OUTPUT: RESULT = TRUE");
+        }
+
+        /// <summary>
+        /// Remove multiple paths from the tree view.
+        /// </summary>
+        public void RemovePaths(IEnumerable<IPathDto> dtos)
+        {
+            foreach (var dto in dtos) RemovePath(dto);
         }
 
         // Add each file path element recursively to the TreeView.
@@ -83,6 +103,29 @@ namespace WpfApp1
                 break;
             }
 
+            return result;
+        }
+
+        private bool PathExists(string[] pathElements, ItemCollection childItems)
+        {
+            bool result = false;
+            foreach(var elem in pathElements)
+            {
+                var item = new TreeViewItem();
+                item.Header = elem;
+                TreeViewItem? match;
+
+                if (TryGetMatch(childItems, item, out match))
+                {
+                    childItems = match.Items;
+                    result = true;
+                }
+                else
+                {
+                    result = false;
+                    break;
+                }
+            }
             return result;
         }
     }
