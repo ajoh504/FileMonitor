@@ -4,7 +4,6 @@ using Services;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using FileMonitor.ViewModels;
 using System.Windows;
 
 namespace FileMonitor

@@ -1,9 +1,8 @@
 ﻿using Services.Dto;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 
-namespace FileMonitor.ViewModels
+namespace FileMonitor
 {
     /// <summary>
     /// Provides a view model for binding to the UI. 

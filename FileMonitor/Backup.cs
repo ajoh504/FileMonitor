@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace FileMonitor.FileBackups
+namespace FileMonitor
 {
     /// <summary>
     /// Defines a class for copying monitored files to a backup location.
