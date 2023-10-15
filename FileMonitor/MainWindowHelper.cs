@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using FileMonitor.View;
+using FileMonitor.Helpers;
 
 namespace FileMonitor
 {

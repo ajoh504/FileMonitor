@@ -5,6 +5,8 @@ using System.Linq;
 using System.Windows.Controls;
 using System;
 using FileMonitor.Dialogs;
+using FileMonitor.View;
+using FileMonitor.Helpers;
 using Services;
 using Services.Dto;
 using Services.Extensions;
