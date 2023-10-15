@@ -6,7 +6,7 @@ using System.IO;
 using System.Diagnostics;
 using Services.Dto;
 
-namespace FileMonitor
+namespace FileMonitor.View
 {
     /// <summary>
     /// A class for creating a Windows File Explorer tree view.

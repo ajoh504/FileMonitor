@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-namespace FileMonitor
+namespace FileMonitor.View
 {
     /// <summary>
     /// Provides a view model for binding to the UI. 

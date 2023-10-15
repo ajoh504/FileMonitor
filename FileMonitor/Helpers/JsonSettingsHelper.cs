@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text.Json;
 
-namespace FileMonitor
+namespace FileMonitor.Helpers
 {
     internal static class JsonSettingsHelper
     {

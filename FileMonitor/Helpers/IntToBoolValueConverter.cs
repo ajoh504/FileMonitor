@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace FileMonitor
+namespace FileMonitor.Helpers
 {
     /// <summary>
     /// Provides a value converter from <see cref="int"/> to <see cref="bool"/>.
