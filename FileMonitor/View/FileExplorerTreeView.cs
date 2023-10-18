@@ -34,8 +34,8 @@ namespace FileMonitor.View
         public void AddPath(IPathDto dto)
         {
             // Split the file path components then add them to a Queue.
-            var pathElements = new Queue<string>(dto.Path.Split(Path.DirectorySeparatorChar).ToList());
-            AddNodes(pathElements, FileTree.Items);
+            var pathNodes = new Queue<string>(dto.Path.Split(Path.DirectorySeparatorChar).ToList());
+            AddNodes(pathNodes, FileTree.Items);
         }
 
         /// <summary>
@@ -51,8 +51,8 @@ namespace FileMonitor.View
         /// </summary>
         public void RemovePath(IPathDto dto)
         {
-            var pathElements = dto.Path.Split(Path.DirectorySeparatorChar);
-            if (PathExists(pathElements, FileTree.Items))
+            var pathNodes = dto.Path.Split(Path.DirectorySeparatorChar);
+            if (PathExists(pathNodes, FileTree.Items))
                 Debug.WriteLine("TEST OUTPUT: RESULT = TRUE");
         }
 
@@ -65,21 +65,21 @@ namespace FileMonitor.View
         }
 
         // Add each file path element recursively to the TreeView.
-        private void AddNodes(Queue<string> pathElements, ItemCollection childItems)
+        private void AddNodes(Queue<string> pathNodes, ItemCollection childItems)
         {
-            if (pathElements.Count == 0) return;
+            if (pathNodes.Count == 0) return;
             var first = new TreeViewItem();
             TreeViewItem? match;
-            first.Header = pathElements.Dequeue();
+            first.Header = pathNodes.Dequeue();
 
             if (TryGetMatch(childItems, first, out match))
             {
-                AddNodes(pathElements, match.Items);
+                AddNodes(pathNodes, match.Items);
             }
             else
             {
                 childItems.Add(first);
-                AddNodes(pathElements, first.Items);
+                AddNodes(pathNodes, first.Items);
             }
         }
 
@@ -106,10 +106,11 @@ namespace FileMonitor.View
             return result;
         }
 
-        private bool PathExists(string[] pathElements, ItemCollection childItems)
+        // Returns true if the path exists in this tree view, false otherwise.
+        private bool PathExists(string[] pathNodes, ItemCollection childItems)
         {
             bool result = false;
-            foreach(var elem in pathElements)
+            foreach(var elem in pathNodes)
             {
                 var item = new TreeViewItem();
                 item.Header = elem;
