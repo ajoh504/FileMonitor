@@ -351,27 +351,6 @@ namespace FileMonitor
             ignorableFolderService.Remove(ids);
             _viewModel.IgnorableFolders.RemoveRange<IgnorableFolderDto>(ignorableFolders);
         }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            // BEGIN TEST CODE
-            // TODO: check settings.JSON for user configuration
-
-            //var paths = new List<string>
-            //{
-            //    "C:\\TestDir\\TestDir2\\testFile1.txt",
-            //    "C:\\TestDir\\TestDir2\\testFile2.txt",
-            //    "C:\\TestDir3\\TestDir4\\test.txt",
-            //    "C:\\TestDir3\\TestDir4\\test.txt"
-            //};
-
-            //var tree = new FileExplorerTreeView();
-            //tree.AddPaths(paths);
-
-            //FilesDisplayedGrid.Children.Clear();
-            //FilesDisplayedGrid.Children.Add(tree.FileTree);
-            // END TEST CODE
-        }
     }
 }
 
