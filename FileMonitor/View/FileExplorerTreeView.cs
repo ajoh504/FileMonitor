@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections;
-using System.Linq;
 using System.Windows.Controls;
 using System.IO;
 using System.Diagnostics;
@@ -33,8 +32,7 @@ namespace FileMonitor.View
         /// </summary>
         public void AddPath(IPathDto dto)
         {
-            // Split the file path components then add them to a Queue.
-            var pathNodes = new Queue<string>(dto.Path.Split(Path.DirectorySeparatorChar).ToList());
+            var pathNodes = ToQueue(dto);
             AddNodes(pathNodes, FileTree.Items);
         }
 
@@ -65,7 +63,7 @@ namespace FileMonitor.View
         }
 
         // Add each file path element recursively to the TreeView.
-        private void AddNodes(Queue<string> pathNodes, ItemCollection childItems)
+        private void AddNodes(Queue<PathNode> pathNodes, ItemCollection childItems)
         {
             if (pathNodes.Count == 0) return;
             var first = new TreeViewItem();
@@ -102,11 +100,10 @@ namespace FileMonitor.View
                 }
                 break;
             }
-
             return result;
         }
 
-        // Returns true if the path exists in this tree view, false otherwise.
+        // Returns true if the path exists in this tree view instance, false otherwise.
         private bool PathExists(string[] pathNodes, ItemCollection childItems)
         {
             bool result = false;
@@ -128,6 +125,56 @@ namespace FileMonitor.View
                 }
             }
             return result;
+        }
+
+        // Returns a Queue of PathNodes to be added to this instance of the tree view. 
+        private static Queue<PathNode> ToQueue(IPathDto dto)
+        {
+            var pathElements = dto.Path.Split(Path.DirectorySeparatorChar);
+            var root = Path.GetPathRoot(dto.Path);
+            var fileName = Path.GetFileName(dto.Path);
+            var queue = new Queue<PathNode>();
+            PathNode node;
+
+            foreach (var element in pathElements)
+            {
+                if(element + "\\" == root)
+                {
+                    node = new(element, PathNode.NodeCategory.Root);
+                    queue.Enqueue(node);
+                    continue;
+                }
+                else if (element + "\\" != fileName)
+                {
+                    node = new(element, PathNode.NodeCategory.Directory);
+                    queue.Enqueue(node);
+                    continue;
+                }
+                node = new(element, PathNode.NodeCategory.File);
+                queue.Enqueue(node);
+            }
+            return queue;
+        }
+
+        class PathNode
+        {
+            public string? NodeItem { get; set; }
+            public NodeCategory Category { get; set; }
+
+            public override string? ToString() => NodeItem;
+
+            public enum NodeCategory
+            {
+                Root = 0,
+                Directory = 1,
+                File = 2
+            }
+
+            public PathNode(string nodeItem, NodeCategory category)
+            {
+                NodeItem = nodeItem;
+                Category = category;
+            }
         }
     }
 }
