@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.IO;
 using System.Diagnostics;
 using Services.Dto;
+using System.Linq;
 
 namespace FileMonitor.View
 {
@@ -153,13 +154,24 @@ namespace FileMonitor.View
                 node = new(element, PathNode.NodeCategory.File);
                 queue.Enqueue(node);
             }
+            //queue.ElementAt(queue.Count - 1).;
             return queue;
         }
 
-        class PathNode
+        public class PathNode
         {
             public string? NodeItem { get; set; }
             public NodeCategory Category { get; set; }
+            public bool IsLast { get; set; }
+            public int Id 
+            {
+                get { return Id; }
+                set
+                {
+                    if (IsLast == false)
+                        value = default;
+                }
+            }
 
             public override string? ToString() => NodeItem;
 
