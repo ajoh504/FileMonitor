@@ -4,7 +4,6 @@ using System.Windows.Controls;
 using System.IO;
 using System.Diagnostics;
 using Services.Dto;
-using System.Linq;
 
 namespace FileMonitor.View
 {
