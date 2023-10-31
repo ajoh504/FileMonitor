@@ -161,16 +161,8 @@ namespace FileMonitor.View
         {
             public string? NodeItem { get; set; }
             public NodeCategory Category { get; set; }
-            public bool IsLast { get; set; }
-            public int Id 
-            {
-                get { return Id; }
-                set
-                {
-                    if (IsLast == false)
-                        value = default;
-                }
-            }
+            public bool DisplayCheckBox { get; set; }
+            public int Id { get; set; }
 
             public override string? ToString() => NodeItem;
 
