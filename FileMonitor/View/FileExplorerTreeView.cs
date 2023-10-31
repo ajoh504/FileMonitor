@@ -138,13 +138,13 @@ namespace FileMonitor.View
 
             foreach (var element in pathElements)
             {
-                if(element + "\\" == root)
+                if($"{element}{Path.DirectorySeparatorChar}" == root)
                 {
                     node = new(element, PathNode.NodeCategory.Root);
                     queue.Enqueue(node);
                     continue;
                 }
-                else if (element + "\\" != fileName)
+                else if ($"{element}{Path.DirectorySeparatorChar}" != fileName)
                 {
                     node = new(element, PathNode.NodeCategory.Directory);
                     queue.Enqueue(node);
@@ -153,7 +153,6 @@ namespace FileMonitor.View
                 node = new(element, PathNode.NodeCategory.File);
                 queue.Enqueue(node);
             }
-            //queue.ElementAt(queue.Count - 1).;
             return queue;
         }
 
