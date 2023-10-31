@@ -157,7 +157,7 @@ namespace FileMonitor.View
             return queue;
         }
 
-        public class PathNode
+        class PathNode
         {
             public string? NodeItem { get; set; }
             public NodeCategory Category { get; set; }
