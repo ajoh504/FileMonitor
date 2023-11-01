@@ -73,17 +73,16 @@
         THIS CODE IS TO TEST USING A HierarchicalDataTemplate
         -->
         <HierarchicalDataTemplate
-            x:Key="TreeViewItemTemplate"
-            ItemsSource="{Binding Children, Mode=OneTime}" >
+            x:Key="TreeViewItemTemplate">
             <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{Binding NodeItem}" />
                 <CheckBox
+                    Visibility="Visible"
                     Focusable="False"
-                    IsChecked="{Binding DisplayCheckBox}"
+                    IsChecked="False"
                     VerticalAlignment="Center">
                 </CheckBox>
-                <ContentPresenter
-                    Content="{Binding NodeItem}">
-                </ContentPresenter>
+
             </StackPanel>
         </HierarchicalDataTemplate>
 
