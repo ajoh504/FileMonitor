@@ -75,7 +75,7 @@
         <HierarchicalDataTemplate
             x:Key="TreeViewItemTemplate">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="{Binding NodeItem}" />
+                <TextBlock Text="{Binding Text}" />
                 <CheckBox
                     Visibility="Visible"
                     Focusable="False"
@@ -322,7 +322,7 @@
                             <TreeView 
                                 x:Name="BackupPathsDisplayed"
                                 Style="{StaticResource TreeViewStyle}"
-                                ItemsSource="{Binding BackupPaths.FileTreeItems}"
+                                ItemsSource="{Binding BackupPaths.RootNodes}"
                                 ItemTemplate="{StaticResource TreeViewItemTemplate}">
                             </TreeView>
                         </Grid>
