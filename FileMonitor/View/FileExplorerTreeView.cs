@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.IO;
 using System.Diagnostics;
 using Services.Dto;
+using System.Collections.ObjectModel;
 
 namespace FileMonitor.View
 {
@@ -162,6 +163,7 @@ namespace FileMonitor.View
             public NodeCategory Category { get; set; }
             public bool DisplayCheckBox { get; set; }
             public int Id { get; set; }
+            public ObservableCollection<PathNode>? ChildNodes { get; set; }
 
             public override string? ToString() => Text;
 
