@@ -20,7 +20,10 @@ namespace FileMonitor.View
         /// </summary>
         public IEnumerable FileTreeItems => FileTree.Items;
 
-        public ObservableCollection<PathNode> RootNodes { get; }
+        private ObservableCollection<PathNode> _rootNodes;
+        private ReadOnlyObservableCollection<PathNode> _readOnlyRootNodes;
+
+        public ReadOnlyObservableCollection<PathNode> RootNodes => _readOnlyRootNodes;
 
         /// <summary>
         /// The <see cref="FileExplorerTreeView"/> class constructor. 
@@ -28,6 +31,8 @@ namespace FileMonitor.View
         public FileExplorerTreeView()
         {
             FileTree = new TreeView();
+            _rootNodes = new ObservableCollection<PathNode>();
+            _readOnlyRootNodes = new ReadOnlyObservableCollection<PathNode>(_rootNodes);
         }
 
         /// <summary>
@@ -36,7 +41,7 @@ namespace FileMonitor.View
         public void AddPath(IPathDto dto)
         {
             var pathNodes = ToQueue(dto);
-            AddNodes(pathNodes, FileTree.Items);
+            AddNodes(pathNodes, _rootNodes);
         }
 
         /// <summary>
@@ -95,7 +100,7 @@ namespace FileMonitor.View
         }
 
         // Add each file path node recursively to the TreeView.
-        private void AddNodes(Queue<PathNode> pathNodes, ItemCollection childItems)
+        private void AddNodes(Queue<PathNode> pathNodes, ObservableCollection<PathNode> childItems)
         {
             if (pathNodes.Count == 0) return;
             var first = new TreeViewItem();
@@ -115,7 +120,7 @@ namespace FileMonitor.View
 
         // If the TreeViewItem is contained in childItems, return true and return the "item" object as an out
         // parameter.
-        private bool TryGetMatch(ItemCollection childItems, TreeViewItem item, out TreeViewItem? match)
+        private bool TryGetMatch(ObservableCollection<PathNode> childItems, TreeViewItem item, out TreeViewItem? match)
         {
             bool result = false;
             match = default;
