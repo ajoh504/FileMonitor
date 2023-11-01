@@ -20,6 +20,8 @@ namespace FileMonitor.View
         /// </summary>
         public IEnumerable FileTreeItems => FileTree.Items;
 
+        public ObservableCollection<PathNode> RootNodes { get; }
+
         /// <summary>
         /// The <see cref="FileExplorerTreeView"/> class constructor. 
         /// </summary>
