@@ -27,6 +27,7 @@ namespace FileMonitor.View
         public PathNode(string text)
         {
             Text = text;
+            Children = new ObservableCollection<PathNode>();
         }
     }
 }
