@@ -94,10 +94,7 @@ namespace FileMonitor.View
         // Add each file path node recursively to the TreeView.
         private void AddNodes(Queue<PathNode> pathNodes, ItemCollection childItems)
         {
-            bool displayCheckBox = false;
             if (pathNodes.Count == 0) return;
-            if (pathNodes.Count == 1) displayCheckBox = true;
-
             var first = new TreeViewItem();
             TreeViewItem? match;
             first.Header = pathNodes.Dequeue();
@@ -159,7 +156,7 @@ namespace FileMonitor.View
             return result;
         }
 
-        class PathNode
+        public class PathNode
         {
             public string? NodeItem { get; set; }
             public NodeCategory Category { get; set; }
