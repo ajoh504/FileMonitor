@@ -62,10 +62,42 @@ namespace FileMonitor.View
             foreach (var dto in dtos) RemovePath(dto);
         }
 
-        // Add each file path element recursively to the TreeView.
+        // Returns a Queue of PathNodes to be added to this instance of the tree view. 
+        private static Queue<PathNode> ToQueue(IPathDto dto)
+        {
+            var pathElements = dto.Path.Split(Path.DirectorySeparatorChar);
+            var root = Path.GetPathRoot(dto.Path);
+            var fileName = Path.GetFileName(dto.Path);
+            var queue = new Queue<PathNode>();
+            PathNode node;
+
+            foreach (var element in pathElements)
+            {
+                if ($"{element}{Path.DirectorySeparatorChar}" == root)
+                {
+                    node = new(element, PathNode.NodeCategory.Root);
+                    queue.Enqueue(node);
+                    continue;
+                }
+                else if ($"{element}{Path.DirectorySeparatorChar}" != fileName)
+                {
+                    node = new(element, PathNode.NodeCategory.Directory);
+                    queue.Enqueue(node);
+                    continue;
+                }
+                node = new(element, PathNode.NodeCategory.File);
+                queue.Enqueue(node);
+            }
+            return queue;
+        }
+
+        // Add each file path node recursively to the TreeView.
         private void AddNodes(Queue<PathNode> pathNodes, ItemCollection childItems)
         {
+            bool displayCheckBox = false;
             if (pathNodes.Count == 0) return;
+            if (pathNodes.Count == 1) displayCheckBox = true;
+
             var first = new TreeViewItem();
             TreeViewItem? match;
             first.Header = pathNodes.Dequeue();
@@ -125,35 +157,6 @@ namespace FileMonitor.View
                 }
             }
             return result;
-        }
-
-        // Returns a Queue of PathNodes to be added to this instance of the tree view. 
-        private static Queue<PathNode> ToQueue(IPathDto dto)
-        {
-            var pathElements = dto.Path.Split(Path.DirectorySeparatorChar);
-            var root = Path.GetPathRoot(dto.Path);
-            var fileName = Path.GetFileName(dto.Path);
-            var queue = new Queue<PathNode>();
-            PathNode node;
-
-            foreach (var element in pathElements)
-            {
-                if($"{element}{Path.DirectorySeparatorChar}" == root)
-                {
-                    node = new(element, PathNode.NodeCategory.Root);
-                    queue.Enqueue(node);
-                    continue;
-                }
-                else if ($"{element}{Path.DirectorySeparatorChar}" != fileName)
-                {
-                    node = new(element, PathNode.NodeCategory.Directory);
-                    queue.Enqueue(node);
-                    continue;
-                }
-                node = new(element, PathNode.NodeCategory.File);
-                queue.Enqueue(node);
-            }
-            return queue;
         }
 
         class PathNode
