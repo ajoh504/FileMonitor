@@ -24,10 +24,9 @@ namespace FileMonitor.View
             File = 2
         }
 
-        public PathNode(string text, NodeCategory category)
+        public PathNode(string text)
         {
             Text = text;
-            Category = category;
         }
     }
 }
