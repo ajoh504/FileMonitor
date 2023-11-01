@@ -85,7 +85,6 @@
                     Content="{Binding NodeItem}">
                 </ContentPresenter>
             </StackPanel>
-           
         </HierarchicalDataTemplate>
 
     </Window.Resources>
@@ -324,7 +323,8 @@
                             <TreeView 
                                 x:Name="BackupPathsDisplayed"
                                 Style="{StaticResource TreeViewStyle}"
-                                ItemsSource="{Binding BackupPaths.FileTreeItems}">
+                                ItemsSource="{Binding BackupPaths.FileTreeItems}"
+                                ItemTemplate="{StaticResource TreeViewItemTemplate}">
                             </TreeView>
                         </Grid>
                     </Border>
