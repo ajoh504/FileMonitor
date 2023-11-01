@@ -13,13 +13,6 @@ namespace FileMonitor.View
     /// </summary>
     public class FileExplorerTreeView
     {
-        private TreeView FileTree { get; }
-
-        /// <summary>
-        /// A public collection exposing an <see cref="ItemCollection"/> of <see cref="TreeViewItem"/>s.
-        /// </summary>
-        public IEnumerable FileTreeItems => FileTree.Items;
-
         private ObservableCollection<PathNode> _rootNodes;
         private ReadOnlyObservableCollection<PathNode> _readOnlyRootNodes;
 
@@ -30,7 +23,6 @@ namespace FileMonitor.View
         /// </summary>
         public FileExplorerTreeView()
         {
-            FileTree = new TreeView();
             _rootNodes = new ObservableCollection<PathNode>();
             _readOnlyRootNodes = new ReadOnlyObservableCollection<PathNode>(_rootNodes);
         }
@@ -58,7 +50,7 @@ namespace FileMonitor.View
         public void RemovePath(IPathDto dto)
         {
             var pathNodes = dto.Path.Split(Path.DirectorySeparatorChar);
-            if (PathExists(pathNodes, FileTree.Items))
+            if (PathExists(pathNodes, _rootNodes))
                 Debug.WriteLine("TEST OUTPUT: RESULT = TRUE");
         }
 
@@ -83,17 +75,20 @@ namespace FileMonitor.View
             {
                 if ($"{element}{Path.DirectorySeparatorChar}" == root)
                 {
-                    node = new(element, PathNode.NodeCategory.Root);
+                    node = new(element);
+                    node.Category = PathNode.NodeCategory.Root;
                     queue.Enqueue(node);
                     continue;
                 }
                 else if ($"{element}{Path.DirectorySeparatorChar}" != fileName)
                 {
-                    node = new(element, PathNode.NodeCategory.Directory);
+                    node = new(element);
+                    node.Category = PathNode.NodeCategory.Directory;
                     queue.Enqueue(node);
                     continue;
                 }
-                node = new(element, PathNode.NodeCategory.File);
+                node = new(element);
+                node.Category = PathNode.NodeCategory.File;
                 queue.Enqueue(node);
             }
             return queue;
@@ -103,56 +98,51 @@ namespace FileMonitor.View
         private void AddNodes(Queue<PathNode> pathNodes, ObservableCollection<PathNode> childItems)
         {
             if (pathNodes.Count == 0) return;
-            var first = new TreeViewItem();
-            TreeViewItem? match;
-            first.Header = pathNodes.Dequeue();
+            PathNode? first;
+            PathNode? match;
+            first = pathNodes.Dequeue();
 
             if (TryGetMatch(childItems, first, out match))
             {
-                AddNodes(pathNodes, match.Items);
+                AddNodes(pathNodes, match.Children);
             }
             else
             {
                 childItems.Add(first);
-                AddNodes(pathNodes, first.Items);
+                AddNodes(pathNodes, first.Children);
             }
         }
 
         // If the TreeViewItem is contained in childItems, return true and return the "item" object as an out
         // parameter.
-        private bool TryGetMatch(ObservableCollection<PathNode> childItems, TreeViewItem item, out TreeViewItem? match)
+        private bool TryGetMatch(ObservableCollection<PathNode> childItems, PathNode item, out PathNode? match)
         {
             bool result = false;
             match = default;
 
             foreach (var childItem in childItems)
             {
-                if(childItem is TreeViewItem treeViewItem)
-                {
-                    if (!item.Header.Equals(treeViewItem.Header))
-                        continue;
+                if (!item.Text.Equals(childItem.Text))
+                    continue;
 
-                    match = treeViewItem;
-                    result = true; 
-                }
+                match = item;
+                result = true;  
                 break;
             }
             return result;
         }
 
         // Returns true if the path exists in this tree view instance, false otherwise.
-        private bool PathExists(string[] pathNodes, ItemCollection childItems)
+        private bool PathExists(string[] pathNodes, ObservableCollection<PathNode> childItems)
         {
             bool result = false;
             foreach(var elem in pathNodes)
             {
-                var item = new TreeViewItem();
-                item.Header = elem;
-                TreeViewItem? match;
+                var item = new PathNode(elem);
+                PathNode? match;
 
-                if (TryGetMatch(childItems, item, out match))
+                if (TryGetMatch(childItems, item, out _))
                 {
-                    childItems = match.Items;
                     result = true;
                 }
                 else
