@@ -158,12 +158,12 @@ namespace FileMonitor.View
 
         public class PathNode
         {
-            public string? NodeItem { get; set; }
+            public string? Text { get; set; }
             public NodeCategory Category { get; set; }
             public bool DisplayCheckBox { get; set; }
             public int Id { get; set; }
 
-            public override string? ToString() => NodeItem;
+            public override string? ToString() => Text;
 
             public enum NodeCategory
             {
@@ -172,9 +172,9 @@ namespace FileMonitor.View
                 File = 2
             }
 
-            public PathNode(string nodeItem, NodeCategory category)
+            public PathNode(string text, NodeCategory category)
             {
-                NodeItem = nodeItem;
+                Text = text;
                 Category = category;
             }
         }
