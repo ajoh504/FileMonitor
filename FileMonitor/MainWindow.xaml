@@ -73,8 +73,10 @@
         THIS CODE IS TO TEST USING A HierarchicalDataTemplate
         -->
         <HierarchicalDataTemplate
-            x:Key="TreeViewItemTemplate">
-            <StackPanel Orientation="Horizontal">
+            x:Key="TreeViewItemTemplate"
+            ItemsSource="{Binding Children}">
+            <StackPanel 
+                Orientation="Horizontal">
                 <TextBlock Text="{Binding Text}" />
                 <CheckBox
                     Visibility="Visible"
