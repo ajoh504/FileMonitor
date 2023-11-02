@@ -31,11 +31,12 @@ namespace FileMonitor.View
         /// <summary>
         /// The <see cref="FileExplorerTreeView"/> class constructor. 
         /// </summary>
-        public FileExplorerTreeView()
+        public FileExplorerTreeView(IEnumerable<IPathDto> paths)
         {
             _rootNodes = new ObservableCollection<PathNode>();
             _readOnlyRootNodes = new ReadOnlyObservableCollection<PathNode>(_rootNodes);
             _paths = new List<IPathDto>();
+            AddPaths(paths);
         }
 
         /// <summary>
