@@ -13,7 +13,8 @@
 
     <Window.Resources>
         <valueConverters:IntToBoolValueConverter x:Key="IntToBoolValueConverter" />
-        
+        <BooleanToVisibilityConverter x:Key="boolToVisibilityConverter"/>
+
         <Style x:Key="MainBorderStyle" TargetType="Border">
             <Setter Property="BorderBrush" Value="Black"/>
             <Setter Property="BorderThickness" Value=".5" />
@@ -79,7 +80,7 @@
                 Orientation="Horizontal">
                 <TextBlock Text="{Binding Text}" />
                 <CheckBox
-                    Visibility="Visible"
+                    Visibility="{Binding DisplayCheckBox, Converter={StaticResource boolToVisibilityConverter}}"
                     Focusable="False"
                     IsChecked="False"
                     VerticalAlignment="Center">
