@@ -42,7 +42,7 @@ namespace FileMonitor
                 RepositoryHelper.CreateIgnorableFolderRepositoryInstance());
 
             _viewModel = new MainWindowViewModel(
-                new FileExplorerTreeView(),
+                new FileExplorerTreeView(backupPathService.GetDirectories()),
                 new ObservableCollection<SourceFileDto>(sourceFileService.GetFiles()),
                 new ObservableCollection<SourceFileDto>(sourceFileService.GetModifiedFiles()),
                 new ObservableCollection<SourceFolderDto>(sourceFolderService.GetFolders()),
@@ -53,7 +53,6 @@ namespace FileMonitor
                 JsonSettingsHelper.IncludeAllSubFolders
             );
 
-            _viewModel.BackupPaths.AddPaths(backupPathService.GetDirectories());
             _viewModel.RemovePossibleRenamedFiles();
             DataContext = _viewModel;
             _helper = new MainWindowHelper();
