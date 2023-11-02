@@ -142,7 +142,7 @@ namespace FileMonitor
                 MessageBox.Show("Please add a backup path.");
                 return;
             }
-            foreach(BackupPathDto dto in _viewModel.BackupPaths.FileTreeItems)
+            foreach(BackupPathDto dto in _viewModel.BackupPaths.FullPaths)
             {
                 if(dto.IsSelected)
                 {
@@ -161,7 +161,7 @@ namespace FileMonitor
                 MessageBox.Show("Please add a backup path.");
                 return;
             }
-            foreach (BackupPathDto dto in _viewModel.BackupPaths.FileTreeItems)
+            foreach (BackupPathDto dto in _viewModel.BackupPaths.FullPaths)
             {
                 if (dto.IsSelected)
                 {

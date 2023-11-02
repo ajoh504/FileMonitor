@@ -167,7 +167,7 @@ namespace FileMonitor.View
         /// </summary>
         public bool IsAnyBackupSelected()
         {
-            foreach (BackupPathDto dto in  _backupPaths.FileTreeItems)
+            foreach (BackupPathDto dto in  _backupPaths.FullPaths)
             {
                 if (dto.IsSelected == true) return true;
             }
