@@ -15,8 +15,18 @@ namespace FileMonitor.View
     {
         private ObservableCollection<PathNode> _rootNodes;
         private ReadOnlyObservableCollection<PathNode> _readOnlyRootNodes;
+        private List<IPathDto> _paths;
 
+        /// <summary>
+        /// Holds a readonly collection of all root nodes for this instance of the tree view. 
+        /// </summary>
         public ReadOnlyObservableCollection<PathNode> RootNodes => _readOnlyRootNodes;
+
+        /// <summary>
+        /// Holds an <see cref="IEnumerable{T}"/> of all data transfer objects added to this instance of the 
+        /// tree view. Use this property to access the full paths or the database IDs. 
+        /// </summary>
+        public IEnumerable<IPathDto> FullPaths => _paths;
 
         /// <summary>
         /// The <see cref="FileExplorerTreeView"/> class constructor. 
@@ -25,6 +35,7 @@ namespace FileMonitor.View
         {
             _rootNodes = new ObservableCollection<PathNode>();
             _readOnlyRootNodes = new ReadOnlyObservableCollection<PathNode>(_rootNodes);
+            _paths = new List<IPathDto>();
         }
 
         /// <summary>
@@ -32,6 +43,7 @@ namespace FileMonitor.View
         /// </summary>
         public void AddPath(IPathDto dto)
         {
+            _paths.Add(dto);
             var pathNodes = ToQueue(dto);
             AddNodes(pathNodes, _rootNodes);
         }
@@ -49,6 +61,7 @@ namespace FileMonitor.View
         /// </summary>
         public void RemovePath(IPathDto dto)
         {
+            _paths.Remove(dto);
             var pathNodes = dto.Path.Split(Path.DirectorySeparatorChar);
             if (PathExists(pathNodes, _rootNodes))
                 Debug.WriteLine("TEST OUTPUT: RESULT = TRUE");
