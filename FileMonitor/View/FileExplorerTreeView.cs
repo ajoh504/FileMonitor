@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Diagnostics;
 using Services.Dto;
 using System.Collections.ObjectModel;
 
@@ -80,26 +79,26 @@ namespace FileMonitor.View
             var root = Path.GetPathRoot(dto.Path);
             var fileName = Path.GetFileName(dto.Path);
             var queue = new Queue<PathNode>();
-            PathNode node;
+            var node = new PathNode(root, PathNode.NodeCategory.Root);
+            var parent = node;
+            queue.Enqueue(node);
 
-            foreach (var element in pathElements)
+            foreach (var pathElement in pathElements)
             {
-                if ($"{element}{Path.DirectorySeparatorChar}" == root)
+                if ($"{pathElement}{Path.DirectorySeparatorChar}" != fileName)
                 {
-                    node = new(element);
-                    node.Category = PathNode.NodeCategory.Root;
+                    node = new PathNode(
+                        pathElement,
+                        PathNode.NodeCategory.Directory,
+                        parent);
+                    parent = node;
                     queue.Enqueue(node);
                     continue;
                 }
-                else if ($"{element}{Path.DirectorySeparatorChar}" != fileName)
-                {
-                    node = new(element);
-                    node.Category = PathNode.NodeCategory.Directory;
-                    queue.Enqueue(node);
-                    continue;
-                }
-                node = new(element);
-                node.Category = PathNode.NodeCategory.File;
+                node = new PathNode(
+                    pathElement,
+                    PathNode.NodeCategory.File,
+                    parent);
                 queue.Enqueue(node);
             }
             return queue;
@@ -158,7 +157,23 @@ namespace FileMonitor.View
 
         private void RemoveNodes(string[] pathNodes, IPathDto dto)
         {
+            //var children = _rootNodes;
+            //PathNode? match;
+            //PathNode? parent;
 
+            //foreach (var pathNode in pathNodes)
+            //{
+            //    if (TryGetMatch(children, new PathNode(pathNode), out match))
+            //    {
+            //        children = match.Children;
+            //        // Check if the node is the last in the list
+            //        if(match.PathId == dto.Id)
+            //        {
+            //            match.
+            //        }
+            //    }
+            //    else break;
+            //}
         }
 
         public class PathNode
@@ -167,6 +182,7 @@ namespace FileMonitor.View
             public NodeCategory Category { get; set; }
             public bool DisplayCheckBox { get; set; }
             public ObservableCollection<PathNode>? Children { get; set; }
+            public PathNode Parent { get; set; }
             public int PathId { get; set; }
 
             public override string? ToString() => Text;
@@ -178,9 +194,12 @@ namespace FileMonitor.View
                 File = 2
             }
 
-            public PathNode(string text)
+            public PathNode(string text, NodeCategory category, PathNode parent = null)
             {
                 Text = text;
+                Category = category;
+                Parent = parent;
+                PathId = -1;
                 Children = new ObservableCollection<PathNode>();
             }
         }
