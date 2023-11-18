@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections;
-using System.Windows.Controls;
 using System.IO;
 using System.Diagnostics;
 using Services.Dto;
@@ -46,7 +44,7 @@ namespace FileMonitor.View
         {
             _paths.Add(dto);
             var pathNodes = ToQueue(dto);
-            AddNodes(pathNodes, _rootNodes);
+            AddNodes(pathNodes, _rootNodes, dto.Id);
         }
 
         /// <summary>
@@ -109,7 +107,7 @@ namespace FileMonitor.View
         }
 
         // Add each file path node recursively to the TreeView.
-        private void AddNodes(Queue<PathNode> pathNodes, ObservableCollection<PathNode> childItems)
+        private void AddNodes(Queue<PathNode> pathNodes, ObservableCollection<PathNode> childItems, int pathId)
         {
             bool returnToCaller = false;
             if (pathNodes.Count == 1) returnToCaller = true;
@@ -121,20 +119,22 @@ namespace FileMonitor.View
             if (TryGetMatch(childItems, first, out match))
             {
                 if (returnToCaller) return;
-                AddNodes(pathNodes, match.Children);
+                AddNodes(pathNodes, match.Children, pathId);
             }
             else
             {
                 if (returnToCaller)
                 {
                     // Only display the checkbox on the final path node. This allows the user to delete the path based
-                    // on the last node. 
+                    // on the last node. Additionally, store the pathId on the final node, so when the user wants to 
+                    // delete a path, the ID is sent back to the services layer. 
                     first.DisplayCheckBox = true;
+                    first.PathId = pathId;
                     childItems.Add(first);
                     return;
                 }
                 childItems.Add(first);
-                AddNodes(pathNodes, first.Children);
+                AddNodes(pathNodes, first.Children, pathId);
             }
         }
 
