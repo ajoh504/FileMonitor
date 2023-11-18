@@ -7,7 +7,6 @@ namespace FileMonitor.View
         public string? Text { get; set; }
         public NodeCategory Category { get; set; }
         public bool DisplayCheckBox { get; set; }
-        public int Id { get; set; }
         public ObservableCollection<PathNode>? Children { get; set; }
 
         public override string? ToString() => Text;
