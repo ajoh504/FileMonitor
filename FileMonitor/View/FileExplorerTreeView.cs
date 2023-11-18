@@ -179,6 +179,11 @@ namespace FileMonitor.View
             return result;
         }
 
+        private void RemoveNodes(string[] pathNodes, IPathDto dto)
+        {
+
+        }
+
         public class PathNode
         {
             public string? Text { get; set; }
