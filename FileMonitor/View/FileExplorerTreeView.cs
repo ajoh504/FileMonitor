@@ -62,8 +62,7 @@ namespace FileMonitor.View
         {
             _paths.Remove(dto);
             var pathNodes = dto.Path.Split(Path.DirectorySeparatorChar);
-            if (PathExists(pathNodes, _rootNodes))
-                Debug.WriteLine("TEST OUTPUT: RESULT = TRUE");
+            RemoveNodes(pathNodes, dto);
         }
 
         /// <summary>
@@ -153,28 +152,6 @@ namespace FileMonitor.View
                 match = item;
                 result = true;  
                 break;
-            }
-            return result;
-        }
-
-        // Returns true if the path exists in this tree view instance, false otherwise.
-        private bool PathExists(string[] pathNodes, ObservableCollection<PathNode> childItems)
-        {
-            bool result = false;
-            foreach(var elem in pathNodes)
-            {
-                var item = new PathNode(elem);
-                PathNode? match;
-
-                if (TryGetMatch(childItems, item, out _))
-                {
-                    result = true;
-                }
-                else
-                {
-                    result = false;
-                    break;
-                }
             }
             return result;
         }
