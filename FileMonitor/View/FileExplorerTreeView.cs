@@ -190,6 +190,7 @@ namespace FileMonitor.View
             public NodeCategory Category { get; set; }
             public bool DisplayCheckBox { get; set; }
             public ObservableCollection<PathNode>? Children { get; set; }
+            public int PathId { get; set; }
 
             public override string? ToString() => Text;
 
