@@ -127,6 +127,8 @@ namespace FileMonitor.View
             {
                 if (returnToCaller)
                 {
+                    // Only display the checkbox on the final path node. This allows the user to delete the path based
+                    // on the last node. 
                     first.DisplayCheckBox = true;
                     childItems.Add(first);
                     return;
