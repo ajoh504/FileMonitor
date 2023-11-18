@@ -1,4 +1,5 @@
 Todo:
+- 
 - Add multiple folders at once?
 - Update UI to allow user to edit files that have been moved, deleted, or renamed
 - If the user deletes a file that was added from a monitored folder, display a message informing them that the file will be re-added. Offer option to ignore files instead.
@@ -6,6 +7,7 @@ Todo:
 - Set database IDs to reuse unused IDs?
 
 Fixes:
+- Delete buttons should be greyed out until at least one checkbox is selected
 - TreeView does not add a parent folder when it is part of a monitored child folder
 - Window Mousedown only works in the Main tab, not the settings tab
 - The ListView item width breaks when the width is greater than the ListView itself
