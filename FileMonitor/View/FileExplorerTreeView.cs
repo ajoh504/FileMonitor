@@ -2,6 +2,7 @@
 using System.IO;
 using Services.Dto;
 using System.Collections.ObjectModel;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace FileMonitor.View
 {
@@ -43,8 +44,7 @@ namespace FileMonitor.View
         {
             _paths.Add(dto);
             var pathNodes = ToQueue(dto);
-            AddNodes(ref pathNodes, ref _rootNodes);
-            AddNodes(pathNodes, _rootNodes, dto.Id);
+            AddNodes(ref pathNodes, ref _rootNodes, dto.Id);
         }
 
         /// <summary>
@@ -73,31 +73,37 @@ namespace FileMonitor.View
             foreach (var dto in dtos) RemovePath(dto);
         }
 
-        // Returns a Queue of PathNodes to be added to this instance of the tree view. 
         private static Queue<PathNode> ToQueue(IPathDto dto)
         {
             var pathElements = dto.Path.Split(Path.DirectorySeparatorChar);
             var root = Path.GetPathRoot(dto.Path);
             var fileName = Path.GetFileName(dto.Path);
             var queue = new Queue<PathNode>();
+
             var node = new PathNode(root, PathNode.NodeCategory.Root);
             var parent = node;
             queue.Enqueue(node);
 
-            foreach (var pathElement in pathElements)
+            foreach (var elem in pathElements)
             {
-                if ($"{pathElement}{Path.DirectorySeparatorChar}" != fileName)
+                var formatted = $"{elem}{Path.DirectorySeparatorChar}";
+
+                if (formatted == root)
+                    continue;
+                
+                if (formatted != fileName)
                 {
                     node = new PathNode(
-                        pathElement,
+                        formatted,
                         PathNode.NodeCategory.Directory,
                         parent);
                     parent = node;
                     queue.Enqueue(node);
                     continue;
                 }
+
                 node = new PathNode(
-                    pathElement,
+                    formatted,
                     PathNode.NodeCategory.File,
                     parent);
                 queue.Enqueue(node);
@@ -105,9 +111,10 @@ namespace FileMonitor.View
             return queue;
         }
 
+
+
         // Add each file path node recursively to the TreeView.
-        private void AddNodes(ref Queue<PathNode> pathNodes, ref ObservableCollection<PathNode> childItems)
-        private void AddNodes(Queue<PathNode> pathNodes, ObservableCollection<PathNode> childItems, int pathId)
+        private void AddNodes(ref Queue<PathNode> pathNodes, ref ObservableCollection<PathNode> childItems, int pathId)
         {
             bool returnToCaller = false;
             if (pathNodes.Count == 1) returnToCaller = true;
@@ -120,8 +127,7 @@ namespace FileMonitor.View
             {
                 if (returnToCaller) return;
                 var children = match.Children;
-                AddNodes(ref pathNodes, ref children);
-                AddNodes(pathNodes, match.Children, pathId);
+                AddNodes(ref pathNodes, ref children, pathId);
             }
             else
             {
@@ -137,8 +143,7 @@ namespace FileMonitor.View
                 }
                 childItems.Add(first);
                 var children = first.Children;
-                AddNodes(ref pathNodes, ref children);
-                AddNodes(pathNodes, first.Children, pathId);
+                AddNodes(ref pathNodes, ref children, pathId);
             }
         }
 
@@ -167,17 +172,17 @@ namespace FileMonitor.View
             //PathNode? match;
             //PathNode? parent;
 
-                if (TryGetMatch(ref childItems, item, out _))
-                {
-                    result = true;
-                }
-                else
-                {
-                    result = false;
-                    break;
-                }
-            }
-            return result;
+            //    if (TryGetMatch(ref childItems, item, out _))
+            //    {
+            //        result = true;
+            //    }
+            //    else
+            //    {
+            //        result = false;
+            //        break;
+            //    }
+            //}
+            //return result;
             //foreach (var pathNode in pathNodes)
             //{
             //    if (TryGetMatch(children, new PathNode(pathNode), out match))
