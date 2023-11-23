@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Collections;
-using System.Windows.Controls;
 using System.IO;
-using System.Diagnostics;
 using Services.Dto;
 using System.Collections.ObjectModel;
 
@@ -47,6 +44,7 @@ namespace FileMonitor.View
             _paths.Add(dto);
             var pathNodes = ToQueue(dto);
             AddNodes(ref pathNodes, ref _rootNodes);
+            AddNodes(pathNodes, _rootNodes, dto.Id);
         }
 
         /// <summary>
@@ -64,8 +62,7 @@ namespace FileMonitor.View
         {
             _paths.Remove(dto);
             var pathNodes = dto.Path.Split(Path.DirectorySeparatorChar);
-            if (PathExists(pathNodes, _rootNodes))
-                Debug.WriteLine("TEST OUTPUT: RESULT = TRUE");
+            RemoveNodes(pathNodes, dto);
         }
 
         /// <summary>
@@ -83,26 +80,26 @@ namespace FileMonitor.View
             var root = Path.GetPathRoot(dto.Path);
             var fileName = Path.GetFileName(dto.Path);
             var queue = new Queue<PathNode>();
-            PathNode node;
+            var node = new PathNode(root, PathNode.NodeCategory.Root);
+            var parent = node;
+            queue.Enqueue(node);
 
-            foreach (var element in pathElements)
+            foreach (var pathElement in pathElements)
             {
-                if ($"{element}{Path.DirectorySeparatorChar}" == root)
+                if ($"{pathElement}{Path.DirectorySeparatorChar}" != fileName)
                 {
-                    node = new(element);
-                    node.Category = PathNode.NodeCategory.Root;
+                    node = new PathNode(
+                        pathElement,
+                        PathNode.NodeCategory.Directory,
+                        parent);
+                    parent = node;
                     queue.Enqueue(node);
                     continue;
                 }
-                else if ($"{element}{Path.DirectorySeparatorChar}" != fileName)
-                {
-                    node = new(element);
-                    node.Category = PathNode.NodeCategory.Directory;
-                    queue.Enqueue(node);
-                    continue;
-                }
-                node = new(element);
-                node.Category = PathNode.NodeCategory.File;
+                node = new PathNode(
+                    pathElement,
+                    PathNode.NodeCategory.File,
+                    parent);
                 queue.Enqueue(node);
             }
             return queue;
@@ -110,6 +107,7 @@ namespace FileMonitor.View
 
         // Add each file path node recursively to the TreeView.
         private void AddNodes(ref Queue<PathNode> pathNodes, ref ObservableCollection<PathNode> childItems)
+        private void AddNodes(Queue<PathNode> pathNodes, ObservableCollection<PathNode> childItems, int pathId)
         {
             bool returnToCaller = false;
             if (pathNodes.Count == 1) returnToCaller = true;
@@ -123,20 +121,24 @@ namespace FileMonitor.View
                 if (returnToCaller) return;
                 var children = match.Children;
                 AddNodes(ref pathNodes, ref children);
+                AddNodes(pathNodes, match.Children, pathId);
             }
             else
             {
                 if (returnToCaller)
                 {
                     // Only display the checkbox on the final path node. This allows the user to delete the path based
-                    // on the last node. 
+                    // on the last node. Additionally, store the pathId on the final node, so when the user wants to 
+                    // delete a path, the ID is sent back to the services layer. 
                     first.DisplayCheckBox = true;
+                    first.PathId = pathId;
                     childItems.Add(first);
                     return;
                 }
                 childItems.Add(first);
                 var children = first.Children;
                 AddNodes(ref pathNodes, ref children);
+                AddNodes(pathNodes, first.Children, pathId);
             }
         }
 
@@ -159,14 +161,11 @@ namespace FileMonitor.View
             return result;
         }
 
-        // Returns true if the path exists in this tree view instance, false otherwise.
-        private bool PathExists(string[] pathNodes, ObservableCollection<PathNode> childItems)
+        private void RemoveNodes(string[] pathNodes, IPathDto dto)
         {
-            bool result = false;
-            foreach(var elem in pathNodes)
-            {
-                var item = new PathNode(elem);
-                PathNode? match;
+            //var children = _rootNodes;
+            //PathNode? match;
+            //PathNode? parent;
 
                 if (TryGetMatch(ref childItems, item, out _))
                 {
@@ -179,6 +178,19 @@ namespace FileMonitor.View
                 }
             }
             return result;
+            //foreach (var pathNode in pathNodes)
+            //{
+            //    if (TryGetMatch(children, new PathNode(pathNode), out match))
+            //    {
+            //        children = match.Children;
+            //        // Check if the node is the last in the list
+            //        if(match.PathId == dto.Id)
+            //        {
+            //            match.
+            //        }
+            //    }
+            //    else break;
+            //}
         }
 
         public class PathNode
@@ -187,6 +199,8 @@ namespace FileMonitor.View
             public NodeCategory Category { get; set; }
             public bool DisplayCheckBox { get; set; }
             public ObservableCollection<PathNode>? Children { get; set; }
+            public PathNode Parent { get; set; }
+            public int PathId { get; set; }
 
             public override string? ToString() => Text;
 
@@ -197,9 +211,12 @@ namespace FileMonitor.View
                 File = 2
             }
 
-            public PathNode(string text)
+            public PathNode(string text, NodeCategory category, PathNode parent = null)
             {
                 Text = text;
+                Category = category;
+                Parent = parent;
+                PathId = -1;
                 Children = new ObservableCollection<PathNode>();
             }
         }
