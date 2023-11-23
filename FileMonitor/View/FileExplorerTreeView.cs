@@ -46,7 +46,7 @@ namespace FileMonitor.View
         {
             _paths.Add(dto);
             var pathNodes = ToQueue(dto);
-            AddNodes(pathNodes, _rootNodes);
+            AddNodes(ref pathNodes, ref _rootNodes);
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace FileMonitor.View
         }
 
         // Add each file path node recursively to the TreeView.
-        private void AddNodes(Queue<PathNode> pathNodes, ObservableCollection<PathNode> childItems)
+        private void AddNodes(ref Queue<PathNode> pathNodes, ref ObservableCollection<PathNode> childItems)
         {
             bool returnToCaller = false;
             if (pathNodes.Count == 1) returnToCaller = true;
@@ -118,10 +118,11 @@ namespace FileMonitor.View
             PathNode? match;
             first = pathNodes.Dequeue();
 
-            if (TryGetMatch(childItems, first, out match))
+            if (TryGetMatch(ref childItems, first, out match))
             {
                 if (returnToCaller) return;
-                AddNodes(pathNodes, match.Children);
+                var children = match.Children;
+                AddNodes(ref pathNodes, ref children);
             }
             else
             {
@@ -134,13 +135,14 @@ namespace FileMonitor.View
                     return;
                 }
                 childItems.Add(first);
-                AddNodes(pathNodes, first.Children);
+                var children = first.Children;
+                AddNodes(ref pathNodes, ref children);
             }
         }
 
         // If the TreeViewItem is contained in childItems, return true and return the "item" object as an out
         // parameter.
-        private bool TryGetMatch(ObservableCollection<PathNode> childItems, PathNode item, out PathNode? match)
+        private bool TryGetMatch(ref ObservableCollection<PathNode> childItems, PathNode item, out PathNode? match)
         {
             bool result = false;
             match = default;
@@ -150,7 +152,7 @@ namespace FileMonitor.View
                 if (!item.Text.Equals(childItem.Text))
                     continue;
 
-                match = item;
+                match = childItem;
                 result = true;  
                 break;
             }
@@ -166,7 +168,7 @@ namespace FileMonitor.View
                 var item = new PathNode(elem);
                 PathNode? match;
 
-                if (TryGetMatch(childItems, item, out _))
+                if (TryGetMatch(ref childItems, item, out _))
                 {
                     result = true;
                 }
