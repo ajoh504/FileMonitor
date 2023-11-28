@@ -78,6 +78,10 @@
             ItemsSource="{Binding Children}">
             <StackPanel 
                 Orientation="Horizontal">
+                <Image Name="img"
+                    Width="20"
+                    Height="20"
+                    Source="Images/folder_c.png"/>
                 <TextBlock Text="{Binding Text}" />
                 <CheckBox
                     Visibility="{Binding DisplayCheckBox, Converter={StaticResource boolToVisibilityConverter}}"
