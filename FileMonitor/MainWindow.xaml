@@ -6,8 +6,8 @@
         xmlns:valueConverters="clr-namespace:FileMonitor.Helpers"
         mc:Ignorable="d"
         Title="FileMonitor" 
-        MinHeight="600" 
-        MinWidth="800" 
+        Height="720" 
+        Width="1280" 
         WindowState="Maximized" 
         MouseDown="Window_MouseDown">
 
