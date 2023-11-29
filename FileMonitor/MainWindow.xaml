@@ -81,7 +81,8 @@
                 <Image Name="img"
                     Width="20"
                     Height="20"
-                    Source="Images/folder_c.png"/>
+                    RenderOptions.BitmapScalingMode="NearestNeighbor"
+                    Source="Images/file-gray-20x20px.png"/>
                 <TextBlock Text="{Binding Text}" />
                 <CheckBox
                     Visibility="{Binding DisplayCheckBox, Converter={StaticResource boolToVisibilityConverter}}"
