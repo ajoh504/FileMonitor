@@ -10,6 +10,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\file-gray-20x20px.png" />
+    <None Remove="Images\folder-yellow-20x20px.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Images\file-gray-20x20px.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\folder-yellow-20x20px.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Data.SQLite" Version="1.0.117" />
   </ItemGroup>
 
