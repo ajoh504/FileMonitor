@@ -1,5 +1,4 @@
 Todo:
-- Make PathNode class private and expose with a public interface
 - Add multiple folders at once?
 - Update UI to allow user to edit files that have been moved, deleted, or renamed
 - If the user deletes a file that was added from a monitored folder, display a message informing them that the file will be re-added. Offer option to ignore files instead.
