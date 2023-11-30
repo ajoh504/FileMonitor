@@ -25,6 +25,13 @@ namespace FileMonitor.View
         /// </summary>
         public IEnumerable<IPathDto> FullPaths => _paths;
 
+        public enum NodeCategory
+        {
+            Root = 0,
+            Directory = 1,
+            File = 2
+        }
+
         /// <summary>
         /// The <see cref="FileExplorerTreeView"/> class constructor. 
         /// </summary>
@@ -197,7 +204,7 @@ namespace FileMonitor.View
             //}
         }
 
-        public class PathNode
+        private class PathNode
         {
             public string? Text { get; set; }
             public NodeCategory Category { get; set; }
@@ -207,13 +214,6 @@ namespace FileMonitor.View
             public int PathId { get; set; }
 
             public override string? ToString() => Text;
-
-            public enum NodeCategory
-            {
-                Root = 0,
-                Directory = 1,
-                File = 2
-            }
 
             public PathNode(string text, NodeCategory category, PathNode parent = null)
             {
