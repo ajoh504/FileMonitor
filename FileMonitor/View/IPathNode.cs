@@ -2,7 +2,7 @@
 
 namespace FileMonitor.View
 {
-    interface IPathNode
+    public interface IPathNode
     {
         public string? Text { get; set; }
         public FileExplorerTreeView.NodeCategory Category { get; set; }
