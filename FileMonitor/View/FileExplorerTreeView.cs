@@ -10,14 +10,14 @@ namespace FileMonitor.View
     /// </summary>
     public class FileExplorerTreeView
     {
-        private ObservableCollection<PathNode> _rootNodes;
-        private ReadOnlyObservableCollection<PathNode> _readOnlyRootNodes;
+        private ObservableCollection<IPathNode> _rootNodes;
+        private ReadOnlyObservableCollection<IPathNode> _readOnlyRootNodes;
         private List<IPathDto> _paths;
 
         /// <summary>
         /// Holds a readonly collection of all root nodes for this instance of the tree view. 
         /// </summary>
-        public ReadOnlyObservableCollection<PathNode> RootNodes => _readOnlyRootNodes;
+        public ReadOnlyObservableCollection<IPathNode> RootNodes => _readOnlyRootNodes;
 
         /// <summary>
         /// Holds an <see cref="IEnumerable{T}"/> of all data transfer objects added to this instance of the 
@@ -37,8 +37,8 @@ namespace FileMonitor.View
         /// </summary>
         public FileExplorerTreeView(IEnumerable<IPathDto> paths)
         {
-            _rootNodes = new ObservableCollection<PathNode>();
-            _readOnlyRootNodes = new ReadOnlyObservableCollection<PathNode>(_rootNodes);
+            _rootNodes = new ObservableCollection<IPathNode>();
+            _readOnlyRootNodes = new ReadOnlyObservableCollection<IPathNode>(_rootNodes);
             _paths = new List<IPathDto>();
             AddPaths(paths);
         }
@@ -79,14 +79,14 @@ namespace FileMonitor.View
             foreach (var dto in dtos) RemovePath(dto);
         }
 
-        private static Queue<PathNode> ToQueue(IPathDto dto)
+        private static Queue<IPathNode> ToQueue(IPathDto dto)
         {
             var pathElements = dto.Path.Split(Path.DirectorySeparatorChar);
             var root = Path.GetPathRoot(dto.Path);
             var fileName = Path.GetFileName(dto.Path);
-            var queue = new Queue<PathNode>();
+            var queue = new Queue<IPathNode>();
 
-            var node = new PathNode(root, PathNode.NodeCategory.Root);
+            var node = new PathNode(root, NodeCategory.Root);
             var parent = node;
             queue.Enqueue(node);
 
@@ -101,7 +101,7 @@ namespace FileMonitor.View
                 {
                     node = new PathNode(
                         formatted,
-                        PathNode.NodeCategory.Directory,
+                        NodeCategory.Directory,
                         parent);
                     parent = node;
                     queue.Enqueue(node);
@@ -110,7 +110,7 @@ namespace FileMonitor.View
 
                 node = new PathNode(
                     formatted,
-                    PathNode.NodeCategory.File,
+                    NodeCategory.File,
                     parent);
                 queue.Enqueue(node);
             }
@@ -120,13 +120,13 @@ namespace FileMonitor.View
 
 
         // Add each file path node recursively to the TreeView.
-        private void AddNodes(ref Queue<PathNode> pathNodes, ref ObservableCollection<PathNode> childItems, int pathId)
+        private void AddNodes(ref Queue<IPathNode> pathNodes, ref ObservableCollection<IPathNode> childItems, int pathId)
         {
             bool returnToCaller = false;
             if (pathNodes.Count == 1) returnToCaller = true;
 
-            PathNode? first;
-            PathNode? match;
+            IPathNode? first;
+            IPathNode? match;
             first = pathNodes.Dequeue();
 
             if (TryGetMatch(ref childItems, first, out match))
@@ -155,7 +155,7 @@ namespace FileMonitor.View
 
         // If the TreeViewItem is contained in childItems, return true and return the "item" object as an out
         // parameter.
-        private bool TryGetMatch(ref ObservableCollection<PathNode> childItems, PathNode item, out PathNode? match)
+        private bool TryGetMatch(ref ObservableCollection<IPathNode> childItems, IPathNode item, out IPathNode? match)
         {
             bool result = false;
             match = default;
@@ -204,12 +204,12 @@ namespace FileMonitor.View
             //}
         }
 
-        private class PathNode
+        private class PathNode : IPathNode
         {
             public string? Text { get; set; }
             public NodeCategory Category { get; set; }
             public bool DisplayCheckBox { get; set; }
-            public ObservableCollection<PathNode>? Children { get; set; }
+            public ObservableCollection<IPathNode>? Children { get; set; }
             public PathNode Parent { get; set; }
             public int PathId { get; set; }
 
@@ -221,7 +221,7 @@ namespace FileMonitor.View
                 Category = category;
                 Parent = parent;
                 PathId = -1;
-                Children = new ObservableCollection<PathNode>();
+                Children = new ObservableCollection<IPathNode>();
             }
         }
     }
