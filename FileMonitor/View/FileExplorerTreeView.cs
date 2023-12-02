@@ -212,7 +212,7 @@ namespace FileMonitor.View
             public NodeCategory Category { get; set; }
             public bool DisplayCheckBox { get; set; }
             public ObservableCollection<IPathNode>? Children { get; set; }
-            public PathNode Parent { get; set; }
+            public IPathNode Parent { get; set; }
             public int PathId { get; set; }
 
             public override string? ToString() => Text;
