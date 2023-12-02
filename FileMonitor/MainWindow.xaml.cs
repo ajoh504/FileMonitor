@@ -271,13 +271,16 @@ namespace FileMonitor
             using BackupPathService backupPathService = new BackupPathService(
                 RepositoryHelper.CreateBackupPathRepositoryInstance());
 
-            BackupPathDto dto = (BackupPathDto)BackupPathsDisplayed.SelectedItem;
+            /*BackupPathDto dto = (BackupPathDto)BackupPathsDisplayed.SelectedItem;*/
 
-            if(dto != null)
-            {
-                backupPathService.Remove(ids: new List<int> { dto.Id });
-                _viewModel.BackupPaths.RemovePath(dto);
-            }
+            // todo: update class to remove path by node
+            //var node = IPathNode
+
+            //if(node != null)
+            //{
+            //    backupPathService.Remove(ids: new List<int> { node.PathId });
+            //    _viewModel.BackupPaths.RemovePath(node);
+            //}
 
             //List<int> ids = new List<int>();
             //List<BackupPathDto> selectedPaths = new List<BackupPathDto>();

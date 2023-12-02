@@ -64,11 +64,12 @@ namespace FileMonitor.View
         /// <summary>
         /// Remove a single path from the tree view.
         /// </summary>
-        public void RemovePath(IPathDto dto)
+        public void RemovePath(IPathNode node)
         {
-            _paths.Remove(dto);
-            var pathNodes = dto.Path.Split(Path.DirectorySeparatorChar);
-            RemoveNodes(pathNodes, dto);
+            // todo: update class to remove paths by their nodes
+            //_paths.Remove(node);
+            //var pathNodes = dto.Path.Split(Path.DirectorySeparatorChar);
+            //RemoveNodes(pathNodes, dto);
         }
 
         /// <summary>
@@ -76,7 +77,8 @@ namespace FileMonitor.View
         /// </summary>
         public void RemovePaths(IEnumerable<IPathDto> dtos)
         {
-            foreach (var dto in dtos) RemovePath(dto);
+            // todo: update class to remove paths by their nodes
+            //foreach (var dto in dtos) RemovePath(dto);
         }
 
         private static Queue<IPathNode> ToQueue(IPathDto dto)
