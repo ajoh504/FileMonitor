@@ -273,7 +273,8 @@ namespace FileMonitor
 
             /*BackupPathDto dto = (BackupPathDto)BackupPathsDisplayed.SelectedItem;*/
 
-            // todo: update class to remove path by node
+            // todo: update class to remove path by node. Get a list of all nodes with the checkbox checked
+
             //var node = IPathNode
 
             //if(node != null)
@@ -281,6 +282,8 @@ namespace FileMonitor
             //    backupPathService.Remove(ids: new List<int> { node.PathId });
             //    _viewModel.BackupPaths.RemovePath(node);
             //}
+
+            // todo: the next section is old code. It worked with the ListView but not the TreeView
 
             //List<int> ids = new List<int>();
             //List<BackupPathDto> selectedPaths = new List<BackupPathDto>();
