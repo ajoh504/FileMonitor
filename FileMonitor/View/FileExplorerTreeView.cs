@@ -2,6 +2,7 @@
 using System.IO;
 using Services.Dto;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace FileMonitor.View
 {
@@ -66,19 +67,18 @@ namespace FileMonitor.View
         /// </summary>
         public void RemovePath(IPathNode node)
         {
-            // todo: update class to remove paths by their nodes
-            //_paths.Remove(node);
-            //var pathNodes = dto.Path.Split(Path.DirectorySeparatorChar);
-            //RemoveNodes(pathNodes, dto);
+            // Get Path as DTO
+            var dto = _paths.Where(pathDto => pathDto.Id == node.PathId).FirstOrDefault();
+            _paths.Remove(dto);
+            RemoveNodes(node);
         }
 
         /// <summary>
         /// Remove multiple paths from the tree view.
         /// </summary>
-        public void RemovePaths(IEnumerable<IPathDto> dtos)
+        public void RemovePaths(IEnumerable<IPathNode> nodes)
         {
-            // todo: update class to remove paths by their nodes
-            //foreach (var dto in dtos) RemovePath(dto);
+            foreach (var node in nodes) RemovePath(node);
         }
 
         private static Queue<IPathNode> ToQueue(IPathDto dto)
