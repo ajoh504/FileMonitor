@@ -174,36 +174,20 @@ namespace FileMonitor.View
             return result;
         }
 
-        private void RemoveNodes(string[] pathNodes, IPathDto dto)
+        private void RemoveNodes(IPathNode node)
         {
-            //var children = _rootNodes;
-            //PathNode? match;
-            //PathNode? parent;
-
-            //    if (TryGetMatch(ref childItems, item, out _))
-            //    {
-            //        result = true;
-            //    }
-            //    else
-            //    {
-            //        result = false;
-            //        break;
-            //    }
-            //}
-            //return result;
-            //foreach (var pathNode in pathNodes)
-            //{
-            //    if (TryGetMatch(children, new PathNode(pathNode), out match))
-            //    {
-            //        children = match.Children;
-            //        // Check if the node is the last in the list
-            //        if(match.PathId == dto.Id)
-            //        {
-            //            match.
-            //        }
-            //    }
-            //    else break;
-            //}
+            // Walk through the tree in reverse and remove the given node(s)
+            // If node.Parent has no more logical children, then remove the parent
+            while(true)
+            {
+                var parent = node.Parent;
+                parent.Children.Remove(node);
+                if (parent.Children.Count > 0)
+                {
+                    node = parent;
+                }
+                else break;
+            }
         }
 
         private class PathNode : IPathNode
