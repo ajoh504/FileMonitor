@@ -85,7 +85,7 @@
                     Source="Images/file-gray-20x20px.png"/>
                 <TextBlock Text="{Binding Text}" />
                 <CheckBox
-                    Visibility="{Binding DisplayCheckBox, Converter={StaticResource boolToVisibilityConverter}}"
+                    Visibility="{Binding DisplayCheckBox, Mode=TwoWay, Converter={StaticResource boolToVisibilityConverter}}"
                     Focusable="False"
                     IsChecked="False"
                     VerticalAlignment="Center">
