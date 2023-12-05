@@ -81,6 +81,29 @@ namespace FileMonitor.View
             foreach (var node in nodes) RemovePath(node);
         }
 
+        /// <summary>
+        /// Get a path DTO from the given node.
+        /// </summary>
+        public IPathDto? GetPath(IPathNode node)
+        {
+            return _paths
+                .Where(path => path.Id == node.PathId)
+                .FirstOrDefault();
+        }
+
+        // todo: Create a recursive solution to get a node from the given predicate
+        //public IPathNode GetNodeDepthFirst(Func<IPathNode, bool> predicate, IEnumerable<IPathNode> rootNodes)
+        //{
+        //    foreach(var node in rootNodes) 
+        //    {
+        //        if(node.Children.Count == 0)
+        //        {
+
+        //        }
+        //    }
+        //    return GetNodeDepthFirst(predicate)
+        //}
+
         private static Queue<IPathNode> ToQueue(IPathDto dto)
         {
             var pathElements = dto.Path.Split(Path.DirectorySeparatorChar);
