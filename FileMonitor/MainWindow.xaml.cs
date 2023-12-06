@@ -271,30 +271,11 @@ namespace FileMonitor
             using BackupPathService backupPathService = new BackupPathService(
                 RepositoryHelper.CreateBackupPathRepositoryInstance());
 
-            /*BackupPathDto dto = (BackupPathDto)BackupPathsDisplayed.SelectedItem;*/
+            var nodes = _viewModel.BackupPaths.GetNodes(node => node.DisplayCheckBox == true);
+            _viewModel.BackupPaths.RemovePaths(nodes);
 
-            // todo: update class to remove path by node. Get a list of all nodes with the checkbox checked
-
-            //var node = IPathNode
-
-            //if(node != null)
-            //{
-            //    backupPathService.Remove(ids: new List<int> { node.PathId });
-            //    _viewModel.BackupPaths.RemovePath(node);
-            //}
-
-            // todo: the next section is old code. It worked with the ListView but not the TreeView
-
-            //List<int> ids = new List<int>();
-            //List<BackupPathDto> selectedPaths = new List<BackupPathDto>();
-            //foreach (object item in BackupPathsDisplayed.SelectedItems)
-            //{
-            //    BackupPathDto dto = (BackupPathDto)item;
-            //    selectedPaths.Add(dto);
-            //    ids.Add(dto.Id);
-            //}
-            //backupPathService.Remove(ids);
-            //_viewModel.BackupPaths.FileTreeItems.RemoveRange<BackupPathDto>(selectedPaths);
+            var ids = nodes.Select(node => node.PathId);
+            backupPathService.Remove(ids);
         }
 
         private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
