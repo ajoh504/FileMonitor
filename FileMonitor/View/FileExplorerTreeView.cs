@@ -3,6 +3,8 @@ using System.IO;
 using Services.Dto;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System;
+using System.Windows.Forms;
 
 namespace FileMonitor.View
 {
@@ -68,7 +70,7 @@ namespace FileMonitor.View
         public void RemovePath(IPathNode node)
         {
             // Get Path as DTO
-            var dto = _paths.Where(pathDto => pathDto.Id == node.PathId).FirstOrDefault();
+            var dto = GetPath(node);
             _paths.Remove(dto);
             RemoveNodes(node);
         }
@@ -91,18 +93,28 @@ namespace FileMonitor.View
                 .FirstOrDefault();
         }
 
-        // todo: Create a recursive solution to get a node from the given predicate
-        //public IPathNode GetNodeDepthFirst(Func<IPathNode, bool> predicate, IEnumerable<IPathNode> rootNodes)
-        //{
-        //    foreach(var node in rootNodes) 
-        //    {
-        //        if(node.Children.Count == 0)
-        //        {
+        public IEnumerable<IPathNode> GetNodes(Func<IPathNode, bool> predicate)
+        {
+            var values = new List<IPathNode>();
+            return GetNodes(predicate, _rootNodes, ref values);
+        }
 
-        //        }
-        //    }
-        //    return GetNodeDepthFirst(predicate)
-        //}
+        // Create a recursive solution to get a node from the given predicate
+        private IEnumerable<IPathNode> GetNodes(
+            Func<IPathNode, bool> predicate,
+            IEnumerable<IPathNode> rootNodes,
+            ref List<IPathNode> values)
+        {
+            foreach (var node in rootNodes)
+            {
+                var children = node.Children;
+                if(children.Count == 0) 
+                    return values;
+                values.AddRange(children.Where(predicate));
+                return GetNodes(predicate, children, ref values);
+            }
+            return values;
+        }
 
         private static Queue<IPathNode> ToQueue(IPathDto dto)
         {
