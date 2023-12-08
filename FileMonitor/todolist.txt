@@ -1,4 +1,5 @@
 Todo:
+- Test removing nodes where there are multiple other monitored nodes. The other nodes should not be removed
 - Refactor ListViews to be used as TreeViews
 - Once ListView to TreeView refactoring is complete, look for unused code
 - Certain nodes should be opened by default (not collapsed) such as the root nodes
@@ -11,6 +12,7 @@ Todo:
 - Migrate to Avalonia
 
 Fixes:
+- Exception thrown when deleting a folder whose parent folder is also monitored. Was unable to reproduce the exact problem
 - Delete buttons should be greyed out until at least one checkbox is selected
 - TreeView does not add a parent folder when it is part of a monitored child folder
 - Window Mousedown only works in the Main tab, not the settings tab
