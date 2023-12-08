@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using Services.Dto;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System;
-using System.Windows.Forms;
+using Services.Dto;
 
 namespace FileMonitor.View
 {
     /// <summary>
-    /// A class for creating a Windows File Explorer tree view.
+    /// A class for creating a Windows File Explorer tree view
     /// </summary>
     public class FileExplorerTreeView
     {
@@ -211,22 +210,21 @@ namespace FileMonitor.View
 
         private void RemoveNodes(IPathNode node)
         {
-            // todo: test this method
-
-            // If node has any logical children then do nothing. Cannot remove nodes unless starting at the bottom!
-            if (node.Children != null) return;
-
             // Walk through the tree in reverse and remove the given node(s)
-            // If node.Parent has no more logical children, then remove the parent
-            while (node.Parent != null)
+            // If node.Parent has no logical children, then remove the parent
+            // When parent == null, you've reached the root of the list
+            var parent = node.Parent;
+            while (parent.Children.Count == 1)
             {
-                var parent = node.Parent;
                 parent.Children.Remove(node);
-                if (parent.Children.Count == 0)
+                node = parent;
+                parent = node.Parent;
+                if(parent == null)
                 {
-                    node = parent;
+                    if (node.Children.Count == 0) 
+                        _rootNodes.Remove(node);
+                    break;
                 }
-                else break;
             }
         }
 
