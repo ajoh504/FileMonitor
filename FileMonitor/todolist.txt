@@ -13,6 +13,14 @@ Todo:
 
 Fixes:
 - Exception thrown when deleting a folder whose parent folder is also monitored. Was unable to reproduce the exact problem
+
+- Exception thrown when two monitored folders share a parent directory. Steps to reproduce: add two monitored folders that share the same directory. Remove one. Then remove the second one, 
+and an exception is thrown: Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException: 'The database operation was expected to affect 1 row(s), but actually affected 0 row(s); data may have 
+been modified or deleted since entities were loaded. See http://go.microsoft.com/fwlink/?LinkId=527962 for information on understanding and handling optimistic concurrency exceptions.'
+- Further testing shows that both folders are removed when one is removed.
+- There is an error in how the ToQueue method works. need to step throough this method. Note: directories need to be stored with the directory separator. Otherwise, the Path.GetFileName method
+will return a directory as a file name.
+
 - Delete buttons should be greyed out until at least one checkbox is selected
 - TreeView does not add a parent folder when it is part of a monitored child folder
 - Window Mousedown only works in the Main tab, not the settings tab
