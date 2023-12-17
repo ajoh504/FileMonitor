@@ -118,6 +118,7 @@ namespace FileMonitor.View
         private static Queue<IPathNode> ToQueue(IPathDto dto)
         {
             var pathElements = dto.Path.Split(Path.DirectorySeparatorChar);
+            dto.Path += '\\';
             var root = Path.GetPathRoot(dto.Path);
             var fileName = Path.GetFileName(dto.Path);
             var queue = new Queue<IPathNode>();
