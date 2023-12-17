@@ -238,6 +238,7 @@ namespace FileMonitor.View
             public string? Text { get; set; }
             public NodeCategory Category { get; set; }
             public bool DisplayCheckBox { get; set; }
+            public bool IsChecked { get; set; }
             public ObservableCollection<IPathNode>? Children { get; set; }
             public IPathNode Parent { get; set; }
             public int PathId { get; set; }
