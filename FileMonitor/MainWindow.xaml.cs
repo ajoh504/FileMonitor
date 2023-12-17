@@ -271,7 +271,7 @@ namespace FileMonitor
             using BackupPathService backupPathService = new BackupPathService(
                 RepositoryHelper.CreateBackupPathRepositoryInstance());
 
-            var nodes = _viewModel.BackupPaths.GetNodes(node => node.DisplayCheckBox == true);
+            var nodes = _viewModel.BackupPaths.GetNodes(node => node.IsChecked == true);
             _viewModel.BackupPaths.RemovePaths(nodes);
 
             var ids = nodes.Select(node => node.PathId);
