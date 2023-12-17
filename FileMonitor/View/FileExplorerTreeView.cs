@@ -52,7 +52,7 @@ namespace FileMonitor.View
         {
             _paths.Add(dto);
             var pathNodes = ToQueue(dto);
-            AddNodes(ref pathNodes, ref _rootNodes, dto.Id);
+            AddNodes(ref pathNodes, ref _rootNodes, dto.Id, default);
         }
 
         /// <summary>
@@ -124,7 +124,6 @@ namespace FileMonitor.View
             var queue = new Queue<IPathNode>();
 
             var node = new PathNode(root, NodeCategory.Root);
-            var parent = node;
             queue.Enqueue(node);
 
             foreach (var elem in pathElements)
@@ -138,17 +137,14 @@ namespace FileMonitor.View
                 {
                     node = new PathNode(
                         formatted,
-                        NodeCategory.Directory,
-                        parent);
-                    parent = node;
+                        NodeCategory.Directory);
                     queue.Enqueue(node);
                     continue;
                 }
 
                 node = new PathNode(
                     formatted,
-                    NodeCategory.File,
-                    parent);
+                    NodeCategory.File);
                 queue.Enqueue(node);
             }
             return queue;
@@ -157,7 +153,11 @@ namespace FileMonitor.View
 
 
         // Add each file path node recursively to the TreeView.
-        private void AddNodes(ref Queue<IPathNode> pathNodes, ref ObservableCollection<IPathNode> childItems, int pathId)
+        private void AddNodes(
+            ref Queue<IPathNode> pathNodes, 
+            ref ObservableCollection<IPathNode> childItems, 
+            int pathId, 
+            IPathNode? parent)
         {
             bool returnToCaller = false;
             if (pathNodes.Count == 1) returnToCaller = true;
@@ -165,12 +165,14 @@ namespace FileMonitor.View
             IPathNode? first;
             IPathNode? match;
             first = pathNodes.Dequeue();
+            first.Parent = parent;
 
             if (TryGetMatch(ref childItems, first, out match))
             {
                 if (returnToCaller) return;
                 var children = match.Children;
-                AddNodes(ref pathNodes, ref children, pathId);
+                parent = match;
+                AddNodes(ref pathNodes, ref children, pathId, parent);
             }
             else
             {
@@ -186,7 +188,8 @@ namespace FileMonitor.View
                 }
                 childItems.Add(first);
                 var children = first.Children;
-                AddNodes(ref pathNodes, ref children, pathId);
+                parent = first;
+                AddNodes(ref pathNodes, ref children, pathId, parent);
             }
         }
 
