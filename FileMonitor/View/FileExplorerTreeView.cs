@@ -215,13 +215,21 @@ namespace FileMonitor.View
             // _rootNodes. Contine to Walk through the tree in reverse and remove any additional nodes as long as they
             // contain no logical children. When parent == null, you've reached the root of the list
             var parent = node.Parent;
-            if(parent != null)
+            if (parent != null)
+            {
                 parent.Children.Remove(node);
-            else _rootNodes.Remove(node);
-            
+                node = parent;
+                parent = node.Parent;
+            }
+            else
+            {
+                _rootNodes.Remove(node);
+                return;
+            }
+
             while (parent != null)
             {
-                if(parent.Children.Count == 1)
+                if(node.Children.Count == 0)
                     parent.Children.Remove(node);
                 node = parent;
                 parent = node.Parent;
