@@ -211,20 +211,24 @@ namespace FileMonitor.View
 
         private void RemoveNodes(IPathNode node)
         {
-            // Walk through the tree in reverse and remove the given node(s)
-            // If node.Parent has no logical children, then remove the parent
-            // When parent == null, you've reached the root of the list
+            // Remove the node. If parent is null, then the node is at the root of list, therefore remove the node from
+            // _rootNodes. Contine to Walk through the tree in reverse and remove any additional nodes as long as they
+            // contain no logical children. When parent == null, you've reached the root of the list
             var parent = node.Parent;
-            while (parent.Children.Count == 1)
-            {
+            if(parent != null)
                 parent.Children.Remove(node);
+            else _rootNodes.Remove(node);
+            
+            while (parent != null)
+            {
+                if(parent.Children.Count == 1)
+                    parent.Children.Remove(node);
                 node = parent;
                 parent = node.Parent;
-                if(parent == null)
+                if (parent == null)
                 {
                     if (node.Children.Count == 0) 
                         _rootNodes.Remove(node);
-                    break;
                 }
             }
         }
