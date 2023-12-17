@@ -12,7 +12,6 @@ Todo:
 - Migrate to Avalonia
 
 Fixes:
-- Issue with data binding. Both when adding and removing nodes, the view is not always updated. Results are not consistent
 - Exception thrown when deleting a folder whose parent folder is also monitored. Was unable to reproduce the exact problem
 - There is an error in how the ToQueue method works. need to step throough this method. Note: directories need to be stored with the directory separator. Otherwise, the Path.GetFileName method
 will return a directory as a file name.
