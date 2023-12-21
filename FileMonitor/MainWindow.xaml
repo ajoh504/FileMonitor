@@ -85,12 +85,13 @@
                     Source="Images/file-gray-20x20px.png"/>
                 <TextBlock Text="{Binding Text}" />
                 <CheckBox
+                    Name="BackupPathCheckBox"
                     Visibility="{Binding DisplayCheckBox, Converter={StaticResource boolToVisibilityConverter}}"
                     Focusable="False"
-                    IsChecked="{Binding IsChecked}"
-                    VerticalAlignment="Center">
+                    VerticalAlignment="Center"
+                    IsChecked="{Binding Mode=TwoWay, Path=IsChecked}" 
+                    Click="BackupPathCheckBox_Click">
                 </CheckBox>
-
             </StackPanel>
         </HierarchicalDataTemplate>
 
