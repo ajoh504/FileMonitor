@@ -271,6 +271,8 @@ namespace FileMonitor
             using BackupPathService backupPathService = new BackupPathService(
                 RepositoryHelper.CreateBackupPathRepositoryInstance());
 
+            // todo: refactor to only get paths from the FullPaths property inside
+            // the tree view. Additionally, redo the tree view API to not expose the nodes
             var nodes = _viewModel.BackupPaths.GetNodes(node => node.IsChecked == true);
             _viewModel.BackupPaths.RemovePaths(nodes);
 
