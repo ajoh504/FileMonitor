@@ -117,10 +117,17 @@ namespace FileMonitor.View
 
         private static Queue<IPathNode> ToQueue(IPathDto dto)
         {
+            string fileName;
+            var attr = File.GetAttributes(dto.Path);
+
+            if(attr.HasFlag(FileAttributes.Directory))
+            {
+                fileName = "";
+            }
+            else fileName = Path.GetFileName(dto.Path);
+
             var pathElements = dto.Path.Split(Path.DirectorySeparatorChar);
-            dto.Path += '\\';
             var root = Path.GetPathRoot(dto.Path);
-            var fileName = Path.GetFileName(dto.Path);
             var queue = new Queue<IPathNode>();
 
             var node = new PathNode(root, NodeCategory.Root);
