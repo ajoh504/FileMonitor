@@ -36,3 +36,20 @@ needs to be an option to migrate paths from an old drive to a new drive.
 4. Display paths as list or treeview
 5. Add Folder adds all files in all subdirectories (option to disable)
 6. Allow ignore files
+
+-------------------------------------------------------
+
+Class diagram:
+FileExplorerTreeView
+
+public ReadOnlyObservableCollection<IPathNode> RootNodes
+public IEnumerable<IPathDto> FullPaths
+public enum NodeCategory
+
+public FileExplorerTreeView(IEnumerable<IPathDto> paths)
+public void AddPath(IPathDto dto)
+public void AddPaths(IEnumerable<IPathDto> dtos)
+public void RemovePath(IPathNode node)
+public void RemovePaths(IEnumerable<IPathNode> nodes)
+public IPathDto? GetPath(IPathNode node)
+public IEnumerable<IPathNode> GetNodes(Func<IPathNode, bool> predicate)
