@@ -3,7 +3,7 @@
 namespace Services.Helpers
 {
     /// <summary>
-    /// A static helper class for the <see cref="IgnorableFolderDto"/> and <see cref="IgnorableFolderService"/> classes.
+    /// A static helper class for the <see cref="IIgnorableFolderDto"/> and <see cref="IgnorableFolderService"/> classes.
     /// </summary>
     public static class IgnorableFolderHelper
     {

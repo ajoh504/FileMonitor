@@ -23,15 +23,16 @@ namespace FileMonitor
         /// <param name="_viewModel"> An instance of the view model to update. </param>
         internal void AddFiles(List<string> paths, bool fromSourceFolder, MainWindowViewModel _viewModel)
         {
-            using SourceFileService sourceFileService = new SourceFileService(
+            using var sourceFileService = new SourceFileService(
                 RepositoryHelper.CreateSourceFileRepositoryInstance());
-            foreach (string path in paths)
+
+            foreach (var path in paths)
             {
-                FileAttributes attributes = File.GetAttributes(path);
+                var attributes = File.GetAttributes(path);
                 // If the path is an empty string, if it exists in the database, or if it is a directory, then continue
                 if (path == "" || sourceFileService.PathExists(path) || attributes.HasFlag(FileAttributes.Directory))
                     continue;
-                SourceFileDto dto = sourceFileService.Add(path, fromSourceFolder);
+                var dto = sourceFileService.Add(path, fromSourceFolder);
                 _viewModel.SourceFiles.Add(dto);
                 _viewModel.UpdatedFiles.Add(dto);
             }
@@ -111,11 +112,10 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
         /// </summary>
         internal bool ConfirmRemoveFiles()
         {
-            string text = "Do you wish to remove the selected file(s) from the program? This cannot be undone.";
-            string caption = "Remove SourceFiles";
-
-            MessageBoxButton button = MessageBoxButton.YesNo;
-            MessageBoxImage image = MessageBoxImage.Warning;
+            var text = "Do you wish to remove the selected file(s) from the program? This cannot be undone.";
+            var caption = "Remove SourceFiles";
+            var button = MessageBoxButton.YesNo;
+            var image = MessageBoxImage.Warning;
             return MessageBox.Show(text, caption, button, image) == MessageBoxResult.Yes;
         }
 
@@ -132,10 +132,10 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
         /// </remarks>
         internal void ResetUpdatedFiles(MainWindowViewModel _viewModel)
         {
-            List<int> ids = new List<int>();
-            foreach (SourceFileDto dto in _viewModel.UpdatedFiles) ids.Add(dto.Id);
+            var ids = new List<int>();
+            foreach (var dto in _viewModel.UpdatedFiles) ids.Add(dto.Id);
             _viewModel.UpdatedFiles.Clear();
-            using SourceFileService sourceFileService = new SourceFileService(
+            using var sourceFileService = new SourceFileService(
                 RepositoryHelper.CreateSourceFileRepositoryInstance());
             sourceFileService.ResetIsModifiedFlag(ids);
             sourceFileService.UpdateHashesToCurrent(ids);
@@ -147,11 +147,11 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
         /// <param name="_viewModel"> An instance of the view model to update. </param>
         internal void RefreshUpdatedFilesView(MainWindowViewModel _viewModel)
         {
-            using SourceFileService sourceFileService = new SourceFileService(
+            using var sourceFileService = new SourceFileService(
                 RepositoryHelper.CreateSourceFileRepositoryInstance());
 
-            List<SourceFileDto> sourceFileDtos = sourceFileService.GetModifiedFiles();
-            foreach (SourceFileDto sourceFileDto in sourceFileDtos)
+            var sourceFileDtos = sourceFileService.GetModifiedFiles();
+            foreach (var sourceFileDto in sourceFileDtos)
             {
                 if (!_viewModel.UpdatedFiles.Contains(sourceFileDto))
                     _viewModel.UpdatedFiles.Add(sourceFileDto);
@@ -171,9 +171,9 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
             );
 
             if (sourceFolderService.FilesAddedToFolders(
-                out List<SourceFileDto>? newFilesFromFolder))
+                out List<IPathDto>? newFilesFromFolder))
             {
-                foreach (SourceFileDto file in newFilesFromFolder)
+                foreach (var file in newFilesFromFolder)
                 {
                     if (!_viewModel.SourceFiles.Contains(file))
                         _viewModel.SourceFiles.Add(file);
@@ -189,10 +189,10 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
         /// <param name="_viewModel"> An instance of the view model to update. </param>
         internal void RefreshMovedOrRenamedFiles(MainWindowViewModel _viewModel)
         {
-            using SourceFileService sourceFileService = new SourceFileService(
+            using var sourceFileService = new SourceFileService(
                 RepositoryHelper.CreateSourceFileRepositoryInstance());
-            List<SourceFileDto> files = sourceFileService.GetMovedOrRenamedFiles();
-            foreach (SourceFileDto file in files)
+            var files = sourceFileService.GetMovedOrRenamedFiles();
+            foreach (var file in files)
             {
                 if (!_viewModel.MovedOrRenamedFiles.Contains(file))
                     _viewModel.MovedOrRenamedFiles.Add(file);
@@ -214,12 +214,12 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
                 RepositoryHelper.CreateFolderFileMappingInstance(),
                 RepositoryHelper.CreateSourceFileRepositoryInstance()
             );
-            List<SourceFolderDto> folders = new List<SourceFolderDto>();
+            var folders = new List<IPathDto>();
             int numberOfFiles = 0;
             int numberOfFolders = mw.FoldersDisplayed.SelectedItems.Count;
             foreach (object item in mw.FoldersDisplayed.SelectedItems)
             {
-                SourceFolderDto dto = (SourceFolderDto)item;
+                var dto = (IPathDto)item;
                 folders.Add(dto);
                 numberOfFiles += sourceFolderService.GetStoredFilesFromFolder(dto.Id).Count();
             }
