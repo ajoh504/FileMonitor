@@ -89,34 +89,46 @@ namespace FileMonitor.View
         /// <summary>
         /// Get a path DTO from the given node.
         /// </summary>
-        public IPathDto? GetPath(IPathNode node)
-        {
-            return _paths
-                .Where(path => path.Id == node.PathId)
-                .FirstOrDefault();
-        }
+        //public IPathDto? GetPath(IPathNode node)
+        //{
+        //    return _paths
+        //        .Where(path => path.Id == node.PathId)
+        //        .FirstOrDefault();
+        //}
 
-        public IEnumerable<IPathNode> GetNodes(Func<IPathNode, bool> predicate)
-        {
-            var values = new List<IPathNode>();
-            return GetNodes(predicate, _rootNodes, ref values);
-        }
+        //private IEnumerable<IPathNode> GetNodes(Func<IPathNode, bool> predicate)
+        //{
+        //    var values = new List<IPathNode>();
+        //    return GetNodes(predicate, _rootNodes, ref values);
+        //}
 
         // Create a recursive solution to get a node from the given predicate
-        private IEnumerable<IPathNode> GetNodes(
-            Func<IPathNode, bool> predicate,
-            IEnumerable<IPathNode> rootNodes,
-            ref List<IPathNode> values)
+        //private IEnumerable<IPathNode> GetNodes(
+        //    Func<IPathNode, bool> predicate,
+        //    IEnumerable<IPathNode> rootNodes,
+        //    ref List<IPathNode> values)
+        //{
+        //    foreach (var node in rootNodes)
+        //    {
+        //        var children = node.Children;
+        //        if(children.Count == 0) 
+        //            return values;
+        //        values.AddRange(children.Where(predicate));
+        //        return GetNodes(predicate, children, ref values);
+        //    }
+        //    return values;
+        //}
+
+        private IPathNode? GetNode(IPathDto dto, ObservableCollection<IPathNode> children)
         {
-            foreach (var node in rootNodes)
+            foreach(var node in _rootNodes) 
             {
-                var children = node.Children;
-                if(children.Count == 0) 
-                    return values;
-                values.AddRange(children.Where(predicate));
-                return GetNodes(predicate, children, ref values);
+                if (dto.Path.Equals(node.Text))
+                    return node;
+                else 
+                    GetNode(dto, node.Children);
             }
-            return values;
+            return null;
         }
 
         private static Queue<IPathNode> ToQueue(IPathDto dto)
