@@ -66,12 +66,16 @@ namespace FileMonitor.View
         /// <summary>
         /// Remove a single path from the tree view.
         /// </summary>
-        public void RemovePath(IPathNode node)
+        public void RemovePath(IPathDto dto)
         {
             // Get Path as DTO
-            var dto = GetPath(node);
+            //var dto = GetPath(node);
+            var node = GetNode(dto, _rootNodes);
+            if(node != null)
+            {
             _paths.Remove(dto);
             RemoveNodes(node);
+        }
         }
 
         /// <summary>
