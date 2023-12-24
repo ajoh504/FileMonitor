@@ -1,10 +1,9 @@
 ﻿namespace Services.Dto
 {
     /// <summary>
-    /// A data transfer object related to the IgnorableFolder entity. Provides a folder name to be ignored by the
-    /// program.
+    /// A public interface for interacting with an ignorable folder DTO.
     /// </summary>
-    public class IgnorableFolderDto : IIgnorableFolderDto
+    public interface IIgnorableFolderDto
     {
         /// <summary>
         /// The database primary key. 

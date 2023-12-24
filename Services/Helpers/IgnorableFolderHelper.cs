@@ -10,9 +10,9 @@ namespace Services.Helpers
         /// <summary>
         /// Returns false if the path is contained within an ignorable folder, true otherwise.
         /// </summary>
-        public static bool NotIgnorable(string path, IEnumerable<IgnorableFolderDto> ignorableFolders)
+        public static bool NotIgnorable(string path, IEnumerable<IIgnorableFolderDto> ignorableFolders)
         {
-            foreach (IgnorableFolderDto folder in ignorableFolders)
+            foreach (var folder in ignorableFolders)
             {
                 if (path.Split(Path.DirectorySeparatorChar).Contains(folder.Name)) return false;
             }

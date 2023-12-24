@@ -1,7 +1,7 @@
 ﻿namespace Services.Dto
 {
     /// <summary>
-    /// A public interface to expose any data transfer object containing a folder or file path.
+    /// A public interface for interacting with any DTO that contains an ID and a file path.
     /// </summary>
     public interface IPathDto
     {

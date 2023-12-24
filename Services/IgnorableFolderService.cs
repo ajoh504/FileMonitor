@@ -16,7 +16,7 @@ namespace Services
         /// The <see cref="IgnorableFolderService"/> class constructor.
         /// </summary>
         /// <param name="ignorableFolderRepository">
-        /// An instance of <see cref="IIgnorableFolderRepository"/> which provides database access.
+        /// An instance of <see cref="IIgnorableFolderRepository"/>  database access.
         /// </param>
         public IgnorableFolderService(IIgnorableFolderRepository ignorableFolderRepository)
         {
@@ -26,17 +26,17 @@ namespace Services
         /// <summary>
         /// Returns all ignorable folders from the database.
         /// </summary>
-        public List<IgnorableFolderDto> Get()
+        public List<IIgnorableFolderDto> Get()
         {
             return _ignorableFolderRepository.GetRange(
                 f => true,
-                f => new IgnorableFolderDto
+                f => (IIgnorableFolderDto) new IgnorableFolderDto
                 {
                     Id = f.Id,
                     Name = f.Name
                 },
                 f => f.Id
-                ); ;
+                );
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Services
         /// </summary>
         /// <param name="name"> The name of the ignorable folder to add. </param>
         /// <returns> An ignorable folder DTO object for updating the UI. </returns>
-        public IgnorableFolderDto Add(string name)
+        public IIgnorableFolderDto Add(string name)
         {
             IgnorableFolder entity = new IgnorableFolder
             {
@@ -64,7 +64,7 @@ namespace Services
         /// <summary>
         /// Remove a range of ignorable folders from the database.
         /// </summary>
-        /// <param name="id"> The Ids for each ignorable folder to remove. </param>
+        /// <param name="ids"> The Ids for each ignorable folder to remove. </param>
         public void Remove(IEnumerable<int> ids)
         {
             foreach (int id in ids)

@@ -16,7 +16,7 @@ namespace Services
         /// The <see cref="BackupPathService"/> class constructor.
         /// </summary>
         /// <param name="repository">
-        /// An instance of <see cref="IBackupPathRepository"/> which provides database access.
+        /// An instance of <see cref="IBackupPathRepository"/> for database access.
         /// </param>
         public BackupPathService(IBackupPathRepository repository)
         {
@@ -26,12 +26,13 @@ namespace Services
         /// <summary>
         /// Returns all backup directory paths from the database.
         /// </summary>
-        public List<BackupPathDto> GetDirectories()
+        public List<IBackupPathDto> GetDirectories()
         {
-            List<BackupPathDto> result = _repository.GetRange(
+            var result = _repository.GetRange(
                 f => true,
                 // Create a new Dto for each Entity, and assign the Dto property values from the Entity properties
-                f => new BackupPathDto
+                // Cast the Dto to an interface for public access
+                f => (IBackupPathDto) new BackupPathDto
                 {
                     Id = f.Id,
                     Path = f.Path,
@@ -46,7 +47,7 @@ namespace Services
         /// </summary>
         /// <param name="path"> The backup path to add to the database. </param>
         /// <returns> A backup path DTO object for updating the UI. </returns>
-        public BackupPathDto Add(string path)
+        public IBackupPathDto Add(string path)
         {
             BackupPath entity = new BackupPath
             {
@@ -98,7 +99,7 @@ namespace Services
         /// An optional boolean value for the check box. If omitted, the default value is null and the property is not 
         /// updated.
         /// </param>
-        public void Update(IPathDto dto, string? path = null, bool? isChecked = null)
+        public void Update(IBackupPathDto dto, string? path = null, bool? isChecked = null)
         {
             var backupPathDto = (BackupPathDto)dto;
             var entity = _repository.FirstOrDefault(f => f.Id == backupPathDto.Id, asNoTracking: false);
@@ -111,11 +112,11 @@ namespace Services
         /// <summary>
         /// Get a list of all backup paths that have been moved, deleted, or renamed since being added to the database.
         /// </summary>
-        public List<BackupPathDto> GetMovedOrRenamedPaths()
+        public List<IBackupPathDto> GetMovedOrRenamedPaths()
         {
-            List<BackupPathDto> paths = GetDirectories();
-            List<BackupPathDto> result = new List<BackupPathDto>();
-            foreach (BackupPathDto path in paths)
+            var paths = GetDirectories();
+            var result = new List<IBackupPathDto>();
+            foreach (var path in paths)
             {
                 if (!Directory.Exists(path.Path)) result.Add(path);
             }
