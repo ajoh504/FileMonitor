@@ -91,16 +91,20 @@ namespace Services
         /// Updates the Entity properties in the database using the provided DTO object.
         /// </summary>
         /// <param name="dto"> The DTO used to update the Entity. </param>
-        /// <param name="updatePath"> This parameter must be set to true in order to update the Path property. </param>
-        /// <param name="updateIsSelected">
-        /// This parameter must be set to true in order to update the IsSelected property.
+        /// <param name="path"> 
+        /// An optional new file path. If omitted, the default value is null and the property is not updated. 
         /// </param>
-        public void Update(BackupPathDto dto, bool updatePath, bool updateIsSelected)
+        /// <param name="isChecked"> 
+        /// An optional boolean value for the check box. If omitted, the default value is null and the property is not 
+        /// updated.
+        /// </param>
+        public void Update(IPathDto dto, string? path = null, bool? isChecked = null)
         {
-            BackupPath entity = _repository.FirstOrDefault(f => f.Id == dto.Id, asNoTracking: false);
+            var backupPathDto = (BackupPathDto)dto;
+            var entity = _repository.FirstOrDefault(f => f.Id == backupPathDto.Id, asNoTracking: false);
             if(entity == null) return;
-            if(updatePath) entity.Path = dto.Path;
-            if(updateIsSelected)entity.IsSelected = dto.IsSelected;
+            if(path != null) entity.Path = backupPathDto.Path;
+            if(isChecked != null) entity.IsSelected = (bool)isChecked;
             _repository.SaveChanges();
         }
 

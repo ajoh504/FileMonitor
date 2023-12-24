@@ -188,11 +188,14 @@ namespace FileMonitor
         // selected even after the program exits. 
         private void BackupPathCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Controls.CheckBox checkBox = (System.Windows.Controls.CheckBox)sender;
-            BackupPathDto backupPathDto = (BackupPathDto)checkBox.DataContext;
-            using BackupPathService backupPathService = new BackupPathService(
+            var checkBox = (CheckBox)sender;
+            var selectedNode = (IPathNode)checkBox.DataContext;
+            var dto = _viewModel.BackupPaths.FullPaths.Where(path => path.Id == selectedNode.PathId).FirstOrDefault();
+            var isChecked = checkBox.IsChecked;
+
+            using var backupPathService = new BackupPathService(
                 RepositoryHelper.CreateBackupPathRepositoryInstance());
-            backupPathService.Update(backupPathDto, updatePath: false, updateIsSelected: true);
+            backupPathService.Update(dto, isChecked: isChecked);
             _viewModel.BackupSelected = _viewModel.IsAnyBackupSelected();
         }
 
