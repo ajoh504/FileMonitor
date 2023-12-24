@@ -81,9 +81,9 @@ namespace FileMonitor.View
         /// <summary>
         /// Remove multiple paths from the tree view.
         /// </summary>
-        public void RemovePaths(IEnumerable<IPathNode> nodes)
+        public void RemovePaths(IEnumerable<IPathDto> dtos)
         {
-            foreach (var node in nodes) RemovePath(node);
+            foreach (var dto in dtos) RemovePath(dto);
         }
 
         /// <summary>
