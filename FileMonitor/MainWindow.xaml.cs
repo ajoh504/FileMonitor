@@ -276,11 +276,12 @@ namespace FileMonitor
 
             // todo: refactor to only get paths from the FullPaths property inside
             // the tree view. Additionally, redo the tree view API to not expose the nodes
-            var nodes = _viewModel.BackupPaths.GetNodes(node => node.IsChecked == true);
-            _viewModel.BackupPaths.RemovePaths(nodes);
 
-            var ids = nodes.Select(node => node.PathId);
-            backupPathService.Remove(ids);
+            //var nodes = _viewModel.BackupPaths.GetNodes(node => node.IsChecked == true);
+            //_viewModel.BackupPaths.RemovePaths(nodes);
+
+            //var ids = nodes.Select(node => node.PathId);
+            //backupPathService.Remove(ids);
         }
 
         private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
