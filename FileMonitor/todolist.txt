@@ -20,7 +20,7 @@ will return a directory as a file name.
 - Delete buttons should be greyed out until at least one checkbox is selected
 - TreeView does not add a parent folder when it is part of a monitored child folder
 - Window Mousedown only works in the Main tab, not the settings tab
-- The ListView item width breaks when the width is greater than the ListView itself
+- The ListView item width breaks when the width is greater than the ListView itself. Additional info, the ListView width binding is not set correctly on most of the XAML properties.
 - Check the SourceFolder repository for: 1. The Add method does not check to ensure each file path is a logical child of the given parent (directory) and
 2. Ensure when removing a monitored folder that the folder/file mapping is dealt with as well
 
