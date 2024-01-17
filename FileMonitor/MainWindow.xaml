@@ -26,6 +26,7 @@
             <Setter Property="Padding" Value="9" />
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Background" Value="CadetBlue" />
         </Style>
         
         <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
@@ -121,8 +122,7 @@
                         
                         <Grid>
                             
-                            <Border Style="{StaticResource HeaderStyle}"
-                                    Background="Aquamarine" >
+                            <Border Style="{StaticResource HeaderStyle}" >
 
                                 <TextBlock Text="Monitored Files:"
                                            Style="{StaticResource HeaderTextStyle}"/>
@@ -188,8 +188,7 @@
                         
                         <Grid>
                             
-                            <Border Style="{StaticResource HeaderStyle}"
-                                    Background="Aquamarine" >
+                            <Border Style="{StaticResource HeaderStyle}" >
 
                                 <TextBlock Text="Monitored Folders:"
                                            Style="{StaticResource HeaderTextStyle}"/>
@@ -240,8 +239,7 @@
 
                         <Grid>
                             
-                            <Border Style="{StaticResource HeaderStyle}" 
-                                    Background="Aquamarine" >
+                            <Border Style="{StaticResource HeaderStyle}" >
 
                                 <TextBlock Text="Updated Files:"
                                            Style="{StaticResource HeaderTextStyle}"/>
@@ -279,8 +277,7 @@
                         
                         <Grid>
                             
-                            <Border Style="{StaticResource HeaderStyle}"
-                                    Background="Orange" >
+                            <Border Style="{StaticResource HeaderStyle}" >
 
                                 <TextBlock Text="Backup Paths:"
                                            Style="{StaticResource HeaderTextStyle}"/>
@@ -349,20 +346,19 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        
+
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="*" />
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        
+
                         <Border Style="{StaticResource MainBorderStyle}"
                                 Grid.Column="0" 
                                 Grid.RowSpan="2">
 
                             <Grid>
                                 
-                                <Border Style="{StaticResource HeaderStyle}"
-                                        Background="MediumPurple" >
+                                <Border Style="{StaticResource HeaderStyle}">
 
                                     <TextBlock Text="User Settings:"
                                                Style="{StaticResource HeaderTextStyle}"/>
@@ -404,8 +400,7 @@
                                 Grid.RowSpan="2">
                             
                             <Grid>
-                                <Border Style="{StaticResource HeaderStyle}"
-                                        Background="MediumPurple" >
+                                <Border Style="{StaticResource HeaderStyle}" >
 
                                     <TextBlock Text="Ignorable Folders:"
                                                Style="{StaticResource HeaderTextStyle}"/>
@@ -455,8 +450,7 @@
                             
                             <Grid>
                                 
-                                <Border Style="{StaticResource HeaderStyle}"
-                                        Background="MediumPurple" >
+                                <Border Style="{StaticResource HeaderStyle}" >
 
                                     <TextBlock Text="Moved, Deleted, or Renamed Files:"
                                                Style="{StaticResource HeaderTextStyle}"/>
@@ -507,8 +501,7 @@
                             
                             <Grid>
                                 
-                                <Border Style="{StaticResource HeaderStyle}"
-                                        Background="MediumPurple" >
+                                <Border Style="{StaticResource HeaderStyle}" >
 
                                     <TextBlock Text="Moved, Deleted, or Renamed Backup Paths:"
                                                Style="{StaticResource HeaderTextStyle}"/>
