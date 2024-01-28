@@ -87,7 +87,7 @@
                         <Grid>
                             
                             <Border Style="{StaticResource HeaderStyle}"
-                                    Background="Aquamarine" >
+                                    Background="CadetBlue" >
 
                                 <TextBlock Text="Monitored Files:"
                                            Style="{StaticResource HeaderTextStyle}"/>
@@ -154,7 +154,7 @@
                         <Grid>
                             
                             <Border Style="{StaticResource HeaderStyle}"
-                                    Background="Aquamarine" >
+                                    Background="CadetBlue" >
 
                                 <TextBlock Text="Monitored Folders:"
                                            Style="{StaticResource HeaderTextStyle}"/>
@@ -206,7 +206,7 @@
                         <Grid>
                             
                             <Border Style="{StaticResource HeaderStyle}" 
-                                    Background="Aquamarine" >
+                                    Background="CadetBlue" >
 
                                 <TextBlock Text="Updated Files:"
                                            Style="{StaticResource HeaderTextStyle}"/>
@@ -245,7 +245,7 @@
                         <Grid>
                             
                             <Border Style="{StaticResource HeaderStyle}"
-                                    Background="Orange" >
+                                    Background="CadetBlue" >
 
                                 <TextBlock Text="Backup Paths:"
                                            Style="{StaticResource HeaderTextStyle}"/>
@@ -325,7 +325,7 @@
                             <Grid>
                                 
                                 <Border Style="{StaticResource HeaderStyle}"
-                                        Background="MediumPurple" >
+                                        Background="CadetBlue" >
 
                                     <TextBlock Text="User Settings:"
                                                Style="{StaticResource HeaderTextStyle}"/>
@@ -368,7 +368,7 @@
                             
                             <Grid>
                                 <Border Style="{StaticResource HeaderStyle}"
-                                        Background="MediumPurple" >
+                                        Background="CadetBlue" >
 
                                     <TextBlock Text="Ignorable Folders:"
                                                Style="{StaticResource HeaderTextStyle}"/>
@@ -419,7 +419,7 @@
                             <Grid>
                                 
                                 <Border Style="{StaticResource HeaderStyle}"
-                                        Background="MediumPurple" >
+                                        Background="CadetBlue" >
 
                                     <TextBlock Text="Moved, Deleted, or Renamed Files:"
                                                Style="{StaticResource HeaderTextStyle}"/>
@@ -471,7 +471,7 @@
                             <Grid>
                                 
                                 <Border Style="{StaticResource HeaderStyle}"
-                                        Background="MediumPurple" >
+                                        Background="CadetBlue" >
 
                                     <TextBlock Text="Moved, Deleted, or Renamed Backup Paths:"
                                                Style="{StaticResource HeaderTextStyle}"/>
