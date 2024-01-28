@@ -1,31 +1,15 @@
 Todo:
-- Test removing nodes where there are multiple other monitored nodes. The other nodes should not be removed
-- Refactor ListViews to be used as TreeViews
-- Once ListView to TreeView refactoring is complete, look for unused code
-- Certain nodes should be opened by default (not collapsed) such as the root nodes
-- Update color scheme
 - Add multiple folders at once?
 - Update UI to allow user to edit files that have been moved, deleted, or renamed
 - If the user deletes a file that was added from a monitored folder, display a message informing them that the file will be re-added. Offer option to ignore files instead.
 - No references to "RemoveRange()" in the Repository class. The service classes should use Remove for a single value, and RemoveRange for a range of values.
 - Set database IDs to reuse unused IDs?
-- Migrate to Avalonia
 
-Issues:
-- Exception thrown when deleting a folder whose parent folder is also monitored. Was unable to reproduce the exact problem
-- There is an error in how the ToQueue method works. need to step throough this method. Note: directories need to be stored with the directory separator. Otherwise, the Path.GetFileName method
-will return a directory as a file name.
-- Issue when adding a root as a node. The program adds the root as well as an empty child node, where the text only contains the directory separator
-
-- Delete buttons should be greyed out until at least one checkbox is selected
-- TreeView does not add a parent folder when it is part of a monitored child folder
+Fixes:
 - Window Mousedown only works in the Main tab, not the settings tab
-- The ListView item width breaks when the width is greater than the ListView itself. Additional info, the ListView width binding is not set correctly on most of the XAML properties.
-- Check the SourceFolder repository for: 1. The Add method does not check to ensure each file path is a logical child of the given parent (directory) and
-2. Ensure when removing a monitored folder that the folder/file mapping is dealt with as well
+- The ListView item width breaks when the width is greater than the ListView itself
 
 Features:
-- Offer setting to remember what nodes are collapsed and what nodes aren't
 - Offer setting for constant watch? Use the FileSystemWatcher class for this
 - NOTE: the program will break if paths are linked to removable storage media and the drive letter changes. Documentation will recommend the following: if using removable storage media for this app, suggest using permanent
 drive letters. Second, if the drive letter changes and breaks the path, offer the option to search the database for the user, i.e. "Backup path not found. Do you wish to search the database for the file(s)?". Third, there 
@@ -38,20 +22,3 @@ needs to be an option to migrate paths from an old drive to a new drive.
 4. Display paths as list or treeview
 5. Add Folder adds all files in all subdirectories (option to disable)
 6. Allow ignore files
-
--------------------------------------------------------
-
-Class diagram:
-FileExplorerTreeView
-
-public ReadOnlyObservableCollection<IPathNode> RootNodes
-public IEnumerable<IPathDto> FullPaths
-public enum NodeCategory
-
-public FileExplorerTreeView(IEnumerable<IPathDto> paths)
-public void AddPath(IPathDto dto)
-public void AddPaths(IEnumerable<IPathDto> dtos)
-public void RemovePath(IPathNode node)
-public void RemovePaths(IEnumerable<IPathNode> nodes)
-public IPathDto? GetPath(IPathNode node)
-public IEnumerable<IPathNode> GetNodes(Func<IPathNode, bool> predicate)

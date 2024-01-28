@@ -3,16 +3,16 @@
 namespace Services.Helpers
 {
     /// <summary>
-    /// A static helper class for the <see cref="IIgnorableFolderDto"/> and <see cref="IgnorableFolderService"/> classes.
+    /// A static helper class for the <see cref="IgnorableFolderDto"/> and <see cref="IgnorableFolderService"/> classes.
     /// </summary>
     public static class IgnorableFolderHelper
     {
         /// <summary>
         /// Returns false if the path is contained within an ignorable folder, true otherwise.
         /// </summary>
-        public static bool NotIgnorable(string path, IEnumerable<IIgnorableFolderDto> ignorableFolders)
+        public static bool NotIgnorable(string path, IEnumerable<IgnorableFolderDto> ignorableFolders)
         {
-            foreach (var folder in ignorableFolders)
+            foreach (IgnorableFolderDto folder in ignorableFolders)
             {
                 if (path.Split(Path.DirectorySeparatorChar).Contains(folder.Name)) return false;
             }
