@@ -1,6 +1,7 @@
 ﻿using Services.Dto;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 
 namespace FileMonitor.View
 {
@@ -10,7 +11,7 @@ namespace FileMonitor.View
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         private FileExplorerTreeView _backupPaths;
-        private ObservableCollection<IPathDto> _sourceFiles;
+        private FileExplorerTreeView _sourceFiles;
         private ObservableCollection<IPathDto> _updatedFiles;
         private ObservableCollection<ISourceFolderDto> _sourceFolders;
         private ObservableCollection<IPathDto> _movedOrRenamedFiles;
@@ -56,7 +57,7 @@ namespace FileMonitor.View
         /// monitored by the program for the user to add or remove. This property is bound to the <see cref=
         /// "MainWindow.FilesDisplayed"/> list view in the UI.
         /// </summary>
-        public ObservableCollection<IPathDto> SourceFiles { get { return _sourceFiles; } }
+        public FileExplorerTreeView SourceFiles { get { return _sourceFiles; } }
 
         /// <summary>
         /// An observable collection of <see cref="SourceFileDto"/> objects. This collection displays only the files
@@ -132,7 +133,7 @@ namespace FileMonitor.View
         /// <param name="includeAllSubfolders"> Value from Settings.json, bound to a CheckBox. </param>
         public MainWindowViewModel(
             FileExplorerTreeView backupPaths, 
-            ObservableCollection<IPathDto> sourceFiles,
+            FileExplorerTreeView sourceFiles,
             ObservableCollection<IPathDto> updatedFiles,
             ObservableCollection<ISourceFolderDto> sourceFolders,
             ObservableCollection<IPathDto> movedOrRenamedFiles,
@@ -183,7 +184,7 @@ namespace FileMonitor.View
         {
             foreach(var file in _movedOrRenamedFiles)
             {
-                if (_sourceFiles.Contains(file)) _sourceFiles.Remove(file);
+                if (_sourceFiles.FullPaths.Contains(file)) _sourceFiles.RemovePath(file);
                 if (_updatedFiles.Contains(file)) _updatedFiles.Remove(file);
             }
 
