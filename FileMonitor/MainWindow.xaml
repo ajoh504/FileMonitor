@@ -71,9 +71,6 @@
             <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         </Style>
 
-        <!--
-        THIS CODE IS TO TEST USING A HierarchicalDataTemplate
-        -->
         <HierarchicalDataTemplate
             x:Key="TreeViewItemTemplate"
             ItemsSource="{Binding Children}">
@@ -138,11 +135,6 @@
                                 <Button x:Name="RemoveFiles" 
                                         Content="Remove File(s)" 
                                         Click="RemoveFiles_Click"
-                                        IsEnabled="{
-                                            Binding ElementName=FilesDisplayed, 
-                                            Path=SelectedIndex, 
-                                            Converter={StaticResource 
-                                            IntToBoolValueConverter}}" 
                                         Style="{StaticResource MultiButtonStyle}"/>
                                 
                                 <Button x:Name="CopyAllFiles" 
@@ -157,8 +149,15 @@
                                         Style="{StaticResource MultiButtonStyle}"/>
 
                             </StackPanel>
-                            
-                            <Grid x:Name="FilesDisplayedGrid">
+
+                            <TreeView 
+                                x:Name="FilesDisplayed"
+                                Style="{StaticResource TreeViewStyle}"
+                                ItemsSource="{Binding SourceFiles.RootNodes}"
+                                ItemTemplate="{StaticResource TreeViewItemTemplate}">
+                            </TreeView>
+
+                            <!--<Grid x:Name="FilesDisplayedGrid">
                                 <ListView x:Name="FilesDisplayed"  
                                       Style="{StaticResource ListViewStyle}"
                                       ItemsSource="{Binding SourceFiles}" >
@@ -176,7 +175,7 @@
                                         </GridView>
                                     </ListView.View>
                             </ListView>
-                            </Grid>
+                            </Grid>-->
 
                         </Grid>
                     </Border>
