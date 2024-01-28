@@ -9,8 +9,7 @@
         MinHeight="600" 
         MinWidth="800" 
         WindowState="Maximized" 
-        MouseDown="Window_MouseDown"
-        Loaded="Window_Loaded">
+        MouseDown="Window_MouseDown">
 
     <Window.Resources>
         <valueConverters:IntToBoolValueConverter x:Key="IntToBoolValueConverter" />
