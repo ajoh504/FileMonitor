@@ -9,13 +9,13 @@ namespace FileMonitor.ViewModels
     /// </summary>
     public class MainWindowViewModel : INotifyPropertyChanged
     {
-        private ObservableCollection<BackupPathDto> _backupPaths;
-        private ObservableCollection<SourceFileDto> _sourceFiles;
-        private ObservableCollection<SourceFileDto> _updatedFiles;
-        private ObservableCollection<SourceFolderDto> _sourceFolders;
-        private ObservableCollection<SourceFileDto> _movedOrRenamedFiles;
-        private ObservableCollection<BackupPathDto> _movedOrRenamedBackupPaths;
-        private ObservableCollection<IgnorableFolderDto> _ignorableFolders;
+        private FileExplorerTreeView _backupPaths;
+        private ObservableCollection<IPathDto> _sourceFiles;
+        private ObservableCollection<IPathDto> _updatedFiles;
+        private ObservableCollection<ISourceFolderDto> _sourceFolders;
+        private ObservableCollection<IPathDto> _movedOrRenamedFiles;
+        private ObservableCollection<IBackupPathDto> _movedOrRenamedBackupPaths;
+        private ObservableCollection<IIgnorableFolderDto> _ignorableFolders;
         private bool _backupSelected;
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace FileMonitor.ViewModels
         /// monitored by the program for the user to add or remove. This property is bound to the <see cref=
         /// "MainWindow.FilesDisplayed"/> list view in the UI.
         /// </summary>
-        public ObservableCollection<SourceFileDto> SourceFiles { get { return _sourceFiles; } }
+        public FileExplorerTreeView SourceFiles { get { return _sourceFiles; } }
 
         /// <summary>
         /// An observable collection of <see cref="SourceFileDto"/> objects. This collection displays only the files
@@ -125,13 +125,13 @@ namespace FileMonitor.ViewModels
         /// <param name="overwriteUpdatedFiles"> Value from Settings.json, bound to a CheckBox. </param>
         /// <param name="includeAllSubfolders"> Value from Settings.json, bound to a CheckBox. </param>
         public MainWindowViewModel(
-            ObservableCollection<BackupPathDto> backupPaths, 
-            ObservableCollection<SourceFileDto> sourceFiles,
-            ObservableCollection<SourceFileDto> updatedFiles,
-            ObservableCollection<SourceFolderDto> sourceFolders,
-            ObservableCollection<SourceFileDto> movedOrRenamedFiles,
-            ObservableCollection<BackupPathDto> movedOrRenamedBackupPaths,
-            ObservableCollection<IgnorableFolderDto> ignorableFolders,
+            FileExplorerTreeView backupPaths, 
+            FileExplorerTreeView sourceFiles,
+            ObservableCollection<IPathDto> updatedFiles,
+            ObservableCollection<ISourceFolderDto> sourceFolders,
+            ObservableCollection<IPathDto> movedOrRenamedFiles,
+            ObservableCollection<IBackupPathDto> movedOrRenamedBackupPaths,
+            ObservableCollection<IIgnorableFolderDto> ignorableFolders,
             bool overwriteUpdatedFiles,
             bool includeAllSubfolders)
         {
