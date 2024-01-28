@@ -113,22 +113,22 @@ namespace FileMonitor
         // files are also removed from the MainWindowViewModel.UpdatedFiles collection.
         private void RemoveFiles_Click(object sender, RoutedEventArgs e)
         {
-            if (_helper.ConfirmRemoveFiles())
-            {
-                using SourceFileService sourceFileService = new SourceFileService(
-                    RepositoryHelper.CreateSourceFileRepositoryInstance());
-                List<int> ids = new List<int>();
-                var selectedFiles = new List<IPathDto>();
-                foreach (object item in FilesDisplayed.SelectedItems)
-                {
-                    var dto = (IPathDto)item;
-                    selectedFiles.Add(dto);
-                    ids.Add(dto.Id);
-                }
-                sourceFileService.Remove(ids);
-                _viewModel.SourceFiles.RemovePaths(selectedFiles);
-                _viewModel.UpdatedFiles.RemoveRange(selectedFiles);
-            }
+            //if (_helper.ConfirmRemoveFiles())
+            //{
+            //    using SourceFileService sourceFileService = new SourceFileService(
+            //        RepositoryHelper.CreateSourceFileRepositoryInstance());
+            //    List<int> ids = new List<int>();
+            //    var selectedFiles = new List<IPathDto>();
+            //    foreach (object item in FilesDisplayed.SelectedItems)
+            //    {
+            //        var dto = (IPathDto)item;
+            //        selectedFiles.Add(dto);
+            //        ids.Add(dto.Id);
+            //    }
+            //    sourceFileService.Remove(ids);
+            //    _viewModel.SourceFiles.RemovePaths(selectedFiles);
+            //    _viewModel.UpdatedFiles.RemoveRange(selectedFiles);
+            //}
         }
 
         // A button click event handler to create a full backup of all files monitored by the program. The full backup
@@ -291,7 +291,7 @@ namespace FileMonitor
         private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             // Clear all ListViews when the mouse is clicked anywhere in the main window.
-            FilesDisplayed.SelectedItems.Clear();
+            //FilesDisplayed.SelectedItems.Clear();
             FoldersDisplayed.SelectedItems.Clear();
             UpdatedFilesDisplayed.SelectedItems.Clear();
             //BackupPathsDisplayed.SelectedItems.Clear();
