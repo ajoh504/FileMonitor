@@ -118,16 +118,16 @@ namespace FileMonitor
                 using SourceFileService sourceFileService = new SourceFileService(
                     RepositoryHelper.CreateSourceFileRepositoryInstance());
                 List<int> ids = new List<int>();
-                List<SourceFileDto> selectedFiles = new List<SourceFileDto>();
+                var selectedFiles = new List<IPathDto>();
                 foreach (object item in FilesDisplayed.SelectedItems)
                 {
-                    SourceFileDto dto = (SourceFileDto)item;
+                    var dto = (IPathDto)item;
                     selectedFiles.Add(dto);
                     ids.Add(dto.Id);
                 }
                 sourceFileService.Remove(ids);
-                _viewModel.SourceFiles.RemoveRange<SourceFileDto>(selectedFiles);
-                _viewModel.UpdatedFiles.RemoveRange<SourceFileDto>(selectedFiles);
+                _viewModel.SourceFiles.RemovePaths(selectedFiles);
+                _viewModel.UpdatedFiles.RemoveRange(selectedFiles);
             }
         }
 
