@@ -43,7 +43,7 @@ namespace FileMonitor
 
             _viewModel = new MainWindowViewModel(
                 new FileExplorerTreeView(backupPathService.GetDirectories()),
-                new ObservableCollection<IPathDto>(sourceFileService.GetFiles()),
+                new FileExplorerTreeView(sourceFileService.GetFiles()),
                 new ObservableCollection<IPathDto>(sourceFileService.GetModifiedFiles()),
                 new ObservableCollection<ISourceFolderDto>(sourceFolderService.GetFolders()),
                 new ObservableCollection<IPathDto>(sourceFileService.GetMovedOrRenamedFiles()),
@@ -126,7 +126,7 @@ namespace FileMonitor
                     ids.Add(dto.Id);
                 }
                 sourceFileService.Remove(ids);
-                _viewModel.SourceFiles.RemoveRange(selectedFiles);
+                _viewModel.SourceFiles.RemovePaths(selectedFiles);
                 _viewModel.UpdatedFiles.RemoveRange(selectedFiles);
             }
         }
@@ -146,7 +146,7 @@ namespace FileMonitor
                 if(dto.IsSelected)
                 {
                     var backup = new Backup(dto.Path);
-                    backup.CopyAll(_viewModel.SourceFiles.Select(f => f.Path));
+                    backup.CopyAll(_viewModel.SourceFiles.FullPaths.Select(f => f.Path));
                 }
             }
             MessageBox.Show("Backup complete.");
@@ -232,7 +232,7 @@ namespace FileMonitor
                     foldersToRemove.Add(dto);
                     folderIds.Add(dto.Id);
                     filesToRemove = sourceFolderService.GetStoredFilesFromFolder(dto.Id);
-                    _viewModel.SourceFiles.RemoveRange(filesToRemove);
+                    _viewModel.SourceFiles.RemovePaths(filesToRemove);
                     _viewModel.UpdatedFiles.RemoveRange(filesToRemove);
                 }
                 sourceFolderService.Remove(folderIds);
