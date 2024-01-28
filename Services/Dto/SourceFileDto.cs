@@ -3,7 +3,7 @@
     /// <summary>
     /// A data transfer object related to the SourceFile Entity. Provides a full file path for any file monitored by the program.
     /// </summary>
-    public class SourceFileDto : IPathDto
+    public class SourceFileDto
     {
         /// <summary>
         /// The database primary key. 
