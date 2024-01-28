@@ -1,22 +1,21 @@
 ﻿using Services.Dto;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 
-namespace FileMonitor.View
+namespace FileMonitor.ViewModels
 {
     /// <summary>
     /// Provides a view model for binding to the UI. 
     /// </summary>
     public class MainWindowViewModel : INotifyPropertyChanged
     {
-        private FileExplorerTreeView _backupPaths;
-        private FileExplorerTreeView _sourceFiles;
-        private ObservableCollection<IPathDto> _updatedFiles;
-        private ObservableCollection<ISourceFolderDto> _sourceFolders;
-        private ObservableCollection<IPathDto> _movedOrRenamedFiles;
-        private ObservableCollection<IBackupPathDto> _movedOrRenamedBackupPaths;
-        private ObservableCollection<IIgnorableFolderDto> _ignorableFolders;
+        private ObservableCollection<BackupPathDto> _backupPaths;
+        private ObservableCollection<SourceFileDto> _sourceFiles;
+        private ObservableCollection<SourceFileDto> _updatedFiles;
+        private ObservableCollection<SourceFolderDto> _sourceFolders;
+        private ObservableCollection<SourceFileDto> _movedOrRenamedFiles;
+        private ObservableCollection<BackupPathDto> _movedOrRenamedBackupPaths;
+        private ObservableCollection<IgnorableFolderDto> _ignorableFolders;
         private bool _backupSelected;
 
         /// <summary>
@@ -39,60 +38,54 @@ namespace FileMonitor.View
             }
         }
 
-        ///// <summary>
-        ///// An observable collection of <see cref="BackupPathDto"/> objects. This collection displays all possible
-        ///// backup path locations for the user to select, add, or remove. This property is bound to the <see cref=
-        ///// "MainWindow.BackupPathsDisplayed"/> list view in the UI.
-        ///// </summary>
-        //public ObservableCollection<BackupPathDto> BackupPaths { get { return _backupPaths; } }
-
         /// <summary>
-        /// A tree view for interacting with all backup paths. This property is bound to the <see cref=
-        /// "MainWindow.BackupPathsDisplayed"/>
+        /// An observable collection of <see cref="BackupPathDto"/> objects. This collection displays all possible
+        /// backup path locations for the user to select, add, or remove. This property is bound to the <see cref=
+        /// "MainWindow.BackupPathsDisplayed"/> list view in the UI.
         /// </summary>
-        public FileExplorerTreeView BackupPaths { get { return _backupPaths; } }
+        public ObservableCollection<BackupPathDto> BackupPaths { get { return _backupPaths; } }
 
         /// <summary>
         /// An observable collection of <see cref="SourceFileDto"/> objects. This collection displays all files
         /// monitored by the program for the user to add or remove. This property is bound to the <see cref=
         /// "MainWindow.FilesDisplayed"/> list view in the UI.
         /// </summary>
-        public FileExplorerTreeView SourceFiles { get { return _sourceFiles; } }
+        public ObservableCollection<SourceFileDto> SourceFiles { get { return _sourceFiles; } }
 
         /// <summary>
         /// An observable collection of <see cref="SourceFileDto"/> objects. This collection displays only the files
         /// that have been updated since the last time they were copied to a backup location. This property is bound to
         /// the <see cref="MainWindow.UpdatedFilesDisplayed"/> list view.
         /// </summary>
-        public ObservableCollection<IPathDto> UpdatedFiles { get { return _updatedFiles; } }
+        public ObservableCollection<SourceFileDto> UpdatedFiles { get { return _updatedFiles; } }
 
         /// <summary>
         /// An observable collection of <see cref="SourceFolderDto"/> objects. This collection displays all folders
         /// monitored by the program. This property is bound to the <see cref="MainWindow.FoldersDisplayed"/> list 
         /// view.
         /// </summary>
-        public ObservableCollection<ISourceFolderDto> SourceFolders { get { return _sourceFolders; } }
+        public ObservableCollection<SourceFolderDto> SourceFolders { get { return _sourceFolders; } }
 
         /// <summary>
         /// An observable collection of <see cref="SourceFileDto"/> objects. This collection displays all files whose
         /// names or paths have been moved, renamed, or deleted since being monitored by the program. This property is
         /// bound to the <see cref="MainWindow.MovedOrRenamedFilesDisplayed"/> list view.
         /// </summary>
-        public ObservableCollection<IPathDto> MovedOrRenamedFiles { get { return _movedOrRenamedFiles; } }
+        public ObservableCollection<SourceFileDto> MovedOrRenamedFiles { get { return _movedOrRenamedFiles; } }
 
         /// <summary>
         /// An observable collection of <see cref="BackupPathDto"/> objects. This collection displays all backup paths
         /// whose names or paths have been moved, renamed, or deleted since being monitored by the program. This
         /// property is bound to the <see cref="MainWindow.MovedOrRenamedBackupPathsDisplayed"/> list view.
         /// </summary>
-        public ObservableCollection<IBackupPathDto> MovedOrRenamedBackupPaths { get { return _movedOrRenamedBackupPaths; } }
+        public ObservableCollection<BackupPathDto> MovedOrRenamedBackupPaths { get { return _movedOrRenamedBackupPaths; } }
 
         /// <summary>
         /// An observable collection of <see cref="IgnorableFolderDto"/> objects. This collection displays all backup
         /// paths whose names or paths have been moved, renamed, or deleted since being monitored by the program. This
         /// property is bound to the <see cref="MainWindow.IgnorableFoldersDisplayed"/> list view.
         /// </summary>
-        public ObservableCollection<IIgnorableFolderDto> IgnorableFolders { get { return _ignorableFolders;  } }
+        public ObservableCollection<IgnorableFolderDto> IgnorableFolders { get { return _ignorableFolders;  } }
 
         /// <summary>
         /// If false, the program will make copies of updated files whenever they are backed up. If true, the program
@@ -132,13 +125,13 @@ namespace FileMonitor.View
         /// <param name="overwriteUpdatedFiles"> Value from Settings.json, bound to a CheckBox. </param>
         /// <param name="includeAllSubfolders"> Value from Settings.json, bound to a CheckBox. </param>
         public MainWindowViewModel(
-            FileExplorerTreeView backupPaths, 
-            FileExplorerTreeView sourceFiles,
-            ObservableCollection<IPathDto> updatedFiles,
-            ObservableCollection<ISourceFolderDto> sourceFolders,
-            ObservableCollection<IPathDto> movedOrRenamedFiles,
-            ObservableCollection<IBackupPathDto> movedOrRenamedBackupPaths,
-            ObservableCollection<IIgnorableFolderDto> ignorableFolders,
+            ObservableCollection<BackupPathDto> backupPaths, 
+            ObservableCollection<SourceFileDto> sourceFiles,
+            ObservableCollection<SourceFileDto> updatedFiles,
+            ObservableCollection<SourceFolderDto> sourceFolders,
+            ObservableCollection<SourceFileDto> movedOrRenamedFiles,
+            ObservableCollection<BackupPathDto> movedOrRenamedBackupPaths,
+            ObservableCollection<IgnorableFolderDto> ignorableFolders,
             bool overwriteUpdatedFiles,
             bool includeAllSubfolders)
         {
@@ -169,7 +162,7 @@ namespace FileMonitor.View
         /// </summary>
         public bool IsAnyBackupSelected()
         {
-            foreach (IBackupPathDto dto in _backupPaths.FullPaths)
+            foreach (BackupPathDto dto in  _backupPaths)
             {
                 if (dto.IsSelected == true) return true;
             }
@@ -182,15 +175,14 @@ namespace FileMonitor.View
         /// </summary>
         public void RemovePossibleRenamedFiles()
         {
-            foreach(var file in _movedOrRenamedFiles)
+            foreach(SourceFileDto file in _movedOrRenamedFiles)
             {
-                if (_sourceFiles.FullPaths.Contains(file)) _sourceFiles.RemovePath(file);
+                if (_sourceFiles.Contains(file)) _sourceFiles.Remove(file);
                 if (_updatedFiles.Contains(file)) _updatedFiles.Remove(file);
             }
-
-            foreach(var path in _movedOrRenamedBackupPaths)
+            foreach(BackupPathDto path in _movedOrRenamedBackupPaths)
             {
-                //if(_backupPaths.FileTreeItems.Contains(p => p = path.Path)) _backupPaths.RemovePath(path.Path);
+                if(_backupPaths.Contains(path)) _backupPaths.Remove(path);
             }
         }
     }

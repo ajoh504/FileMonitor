@@ -4,10 +4,10 @@ using Services;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using FileMonitor.ViewModels;
 using System.Windows;
-using FileMonitor.View;
 
-namespace FileMonitor.Helpers
+namespace FileMonitor
 {
     /// <summary>
     /// A helper class for the <see cref="MainWindow"/>.
@@ -22,17 +22,16 @@ namespace FileMonitor.Helpers
         /// <param name="_viewModel"> An instance of the view model to update. </param>
         internal void AddFiles(List<string> paths, bool fromSourceFolder, MainWindowViewModel _viewModel)
         {
-            using var sourceFileService = new SourceFileService(
+            using SourceFileService sourceFileService = new SourceFileService(
                 RepositoryHelper.CreateSourceFileRepositoryInstance());
-
-            foreach (var path in paths)
+            foreach (string path in paths)
             {
-                var attributes = File.GetAttributes(path);
+                FileAttributes attributes = File.GetAttributes(path);
                 // If the path is an empty string, if it exists in the database, or if it is a directory, then continue
                 if (path == "" || sourceFileService.PathExists(path) || attributes.HasFlag(FileAttributes.Directory))
                     continue;
-                var dto = sourceFileService.Add(path, fromSourceFolder);
-                _viewModel.SourceFiles.AddPath(dto);
+                SourceFileDto dto = sourceFileService.Add(path, fromSourceFolder);
+                _viewModel.SourceFiles.Add(dto);
                 _viewModel.UpdatedFiles.Add(dto);
             }
         }
@@ -47,9 +46,9 @@ namespace FileMonitor.Helpers
         /// <param name="MonitorAllSubFolders"></param>
         /// <returns></returns>
         // 
-        internal bool VerifyAddFolder(string directory,
+        internal bool VerifyAddFolder(string directory, 
             MainWindowViewModel _viewModel,
-            out List<string> paths,
+            out List<string> paths, 
             out bool MonitorAllSubFolders)
         {
             paths = GetPathsFromFolder(directory, _viewModel, out int numberOfDirectories, out bool MonitorAll);
@@ -65,9 +64,9 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
         }
 
         private List<string> GetPathsFromFolder(
-            string directory,
+            string directory, 
             MainWindowViewModel _viewModel,
-            out int numberOfDirectories,
+            out int numberOfDirectories, 
             out bool MonitorAll)
         {
             if (JsonSettingsHelper.IncludeAllSubFolders)
@@ -88,7 +87,7 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
                             {
                                 Name = fse
                             })
-                        )
+                        ) 
                         .Count();
                     MonitorAll = true;
 
@@ -111,10 +110,11 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
         /// </summary>
         internal bool ConfirmRemoveFiles()
         {
-            var text = "Do you wish to remove the selected file(s) from the program? This cannot be undone.";
-            var caption = "Remove SourceFiles";
-            var button = MessageBoxButton.YesNo;
-            var image = MessageBoxImage.Warning;
+            string text = "Do you wish to remove the selected file(s) from the program? This cannot be undone.";
+            string caption = "Remove SourceFiles";
+
+            MessageBoxButton button = MessageBoxButton.YesNo;
+            MessageBoxImage image = MessageBoxImage.Warning;
             return MessageBox.Show(text, caption, button, image) == MessageBoxResult.Yes;
         }
 
@@ -131,10 +131,10 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
         /// </remarks>
         internal void ResetUpdatedFiles(MainWindowViewModel _viewModel)
         {
-            var ids = new List<int>();
-            foreach (var dto in _viewModel.UpdatedFiles) ids.Add(dto.Id);
+            List<int> ids = new List<int>();
+            foreach (SourceFileDto dto in _viewModel.UpdatedFiles) ids.Add(dto.Id);
             _viewModel.UpdatedFiles.Clear();
-            using var sourceFileService = new SourceFileService(
+            using SourceFileService sourceFileService = new SourceFileService(
                 RepositoryHelper.CreateSourceFileRepositoryInstance());
             sourceFileService.ResetIsModifiedFlag(ids);
             sourceFileService.UpdateHashesToCurrent(ids);
@@ -146,11 +146,11 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
         /// <param name="_viewModel"> An instance of the view model to update. </param>
         internal void RefreshUpdatedFilesView(MainWindowViewModel _viewModel)
         {
-            using var sourceFileService = new SourceFileService(
+            using SourceFileService sourceFileService = new SourceFileService(
                 RepositoryHelper.CreateSourceFileRepositoryInstance());
 
-            var sourceFileDtos = sourceFileService.GetModifiedFiles();
-            foreach (var sourceFileDto in sourceFileDtos)
+            List<SourceFileDto> sourceFileDtos = sourceFileService.GetModifiedFiles();
+            foreach (SourceFileDto sourceFileDto in sourceFileDtos)
             {
                 if (!_viewModel.UpdatedFiles.Contains(sourceFileDto))
                     _viewModel.UpdatedFiles.Add(sourceFileDto);
@@ -170,12 +170,12 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
             );
 
             if (sourceFolderService.FilesAddedToFolders(
-                out List<IPathDto>? newFilesFromFolder))
+                out List<SourceFileDto>? newFilesFromFolder))
             {
-                foreach (var file in newFilesFromFolder)
+                foreach (SourceFileDto file in newFilesFromFolder)
                 {
-                    if (!_viewModel.SourceFiles.FullPaths.Contains(file))
-                        _viewModel.SourceFiles.AddPath(file);
+                    if (!_viewModel.SourceFiles.Contains(file))
+                        _viewModel.SourceFiles.Add(file);
                     if (!_viewModel.UpdatedFiles.Contains(file))
                         _viewModel.UpdatedFiles.Add(file);
                 }
@@ -188,17 +188,17 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
         /// <param name="_viewModel"> An instance of the view model to update. </param>
         internal void RefreshMovedOrRenamedFiles(MainWindowViewModel _viewModel)
         {
-            using var sourceFileService = new SourceFileService(
+            using SourceFileService sourceFileService = new SourceFileService(
                 RepositoryHelper.CreateSourceFileRepositoryInstance());
-            var files = sourceFileService.GetMovedOrRenamedFiles();
-            foreach (var file in files)
+            List<SourceFileDto> files = sourceFileService.GetMovedOrRenamedFiles();
+            foreach (SourceFileDto file in files)
             {
                 if (!_viewModel.MovedOrRenamedFiles.Contains(file))
                     _viewModel.MovedOrRenamedFiles.Add(file);
                 if (_viewModel.UpdatedFiles.Contains(file))
                     _viewModel.UpdatedFiles.Remove(file);
-                if (_viewModel.SourceFiles.FullPaths.Contains(file))
-                    _viewModel.SourceFiles.RemovePath(file);
+                if (_viewModel.SourceFiles.Contains(file))
+                    _viewModel.SourceFiles.Remove(file);
             }
         }
 
@@ -213,12 +213,12 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
                 RepositoryHelper.CreateFolderFileMappingInstance(),
                 RepositoryHelper.CreateSourceFileRepositoryInstance()
             );
-            var folders = new List<IPathDto>();
+            List<SourceFolderDto> folders = new List<SourceFolderDto>();
             int numberOfFiles = 0;
             int numberOfFolders = mw.FoldersDisplayed.SelectedItems.Count;
             foreach (object item in mw.FoldersDisplayed.SelectedItems)
             {
-                var dto = (IPathDto)item;
+                SourceFolderDto dto = (SourceFolderDto)item;
                 folders.Add(dto);
                 numberOfFiles += sourceFolderService.GetStoredFilesFromFolder(dto.Id).Count();
             }

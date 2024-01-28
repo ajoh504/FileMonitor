@@ -7,7 +7,8 @@ using System.IO;
 namespace Services
 {
     /// <summary>
-    ///  A service class offering database access to the SourceFolder and FolderFileMapping entities.
+    ///  A service class offering database access to the FolderFileMapping Entity. This class stores a repository, and
+    ///  creates the appropriate mapping between the folders and the files contained within them.
     /// </summary>
     public class SourceFolderService : DisposableService
     {
@@ -19,13 +20,13 @@ namespace Services
         /// The <see cref="SourceFolderService"/> class constructor.
         /// </summary>
         /// <param name="sourceFolderRepository">
-        /// An instance of the <see cref="ISourceFolderRepository"/> for database access.
+        /// An instance of the <see cref="ISourceFolderRepository"/> which provides database access.
         /// </param>
         /// <param name="folderFileMappingRepository">
-        /// An instance of the <see cref="IFolderFileMappingRepository"/> for database access.
+        /// An instance of the <see cref="IFolderFileMappingRepository"/> which provides database access.
         /// </param>
         /// <param name="sourceFileRepository">
-        /// An instance of the <see cref="ISourceFileRepository"/> for database access.
+        /// An instance of the <see cref="ISourceFileRepository"/> which provides database access.
         /// </param>
         public SourceFolderService(
             ISourceFolderRepository sourceFolderRepository, 
@@ -41,12 +42,12 @@ namespace Services
         /// <summary>
         /// Returns all monitored folders from the database.
         /// </summary>
-        public List<ISourceFolderDto> GetFolders()
+        public List<SourceFolderDto> GetFolders()
         {
             return _sourceFolderRepository.GetRange(
                 sf => true,
                 // Create a new Dto for each Entity, and assign the Dto property values from the Entity properties
-                sf => (ISourceFolderDto) new SourceFolderDto
+                sf => new SourceFolderDto
                 {
                     Id = sf.Id,
                     Path = sf.Path,
@@ -60,16 +61,16 @@ namespace Services
         /// </summary>
         /// <param name="folderId"> The ID of the folder to search in. </param>
         /// <returns> A list of source files as data transfer objects. </returns>
-        public List<IPathDto> GetStoredFilesFromFolder(int folderId)
+        public List<SourceFileDto> GetStoredFilesFromFolder(int folderId)
         {
-            var result = new List<IPathDto>();
-            var mapping = _folderFileMappingRepository.GetRange(
+            List<SourceFileDto> result = new List<SourceFileDto>();
+            List<FolderFileMapping> mapping = _folderFileMappingRepository.GetRange(
                 ffm => ffm.SourceFolderId == folderId);
-            foreach (var map in mapping)
+            foreach (FolderFileMapping map in mapping)
             {
-                var file = _sourceFileRepository.FirstOrDefault(
+                SourceFileDto? file = _sourceFileRepository.FirstOrDefault(
                     f => f.Id == map.SourceFileId,
-                    f => (IPathDto) new SourceFileDto
+                    f => new SourceFileDto
                     {
                         Id = f.Id,
                         Path = f.Path
@@ -91,14 +92,12 @@ namespace Services
         /// Determines if the program should monitor all sub directories within the parent directory.
         /// </param>
         /// <returns> A source folder DTO object for updating the UI. </returns>
-        public ISourceFolderDto Add(
+        public SourceFolderDto Add(
             string directoryPath, 
             List<string> filePaths,
             bool MonitorAllSubFolders)
         {
-            // Check that each file path is contains the given directory as its parent
-            // var verifiedPaths = filePaths.Where(path => Directory.GetParent(path).Name == directoryPath).ToList();
-            var entity = new SourceFolder
+            SourceFolder entity = new SourceFolder
             {
                 Path = directoryPath,
                 MonitorAllSubDirectories = MonitorAllSubFolders
@@ -123,7 +122,7 @@ namespace Services
         {
             foreach (int id in ids)
             {
-                var filesToRemove = GetFileEntitiesFromFolder(id);
+                List<SourceFile> filesToRemove = GetFileEntitiesFromFolder(id);
                 _sourceFileRepository.RemoveRange(filesToRemove);
                 _sourceFileRepository.SaveChanges();
 
@@ -138,29 +137,27 @@ namespace Services
         /// <summary>
         /// Returns true if any monitored folder contains newly added files, false otherwise. If the method returns
         /// true, it will add the files to the database and provide an out parameter containing any files that were
-        /// added.
+        /// added to the database.
         /// </summary>
         /// <param name="newFilesFromFolder"> A list of data transfer objects for values. The values represent all
         /// files that have been added to the monitored folder. </param>
         public bool FilesAddedToFolders(
-            out List<IPathDto>? newFilesFromFolder)
+            out List<SourceFileDto>? newFilesFromFolder)
         {
-            var folders = GetFolders();
+            List<SourceFolderDto> folders = GetFolders();
             bool filesAddedToFolders = false;
-            newFilesFromFolder = new List<IPathDto>();
-
-            foreach (var folder in folders)
+            newFilesFromFolder = new List<SourceFileDto>();
+            foreach (SourceFolderDto folder in folders)
             {
-                var currentFiles = GetCurrentFilesFromFolder(folder);
-                var storedFiles = GetPathsFromEntities(GetFileEntitiesFromFolder(folder.Id));
-                var filesToMap = new List<string>();
-
+                List<string> currentFiles = GetCurrentFilesFromFolder(folder);
+                List<string> storedFiles = GetPathsFromEntities(GetFileEntitiesFromFolder(folder.Id));
+                List<string> filesToMap = new List<string>();
                 foreach (string file in currentFiles)
                 {
                     if (storedFiles.Contains(file)) continue;
                     else
                     {
-                        var sourceFile = AddFile(file, fromSourceFolder: true);
+                        SourceFileDto? sourceFile = AddFile(file, fromSourceFolder: true);
                         filesToMap.Add(file);
                         if (filesAddedToFolders == false) filesAddedToFolders = true;
                         newFilesFromFolder.Add(sourceFile);
@@ -172,7 +169,7 @@ namespace Services
             return filesAddedToFolders;
         }
 
-        private IPathDto? AddFile(string path, bool fromSourceFolder)
+        private SourceFileDto? AddFile(string path, bool fromSourceFolder)
         {
             // Add the file Entity to the database.
             _sourceFileRepository.Add(
@@ -200,8 +197,8 @@ namespace Services
         // are added to that folder in the future then the program has a way to inform the user. 
         private void AddFolderFileMapping(List<string> filePaths, int directoryId)
         {
-            var filesInMonitoredFolder = GetMonitoredFolderChildrenFiles(filePaths);
-            foreach(var file in filesInMonitoredFolder)
+            List<SourceFile> filesInMonitoredFolder = GetMonitoredFolderChildrenFiles(filePaths);
+            foreach(SourceFile file in filesInMonitoredFolder)
             {
                 _folderFileMappingRepository.Add(
                     new FolderFileMapping
@@ -220,7 +217,6 @@ namespace Services
             List<SourceFile> result = new List<SourceFile>();
             List<FolderFileMapping> mapping = _folderFileMappingRepository.GetRange(
                 ffm => ffm.SourceFolderId == folderId);
-
             foreach (FolderFileMapping map in mapping)
             {
                 SourceFile? file = _sourceFileRepository.FirstOrDefault(
@@ -228,7 +224,6 @@ namespace Services
                     asNoTracking: false);
                 if (file != null) result.Add(file);
             }
-
             return result;
         }
 
@@ -241,21 +236,21 @@ namespace Services
             => _sourceFolderRepository.FirstOrDefault(f => f.Path == directoryPath).Id;
         
 
-        // Get all current files from the provided folder. Verify the "MonitorAllSubDirectories" 
+        // Get all current files from the provided folder. Check the "MonitorAllSubDirectories" 
         // property to determine if the program monitors the top directory only, or all sub directories.
-        private List<string> GetCurrentFilesFromFolder(ISourceFolderDto folder)
+        private List<string> GetCurrentFilesFromFolder(SourceFolderDto folder)
         {
-            var fileSystemEntries = new List<string>();
-            using var ignorableFolderService = new IgnorableFolderService(
+            List<string> fileSystemEntries = new List<string>();
+            using IgnorableFolderService ignorableFolderService = new IgnorableFolderService(
                 RepositoryHelper.CreateIgnorableFolderRepositoryInstance());
 
             if (folder.MonitorAllSubDirectories)
             {
                 fileSystemEntries = Directory.GetFileSystemEntries(folder.Path, "*", SearchOption.AllDirectories)
                     .Where(fse => IgnorableFolderHelper.NotIgnorable(
-                        fse, 
-                        ignorableFolderService.Get()))
-                    .ToList();
+                            fse, 
+                            ignorableFolderService.Get())
+                    ).ToList();
             }
             else
             {
