@@ -10,12 +10,12 @@ namespace FileMonitor.ViewModels
     public class MainWindowViewModel : INotifyPropertyChanged
     {
         private FileExplorerTreeView _backupPaths;
-        private ObservableCollection<IPathDto> _sourceFiles;
-        private ObservableCollection<IPathDto> _updatedFiles;
-        private ObservableCollection<ISourceFolderDto> _sourceFolders;
-        private ObservableCollection<IPathDto> _movedOrRenamedFiles;
-        private ObservableCollection<IBackupPathDto> _movedOrRenamedBackupPaths;
-        private ObservableCollection<IIgnorableFolderDto> _ignorableFolders;
+        private ObservableCollection<SourceFileDto> _sourceFiles;
+        private ObservableCollection<SourceFileDto> _updatedFiles;
+        private ObservableCollection<SourceFolderDto> _sourceFolders;
+        private ObservableCollection<SourceFileDto> _movedOrRenamedFiles;
+        private ObservableCollection<BackupPathDto> _movedOrRenamedBackupPaths;
+        private ObservableCollection<IgnorableFolderDto> _ignorableFolders;
         private bool _backupSelected;
 
         /// <summary>
@@ -39,9 +39,7 @@ namespace FileMonitor.ViewModels
         }
 
         /// <summary>
-        /// An observable collection of <see cref="BackupPathDto"/> objects. This collection displays all possible
-        /// backup path locations for the user to select, add, or remove. This property is bound to the <see cref=
-        /// "MainWindow.BackupPathsDisplayed"/> list view in the UI.
+        /// 
         /// </summary>
         public ObservableCollection<BackupPathDto> BackupPaths { get { return _backupPaths; } }
 
@@ -50,7 +48,7 @@ namespace FileMonitor.ViewModels
         /// monitored by the program for the user to add or remove. This property is bound to the <see cref=
         /// "MainWindow.FilesDisplayed"/> list view in the UI.
         /// </summary>
-        public FileExplorerTreeView SourceFiles { get { return _sourceFiles; } }
+        public ObservableCollection<IPathDto> SourceFiles { get { return _sourceFiles; } }
 
         /// <summary>
         /// An observable collection of <see cref="SourceFileDto"/> objects. This collection displays only the files
@@ -126,7 +124,7 @@ namespace FileMonitor.ViewModels
         /// <param name="includeAllSubfolders"> Value from Settings.json, bound to a CheckBox. </param>
         public MainWindowViewModel(
             FileExplorerTreeView backupPaths, 
-            FileExplorerTreeView sourceFiles,
+            ObservableCollection<IPathDto> sourceFiles,
             ObservableCollection<IPathDto> updatedFiles,
             ObservableCollection<ISourceFolderDto> sourceFolders,
             ObservableCollection<IPathDto> movedOrRenamedFiles,
@@ -162,7 +160,7 @@ namespace FileMonitor.ViewModels
         /// </summary>
         public bool IsAnyBackupSelected()
         {
-            foreach (BackupPathDto dto in  _backupPaths)
+            foreach (IBackupPathDto dto in _backupPaths.FullPaths)
             {
                 if (dto.IsSelected == true) return true;
             }

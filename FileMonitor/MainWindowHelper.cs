@@ -30,7 +30,7 @@ namespace FileMonitor
                 // If the path is an empty string, if it exists in the database, or if it is a directory, then continue
                 if (path == "" || sourceFileService.PathExists(path) || attributes.HasFlag(FileAttributes.Directory))
                     continue;
-                var dto = sourceFileService.Add(path, fromSourceFolder);
+                SourceFileDto dto = sourceFileService.Add(path, fromSourceFolder);
                 _viewModel.SourceFiles.Add(dto);
                 _viewModel.UpdatedFiles.Add(dto);
             }
