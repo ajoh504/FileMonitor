@@ -6,9 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using FileMonitor.View;
-using FileMonitor.Helpers;
 
-namespace FileMonitor
+namespace FileMonitor.Helpers
 {
     /// <summary>
     /// A helper class for the <see cref="MainWindow"/>.
@@ -48,9 +47,9 @@ namespace FileMonitor
         /// <param name="MonitorAllSubFolders"></param>
         /// <returns></returns>
         // 
-        internal bool VerifyAddFolder(string directory, 
+        internal bool VerifyAddFolder(string directory,
             MainWindowViewModel _viewModel,
-            out List<string> paths, 
+            out List<string> paths,
             out bool MonitorAllSubFolders)
         {
             paths = GetPathsFromFolder(directory, _viewModel, out int numberOfDirectories, out bool MonitorAll);
@@ -66,9 +65,9 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
         }
 
         private List<string> GetPathsFromFolder(
-            string directory, 
+            string directory,
             MainWindowViewModel _viewModel,
-            out int numberOfDirectories, 
+            out int numberOfDirectories,
             out bool MonitorAll)
         {
             if (JsonSettingsHelper.IncludeAllSubFolders)
@@ -89,7 +88,7 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
                             {
                                 Name = fse
                             })
-                        ) 
+                        )
                         .Count();
                     MonitorAll = true;
 
