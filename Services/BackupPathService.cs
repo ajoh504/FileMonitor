@@ -95,7 +95,11 @@ namespace Services
         /// <param name="updateIsSelected">
         /// This parameter must be set to true in order to update the IsSelected property.
         /// </param>
-        public void Update(BackupPathDto dto, bool updatePath, bool updateIsSelected)
+        /// <param name="isChecked"> 
+        /// An optional boolean value for the check box. If omitted, the default value is null and the property is not 
+        /// updated.
+        /// </param>
+        public void Update(IPathDto dto, string? path = null, bool? isChecked = null)
         {
             BackupPath entity = _repository.FirstOrDefault(f => f.Id == dto.Id, asNoTracking: false);
             if(entity == null) return;

@@ -4,7 +4,7 @@
     /// A data transfer object related to the BackupPath Entity. Provides a full directory path for the backup location
     /// as selected by the user.
     /// </summary>
-    public class BackupPathDto
+    public class BackupPathDto: IPathDto
     {
         /// <summary>
         /// The database primary key. 
