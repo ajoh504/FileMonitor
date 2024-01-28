@@ -8,8 +8,6 @@ Todo:
 Fixes:
 - Window Mousedown only works in the Main tab, not the settings tab
 - The ListView item width breaks when the width is greater than the ListView itself
-- Check the SourceFolder repository for: 1. The Add method does not check to ensure each file path is a logical child of the given parent (directory) and
-2. Ensure when removing a monitored folder that the folder/file mapping is dealt with as well
 
 Features:
 - Offer setting for constant watch? Use the FileSystemWatcher class for this
