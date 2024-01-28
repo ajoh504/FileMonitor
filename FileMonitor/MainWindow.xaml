@@ -60,6 +60,40 @@
             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
             <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         </Style>
+
+        <Style x:Key="TreeViewStyle" TargetType="TreeView">
+            <Setter Property="Margin" Value="0,90,0,0" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        </Style>
+
+        <!--
+        THIS CODE IS TO TEST USING A HierarchicalDataTemplate
+        -->
+        <HierarchicalDataTemplate
+            x:Key="TreeViewItemTemplate"
+            ItemsSource="{Binding Children}">
+            <StackPanel 
+                Orientation="Horizontal">
+                <Image Name="img"
+                    Width="20"
+                    Height="20"
+                    RenderOptions.BitmapScalingMode="NearestNeighbor"
+                    Source="Images/file-gray-20x20px.png"/>
+                <TextBlock Text="{Binding Text}" />
+                <CheckBox
+                    Name="BackupPathCheckBox"
+                    Visibility="{Binding DisplayCheckBox, Converter={StaticResource boolToVisibilityConverter}}"
+                    Focusable="False"
+                    VerticalAlignment="Center"
+                    IsChecked="{Binding Mode=TwoWay, Path=IsChecked}" 
+                    Click="BackupPathCheckBox_Click">
+                </CheckBox>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+
     </Window.Resources>
 
     <Grid>
