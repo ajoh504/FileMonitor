@@ -33,7 +33,7 @@ namespace FileMonitor
                 if (path == "" || sourceFileService.PathExists(path) || attributes.HasFlag(FileAttributes.Directory))
                     continue;
                 var dto = sourceFileService.Add(path, fromSourceFolder);
-                _viewModel.SourceFiles.Add(dto);
+                _viewModel.SourceFiles.AddPath(dto);
                 _viewModel.UpdatedFiles.Add(dto);
             }
         }
@@ -175,8 +175,8 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
             {
                 foreach (var file in newFilesFromFolder)
                 {
-                    if (!_viewModel.SourceFiles.Contains(file))
-                        _viewModel.SourceFiles.Add(file);
+                    if (!_viewModel.SourceFiles.FullPaths.Contains(file))
+                        _viewModel.SourceFiles.AddPath(file);
                     if (!_viewModel.UpdatedFiles.Contains(file))
                         _viewModel.UpdatedFiles.Add(file);
                 }
@@ -198,8 +198,8 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
                     _viewModel.MovedOrRenamedFiles.Add(file);
                 if (_viewModel.UpdatedFiles.Contains(file))
                     _viewModel.UpdatedFiles.Remove(file);
-                if (_viewModel.SourceFiles.Contains(file))
-                    _viewModel.SourceFiles.Remove(file);
+                if (_viewModel.SourceFiles.FullPaths.Contains(file))
+                    _viewModel.SourceFiles.RemovePath(file);
             }
         }
 
