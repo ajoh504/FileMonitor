@@ -1,4 +1,4 @@
-﻿using System.Windows.Forms;
+﻿using Microsoft.Win32;
 
 namespace FileMonitor.Dialogs
 {
@@ -10,9 +10,9 @@ namespace FileMonitor.Dialogs
         /// <returns> The full path to the folder. </returns>
         public static string GetPath()
         {
-            FolderBrowserDialog dialog = new FolderBrowserDialog();
+            var dialog = new OpenFolderDialog();
             dialog.ShowDialog();
-            return dialog.SelectedPath;
+            return dialog.FolderName;
         }
     }
 }

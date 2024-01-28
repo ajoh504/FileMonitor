@@ -4,7 +4,7 @@
     /// A data transfer object related to the IgnorableFolder entity. Provides a folder name to be ignored by the
     /// program.
     /// </summary>
-    public class IgnorableFolderDto
+    public class IgnorableFolderDto : IIgnorableFolderDto
     {
         /// <summary>
         /// The database primary key. 
@@ -17,6 +17,6 @@
         /// <summary>
         /// The name of the folder/directory to be ignored.
         /// </summary>
-        public string Name { get; set; }
+        public string? Name { get; set; }
     }
 }
