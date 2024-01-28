@@ -6,7 +6,8 @@ using Services.Helpers;
 namespace Services
 {
     /// <summary>
-    /// A service class offering database access to the SourceFile Entity. This class stores a repository, and offers data transfer objects for updating the ViewModel.
+    /// A service class offering database access to the SourceFile Entity. This class stores a repository, and offers 
+    /// data transfer objects for updating the ViewModel.
     /// </summary>
     public class SourceFileService : DisposableService
     {
@@ -15,7 +16,9 @@ namespace Services
         /// <summary>
         /// The <see cref="SourceFileService"/> class constructor. 
         /// </summary>
-        /// <param name="sourceFileRepository"> An instance of <see cref="ISourceFileRepository"/> which provides database access. </param>
+        /// <param name="sourceFileRepository"> 
+        /// An instance of <see cref="ISourceFileRepository"/> for database access. 
+        /// </param>
         public SourceFileService(ISourceFileRepository sourceFileRepository)
         {
             _sourceFileRepository = sourceFileRepository;
@@ -24,12 +27,12 @@ namespace Services
         /// <summary>
         /// Returns all source file paths from the database.
         /// </summary>
-        public List<SourceFileDto> GetFiles()
+        public List<IPathDto> GetFiles()
         {
-            List<SourceFileDto> result = _sourceFileRepository.GetRange(
+            List<IPathDto> result = _sourceFileRepository.GetRange(
                 s => true,
                 // Create a new Dto for each Entity, and assign the Dto property values from the Entity properties
-                s => new SourceFileDto
+                s => (IPathDto) new SourceFileDto
                 {
                     Id = s.Id,
                     Path = s.Path
@@ -42,12 +45,12 @@ namespace Services
         /// <summary>
         /// Returns all source file paths from the database if the IsModified property is set to true.
         /// </summary>
-        public List<SourceFileDto> GetModifiedFiles()
+        public List<IPathDto> GetModifiedFiles()
         {
             RefreshModifiedFilePaths();
-            List<SourceFileDto> result = _sourceFileRepository.GetRange(
+            List<IPathDto> result = _sourceFileRepository.GetRange(
                 s => s.IsModified == true,
-                s => new SourceFileDto
+                s => (IPathDto) new SourceFileDto
                 {
                     Id = s.Id,
                     Path = s.Path
@@ -61,9 +64,11 @@ namespace Services
         /// Adds a source file path to the database.
         /// </summary>
         /// <param name="path"> The source file path to add to the database. </param>
-        /// <param name="fromSourceFolder"> Set to true if the file was added from a folder. Otherwise, set to false. </param>
+        /// <param name="fromSourceFolder"> 
+        /// Set to true if the file was added from a folder. Otherwise, set to false. 
+        /// </param>
         /// <returns> A source file DTO object for updating the UI. </returns>
-        public SourceFileDto Add(string path, bool fromSourceFolder)
+        public IPathDto Add(string path, bool fromSourceFolder)
         {
             SourceFile entity = new SourceFile
             {
@@ -102,9 +107,12 @@ namespace Services
         }
 
         /// <summary>
-        /// Set the <see cref="SourceFile.IsModified"/> property to false on all the specified files. This class should be called when the files are first copied to a backup location.
+        /// Set the <see cref="SourceFile.IsModified"/> property to false on all the specified files. This method 
+        /// should be called when the files are first copied to a backup location.
         /// </summary>
-        /// <param name="ids"> The Ids for each file where the <see cref="SourceFile.IsModified"/> property should be set to false. </param>
+        /// <param name="ids"> 
+        /// The Ids for each file where the <see cref="SourceFile.IsModified"/> property should be set to false. 
+        /// </param>
         public void ResetIsModifiedFlag(IEnumerable<int> ids)
         {
             _sourceFileRepository.Update(
@@ -136,11 +144,11 @@ namespace Services
         /// <summary>
         /// Get a list of all files that have been moved, deleted, or renamed since being added to the database.
         /// </summary>
-        public List<SourceFileDto> GetMovedOrRenamedFiles()
+        public List<IPathDto> GetMovedOrRenamedFiles()
         {
-            List<SourceFileDto> files = GetFiles();
-            List<SourceFileDto> result = new List<SourceFileDto>();
-            foreach (SourceFileDto file in files)
+            var files = GetFiles();
+            var result = new List<IPathDto>();
+            foreach (var file in files)
             {
                 if (!File.Exists(file.Path)) result.Add(file);
             }
@@ -150,8 +158,8 @@ namespace Services
         // If FileIsUpdated() returns true, then set IsModified to true, and call SaveChanges on the repository.
         private void RefreshModifiedFilePaths()
         {
-            List<SourceFile> files = _sourceFileRepository.GetRange(s => true);
-            foreach (SourceFile file in files) 
+            var files = _sourceFileRepository.GetRange(s => true);
+            foreach (var file in files) 
             {
                 if (FileIsUpdated(file.Path))
                 {

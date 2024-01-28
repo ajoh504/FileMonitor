@@ -3,17 +3,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-        xmlns:valueConverters="clr-namespace:FileMonitor.ValueConverters"
+        xmlns:valueConverters="clr-namespace:FileMonitor.Helpers"
         mc:Ignorable="d"
         Title="FileMonitor" 
-        MinHeight="600" 
-        MinWidth="800" 
+        Height="720" 
+        Width="1280" 
         WindowState="Maximized" 
         MouseDown="Window_MouseDown">
 
     <Window.Resources>
         <valueConverters:IntToBoolValueConverter x:Key="IntToBoolValueConverter" />
-        
+        <BooleanToVisibilityConverter x:Key="boolToVisibilityConverter"/>
+
         <Style x:Key="MainBorderStyle" TargetType="Border">
             <Setter Property="BorderBrush" Value="Black"/>
             <Setter Property="BorderThickness" Value=".5" />
@@ -25,6 +26,7 @@
             <Setter Property="Padding" Value="9" />
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Background" Value="CadetBlue" />
         </Style>
         
         <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
@@ -60,6 +62,37 @@
             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
             <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         </Style>
+
+        <Style x:Key="TreeViewStyle" TargetType="TreeView">
+            <Setter Property="Margin" Value="0,90,0,0" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        </Style>
+
+        <HierarchicalDataTemplate
+            x:Key="TreeViewItemTemplate"
+            ItemsSource="{Binding Children}">
+            <StackPanel 
+                Orientation="Horizontal">
+                <Image Name="img"
+                    Width="20"
+                    Height="20"
+                    RenderOptions.BitmapScalingMode="NearestNeighbor"
+                    Source="Images/file-gray-20x20px.png"/>
+                <TextBlock Text="{Binding Text}" />
+                <CheckBox
+                    Name="BackupPathCheckBox"
+                    Visibility="{Binding DisplayCheckBox, Converter={StaticResource boolToVisibilityConverter}}"
+                    Focusable="False"
+                    VerticalAlignment="Center"
+                    IsChecked="{Binding Mode=TwoWay, Path=IsChecked}" 
+                    Click="BackupPathCheckBox_Click">
+                </CheckBox>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+
     </Window.Resources>
 
     <Grid>
@@ -86,8 +119,7 @@
                         
                         <Grid>
                             
-                            <Border Style="{StaticResource HeaderStyle}"
-                                    Background="Aquamarine" >
+                            <Border Style="{StaticResource HeaderStyle}" >
 
                                 <TextBlock Text="Monitored Files:"
                                            Style="{StaticResource HeaderTextStyle}"/>
@@ -103,11 +135,6 @@
                                 <Button x:Name="RemoveFiles" 
                                         Content="Remove File(s)" 
                                         Click="RemoveFiles_Click"
-                                        IsEnabled="{
-                                            Binding ElementName=FilesDisplayed, 
-                                            Path=SelectedIndex, 
-                                            Converter={StaticResource 
-                                            IntToBoolValueConverter}}" 
                                         Style="{StaticResource MultiButtonStyle}"/>
                                 
                                 <Button x:Name="CopyAllFiles" 
@@ -122,8 +149,15 @@
                                         Style="{StaticResource MultiButtonStyle}"/>
 
                             </StackPanel>
-                            
-                            <Grid x:Name="FilesDisplayedGrid">
+
+                            <TreeView 
+                                x:Name="FilesDisplayed"
+                                Style="{StaticResource TreeViewStyle}"
+                                ItemsSource="{Binding SourceFiles.RootNodes}"
+                                ItemTemplate="{StaticResource TreeViewItemTemplate}">
+                            </TreeView>
+
+                            <!--<Grid x:Name="FilesDisplayedGrid">
                                 <ListView x:Name="FilesDisplayed"  
                                       Style="{StaticResource ListViewStyle}"
                                       ItemsSource="{Binding SourceFiles}" >
@@ -141,7 +175,7 @@
                                         </GridView>
                                     </ListView.View>
                             </ListView>
-                            </Grid>
+                            </Grid>-->
 
                         </Grid>
                     </Border>
@@ -153,8 +187,7 @@
                         
                         <Grid>
                             
-                            <Border Style="{StaticResource HeaderStyle}"
-                                    Background="Aquamarine" >
+                            <Border Style="{StaticResource HeaderStyle}" >
 
                                 <TextBlock Text="Monitored Folders:"
                                            Style="{StaticResource HeaderTextStyle}"/>
@@ -205,8 +238,7 @@
 
                         <Grid>
                             
-                            <Border Style="{StaticResource HeaderStyle}" 
-                                    Background="Aquamarine" >
+                            <Border Style="{StaticResource HeaderStyle}" >
 
                                 <TextBlock Text="Updated Files:"
                                            Style="{StaticResource HeaderTextStyle}"/>
@@ -244,8 +276,7 @@
                         
                         <Grid>
                             
-                            <Border Style="{StaticResource HeaderStyle}"
-                                    Background="Orange" >
+                            <Border Style="{StaticResource HeaderStyle}" >
 
                                 <TextBlock Text="Backup Paths:"
                                            Style="{StaticResource HeaderTextStyle}"/>
@@ -261,15 +292,10 @@
                                 <Button x:Name="RemoveBackupPath" 
                                         Content="Remove Backup Path(s)" 
                                         Click="RemoveBackupPath_Click"
-                                        IsEnabled="{
-                                            Binding ElementName=BackupPathsDisplayed, 
-                                            Path=SelectedIndex, 
-                                            Converter={StaticResource 
-                                            IntToBoolValueConverter}}" 
                                         Style="{StaticResource MultiButtonStyle}"/>
                             </StackPanel>
 
-                            <ListView x:Name="BackupPathsDisplayed" 
+                            <!--<ListView x:Name="BackupPathsDisplayed" 
                                         Style="{StaticResource ListViewStyle}"
                                         ItemsSource="{Binding BackupPaths}" >
 
@@ -296,7 +322,14 @@
                                         </GridView.Columns>
                                     </GridView>
                                 </ListView.View>
-                            </ListView>
+                            </ListView>-->
+
+                            <TreeView 
+                                x:Name="BackupPathsDisplayed"
+                                Style="{StaticResource TreeViewStyle}"
+                                ItemsSource="{Binding BackupPaths.RootNodes}"
+                                ItemTemplate="{StaticResource TreeViewItemTemplate}">
+                            </TreeView>
                         </Grid>
                     </Border>
 
@@ -312,20 +345,19 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        
+
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="*" />
+                            <RowDefinition Height="2*"/>
+                            <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        
+
                         <Border Style="{StaticResource MainBorderStyle}"
                                 Grid.Column="0" 
                                 Grid.RowSpan="2">
 
                             <Grid>
                                 
-                                <Border Style="{StaticResource HeaderStyle}"
-                                        Background="MediumPurple" >
+                                <Border Style="{StaticResource HeaderStyle}">
 
                                     <TextBlock Text="User Settings:"
                                                Style="{StaticResource HeaderTextStyle}"/>
@@ -367,8 +399,7 @@
                                 Grid.RowSpan="2">
                             
                             <Grid>
-                                <Border Style="{StaticResource HeaderStyle}"
-                                        Background="MediumPurple" >
+                                <Border Style="{StaticResource HeaderStyle}" >
 
                                     <TextBlock Text="Ignorable Folders:"
                                                Style="{StaticResource HeaderTextStyle}"/>
@@ -418,8 +449,7 @@
                             
                             <Grid>
                                 
-                                <Border Style="{StaticResource HeaderStyle}"
-                                        Background="MediumPurple" >
+                                <Border Style="{StaticResource HeaderStyle}" >
 
                                     <TextBlock Text="Moved, Deleted, or Renamed Files:"
                                                Style="{StaticResource HeaderTextStyle}"/>
@@ -470,8 +500,7 @@
                             
                             <Grid>
                                 
-                                <Border Style="{StaticResource HeaderStyle}"
-                                        Background="MediumPurple" >
+                                <Border Style="{StaticResource HeaderStyle}" >
 
                                     <TextBlock Text="Moved, Deleted, or Renamed Backup Paths:"
                                                Style="{StaticResource HeaderTextStyle}"/>

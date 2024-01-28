@@ -5,13 +5,12 @@ using System.Linq;
 using System.Windows.Controls;
 using System;
 using FileMonitor.Dialogs;
-using FileMonitor.FileBackups;
-using FileMonitor.ViewModels;
+using FileMonitor.View;
+using FileMonitor.Helpers;
 using Services;
 using Services.Dto;
 using Services.Extensions;
 using Services.Helpers;
-using System.IO;
 
 namespace FileMonitor
 {
@@ -43,16 +42,17 @@ namespace FileMonitor
                 RepositoryHelper.CreateIgnorableFolderRepositoryInstance());
 
             _viewModel = new MainWindowViewModel(
-                new ObservableCollection<BackupPathDto>(backupPathService.GetDirectories()),
-                new ObservableCollection<SourceFileDto>(sourceFileService.GetFiles()),
-                new ObservableCollection<SourceFileDto>(sourceFileService.GetModifiedFiles()),
-                new ObservableCollection<SourceFolderDto>(sourceFolderService.GetFolders()),
-                new ObservableCollection<SourceFileDto>(sourceFileService.GetMovedOrRenamedFiles()),
-                new ObservableCollection<BackupPathDto>(backupPathService.GetMovedOrRenamedPaths()),
-                new ObservableCollection<IgnorableFolderDto>(ignorableFolderService.Get()),
+                new FileExplorerTreeView(backupPathService.GetDirectories()),
+                new FileExplorerTreeView(sourceFileService.GetFiles()),
+                new ObservableCollection<IPathDto>(sourceFileService.GetModifiedFiles()),
+                new ObservableCollection<ISourceFolderDto>(sourceFolderService.GetFolders()),
+                new ObservableCollection<IPathDto>(sourceFileService.GetMovedOrRenamedFiles()),
+                new ObservableCollection<IBackupPathDto>(backupPathService.GetMovedOrRenamedPaths()),
+                new ObservableCollection<IIgnorableFolderDto>(ignorableFolderService.Get()),
                 JsonSettingsHelper.OverwriteUpdatedFiles,
                 JsonSettingsHelper.IncludeAllSubFolders
             );
+
             _viewModel.RemovePossibleRenamedFiles();
             DataContext = _viewModel;
             _helper = new MainWindowHelper();
@@ -67,7 +67,7 @@ namespace FileMonitor
         {
             try
             {
-                List<string> paths = FileDialogWindow.GetPath().ToList();
+                var paths = FileDialogWindow.GetPath().ToList();
                 if (paths.Count == 0) return;
                 _helper.AddFiles(paths, fromSourceFolder: false, _viewModel);
             }
@@ -86,18 +86,18 @@ namespace FileMonitor
         {
             try
             {
-                string directory = FolderDialogWindow.GetPath();
+                var directory = FolderDialogWindow.GetPath();
                 if (directory.Equals("")) return;
                 if (_helper.VerifyAddFolder(directory, _viewModel, out List<string> paths, out bool MonitorAllSubFolders))
                 {
-                    using SourceFolderService sourceFolderService = new SourceFolderService(
+                    using var sourceFolderService = new SourceFolderService(
                         RepositoryHelper.CreateSourceFolderRepositoryInstance(),
                         RepositoryHelper.CreateFolderFileMappingInstance(),
                         RepositoryHelper.CreateSourceFileRepositoryInstance()
                     );
                     _helper.AddFiles(paths, fromSourceFolder: true, _viewModel);
                     // Directory must be added after adding "paths" to avoid an exception.
-                    SourceFolderDto dto = sourceFolderService.Add(directory, paths, MonitorAllSubFolders);
+                    var dto = sourceFolderService.Add(directory, paths, MonitorAllSubFolders);
                     _viewModel.SourceFolders.Add(dto);
                 }
             }
@@ -113,22 +113,22 @@ namespace FileMonitor
         // files are also removed from the MainWindowViewModel.UpdatedFiles collection.
         private void RemoveFiles_Click(object sender, RoutedEventArgs e)
         {
-            if (_helper.ConfirmRemoveFiles())
-            {
-                using SourceFileService sourceFileService = new SourceFileService(
-                    RepositoryHelper.CreateSourceFileRepositoryInstance());
-                List<int> ids = new List<int>();
-                List<SourceFileDto> selectedFiles = new List<SourceFileDto>();
-                foreach (object item in FilesDisplayed.SelectedItems)
-                {
-                    SourceFileDto dto = (SourceFileDto)item;
-                    selectedFiles.Add(dto);
-                    ids.Add(dto.Id);
-                }
-                sourceFileService.Remove(ids);
-                _viewModel.SourceFiles.RemoveRange<SourceFileDto>(selectedFiles);
-                _viewModel.UpdatedFiles.RemoveRange<SourceFileDto>(selectedFiles);
-            }
+            //if (_helper.ConfirmRemoveFiles())
+            //{
+            //    using SourceFileService sourceFileService = new SourceFileService(
+            //        RepositoryHelper.CreateSourceFileRepositoryInstance());
+            //    List<int> ids = new List<int>();
+            //    var selectedFiles = new List<IPathDto>();
+            //    foreach (object item in FilesDisplayed.SelectedItems)
+            //    {
+            //        var dto = (IPathDto)item;
+            //        selectedFiles.Add(dto);
+            //        ids.Add(dto.Id);
+            //    }
+            //    sourceFileService.Remove(ids);
+            //    _viewModel.SourceFiles.RemovePaths(selectedFiles);
+            //    _viewModel.UpdatedFiles.RemoveRange(selectedFiles);
+            //}
         }
 
         // A button click event handler to create a full backup of all files monitored by the program. The full backup
@@ -141,12 +141,12 @@ namespace FileMonitor
                 MessageBox.Show("Please add a backup path.");
                 return;
             }
-            foreach(BackupPathDto dto in _viewModel.BackupPaths)
+            foreach(IBackupPathDto dto in _viewModel.BackupPaths.FullPaths)
             {
                 if(dto.IsSelected)
                 {
-                    Backup backup = new Backup(dto.Path);
-                    backup.CopyAll(_viewModel.SourceFiles.Select(f => f.Path));
+                    var backup = new Backup(dto.Path);
+                    backup.CopyAll(_viewModel.SourceFiles.FullPaths.Select(f => f.Path));
                 }
             }
             MessageBox.Show("Backup complete.");
@@ -160,11 +160,11 @@ namespace FileMonitor
                 MessageBox.Show("Please add a backup path.");
                 return;
             }
-            foreach (BackupPathDto dto in _viewModel.BackupPaths)
+            foreach (IBackupPathDto dto in _viewModel.BackupPaths.FullPaths)
             {
                 if (dto.IsSelected)
                 {
-                    Backup backup = new Backup(dto.Path);
+                    var backup = new Backup(dto.Path);
                     backup.CopyUpdated(_viewModel.UpdatedFiles.Select(f => f.Path));
                 }
             }
@@ -179,8 +179,8 @@ namespace FileMonitor
             using BackupPathService backupPathService = new BackupPathService(
                 RepositoryHelper.CreateBackupPathRepositoryInstance());
             if (backupPath == "" || backupPathService.PathExists(backupPath)) return;
-            BackupPathDto backupPathDto = backupPathService.Add(backupPath);
-            _viewModel.BackupPaths.Add(backupPathDto);
+            var backupPathDto = backupPathService.Add(backupPath);
+            _viewModel.BackupPaths.AddPath(backupPathDto);
         }
 
         // An event handler to be called when the BackupPathCheckBox is checked in the UI. This method updates the
@@ -188,11 +188,14 @@ namespace FileMonitor
         // selected even after the program exits. 
         private void BackupPathCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Controls.CheckBox checkBox = (System.Windows.Controls.CheckBox)sender;
-            BackupPathDto backupPathDto = (BackupPathDto)checkBox.DataContext;
-            using BackupPathService backupPathService = new BackupPathService(
+            var checkBox = (CheckBox)sender;
+            var selectedNode = (IPathNode)checkBox.DataContext;
+            var dto = (IBackupPathDto)_viewModel.BackupPaths.FullPaths.Where(path => path.Id == selectedNode.PathId).FirstOrDefault();
+            var isChecked = checkBox.IsChecked;
+
+            using var backupPathService = new BackupPathService(
                 RepositoryHelper.CreateBackupPathRepositoryInstance());
-            backupPathService.Update(backupPathDto, updatePath: false, updateIsSelected: true);
+            backupPathService.Update(dto, isChecked: isChecked);
             _viewModel.BackupSelected = _viewModel.IsAnyBackupSelected();
         }
 
@@ -218,20 +221,22 @@ namespace FileMonitor
                     RepositoryHelper.CreateFolderFileMappingInstance(),
                     RepositoryHelper.CreateSourceFileRepositoryInstance()
                 );
-                List<SourceFolderDto> foldersToRemove = new List<SourceFolderDto>();
-                List<SourceFileDto> filesToRemove = new List<SourceFileDto>();
-                List<int> folderIds = new List<int>();
+
+                var foldersToRemove = new List<ISourceFolderDto>();
+                var filesToRemove = new List<IPathDto>();
+                var folderIds = new List<int>();
+
                 foreach (object item in FoldersDisplayed.SelectedItems)
                 {
-                    SourceFolderDto dto = (SourceFolderDto)item;
+                    var dto = (ISourceFolderDto)item;
                     foldersToRemove.Add(dto);
                     folderIds.Add(dto.Id);
                     filesToRemove = sourceFolderService.GetStoredFilesFromFolder(dto.Id);
-                    _viewModel.SourceFiles.RemoveRange<SourceFileDto>(filesToRemove);
-                    _viewModel.UpdatedFiles.RemoveRange<SourceFileDto>(filesToRemove);
+                    _viewModel.SourceFiles.RemovePaths(filesToRemove);
+                    _viewModel.UpdatedFiles.RemoveRange(filesToRemove);
                 }
                 sourceFolderService.Remove(folderIds);
-                _viewModel.SourceFolders.RemoveRange<SourceFolderDto>(foldersToRemove);
+                _viewModel.SourceFolders.RemoveRange(foldersToRemove);
             }
         }
 
@@ -239,18 +244,20 @@ namespace FileMonitor
         {
             if (_helper.ConfirmRemoveFiles())
             {
-                using SourceFileService sourceFileService = new SourceFileService(
+                using var sourceFileService = new SourceFileService(
                     RepositoryHelper.CreateSourceFileRepositoryInstance());
-                List<int> ids = new List<int>();
-                List<SourceFileDto> selectedFiles = new List<SourceFileDto>();
+                var ids = new List<int>();
+                var selectedFiles = new List<IPathDto>();
+
                 foreach (object item in MovedOrRenamedFilesDisplayed.SelectedItems)
                 {
-                    SourceFileDto dto = (SourceFileDto)item;
+                    var dto = (IPathDto)item;
                     selectedFiles.Add(dto);
                     ids.Add(dto.Id);
                 }
+
                 sourceFileService.Remove(ids);
-                _viewModel.MovedOrRenamedFiles.RemoveRange<SourceFileDto>(selectedFiles);
+                _viewModel.MovedOrRenamedFiles.RemoveRange(selectedFiles);
             }
         }
 
@@ -270,25 +277,24 @@ namespace FileMonitor
         {
             using BackupPathService backupPathService = new BackupPathService(
                 RepositoryHelper.CreateBackupPathRepositoryInstance());
-            List<int> ids = new List<int>();
-            List<BackupPathDto> selectedPaths = new List<BackupPathDto>();
-            foreach (object item in BackupPathsDisplayed.SelectedItems)
-            {
-                BackupPathDto dto = (BackupPathDto)item;
-                selectedPaths.Add(dto);
-                ids.Add(dto.Id);
-            }
-            backupPathService.Remove(ids);
-            _viewModel.BackupPaths.RemoveRange<BackupPathDto>(selectedPaths);
+
+            // todo: refactor to only get paths from the FullPaths property inside
+            // the tree view. Additionally, redo the tree view API to not expose the nodes
+
+            //var nodes = _viewModel.BackupPaths.GetNodes(node => node.IsChecked == true);
+            //_viewModel.BackupPaths.RemovePaths(nodes);
+
+            //var ids = nodes.Select(node => node.PathId);
+            //backupPathService.Remove(ids);
         }
 
         private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             // Clear all ListViews when the mouse is clicked anywhere in the main window.
-            FilesDisplayed.SelectedItems.Clear();
+            //FilesDisplayed.SelectedItems.Clear();
             FoldersDisplayed.SelectedItems.Clear();
             UpdatedFilesDisplayed.SelectedItems.Clear();
-            BackupPathsDisplayed.SelectedItems.Clear();
+            //BackupPathsDisplayed.SelectedItems.Clear();
             MovedOrRenamedBackupPathsDisplayed.SelectedItems.Clear();
             MovedOrRenamedFilesDisplayed.SelectedItems.Clear();
         }
@@ -297,49 +303,53 @@ namespace FileMonitor
         {
             using BackupPathService backupPathService = new BackupPathService(
                 RepositoryHelper.CreateBackupPathRepositoryInstance());
-            List<int> ids = new List<int>();
-            List<BackupPathDto> selectedPaths = new List<BackupPathDto>();
+            var ids = new List<int>();
+            var selectedPaths = new List<IBackupPathDto>();
+
             foreach (object item in MovedOrRenamedBackupPathsDisplayed.SelectedItems)
             {
-                BackupPathDto dto = (BackupPathDto)item;
+                var dto = (IBackupPathDto)item;
                 selectedPaths.Add(dto);
                 ids.Add(dto.Id);
             }
+
             backupPathService.Remove(ids);
-            _viewModel.MovedOrRenamedBackupPaths.RemoveRange<BackupPathDto>(selectedPaths);
+            _viewModel.MovedOrRenamedBackupPaths.RemoveRange(selectedPaths);
         }
 
         private void AddIgnorableFolder_Click(object sender, RoutedEventArgs e)
         {
-            using IgnorableFolderService ignorableFolderService = new IgnorableFolderService(
+            using var ignorableFolderService = new IgnorableFolderService(
                 RepositoryHelper.CreateIgnorableFolderRepositoryInstance());
 
-            string folderName = Microsoft.VisualBasic.Interaction.InputBox(
+            var folderName = Microsoft.VisualBasic.Interaction.InputBox(
                 "Add the name of a folder to be ignored by the program, such as .git or .vs binary locations.",
                 "Add Ignorable Folder",
                 "",
                 -1,
                 -1);
-            IgnorableFolderDto dto = ignorableFolderService.Add(folderName);
+
+            var dto = ignorableFolderService.Add(folderName);
             _viewModel.IgnorableFolders.Add(dto);
         }
 
         private void RemoveIgnorableFolder_Click(object sender, RoutedEventArgs e)
         {
-            using IgnorableFolderService ignorableFolderService = new IgnorableFolderService(
+            using var ignorableFolderService = new IgnorableFolderService(
                 RepositoryHelper.CreateIgnorableFolderRepositoryInstance());
 
-            List<int> ids = new List<int>();
-            List<IgnorableFolderDto> ignorableFolders = new List<IgnorableFolderDto>();
+            var ids = new List<int>();
+            var ignorableFolders = new List<IIgnorableFolderDto>();
 
             foreach (object item in IgnorableFoldersDisplayed.SelectedItems)
             {
-                IgnorableFolderDto dto = (IgnorableFolderDto)item;
+                var dto = (IgnorableFolderDto)item;
                 ignorableFolders.Add(dto);
                 ids.Add(dto.Id);
             }
+
             ignorableFolderService.Remove(ids);
-            _viewModel.IgnorableFolders.RemoveRange<IgnorableFolderDto>(ignorableFolders);
+            _viewModel.IgnorableFolders.RemoveRange<IIgnorableFolderDto>(ignorableFolders);
         }
     }
 }
