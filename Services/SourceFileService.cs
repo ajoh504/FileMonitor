@@ -11,6 +11,7 @@ namespace Services
     public class SourceFileService : DisposableService
     {
         private ISourceFileRepository _sourceFileRepository;
+        private int _lastId;
 
         /// <summary>
         /// The <see cref="SourceFileService"/> class constructor. 
@@ -19,14 +20,15 @@ namespace Services
         public SourceFileService(ISourceFileRepository sourceFileRepository)
         {
             _sourceFileRepository = sourceFileRepository;
+            _lastId = -1;
         }
 
         /// <summary>
-        /// Returns all source file paths from the database.
+        /// Returns a paginated list of file paths from the database.
         /// </summary>
         public List<SourceFileDto> GetFiles()
         {
-            List<SourceFileDto> result = _sourceFileRepository.GetRange(
+            List<SourceFileDto> result = _sourceFileRepository.GetRangePaginated(
                 s => true,
                 // Create a new Dto for each Entity, and assign the Dto property values from the Entity properties
                 s => new SourceFileDto
@@ -34,8 +36,12 @@ namespace Services
                     Id = s.Id,
                     Path = s.Path
                 },
-                s => s.Path
+                _lastId
             );
+
+            SourceFileDto last = result.Last();
+            _lastId = last.Id;
+
             return result;
         }
 
