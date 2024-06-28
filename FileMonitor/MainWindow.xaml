@@ -211,12 +211,21 @@
                                 <TextBlock Text="Updated Files:"
                                            Style="{StaticResource HeaderTextStyle}"/>
                             </Border>
-                            
-                            <Button x:Name="CopyUpdatedFiles" 
-                                    Content="Copy Updated Files" 
-                                    Click="CopyUpdatedFiles_Click" 
-                                    IsEnabled="{Binding BackupSelected}"
-                                    Style="{StaticResource SingleButtonStyle}"/>
+
+
+                            <StackPanel Style="{StaticResource ButtonStackPanelStyle}">
+                                <Button x:Name="CopyUpdatedFiles" 
+                                        Content="Copy Updated Files" 
+                                        Click="CopyUpdatedFiles_Click" 
+                                        IsEnabled="{Binding BackupSelected}"
+                                        Style="{StaticResource MultiButtonStyle}"/>
+
+                                <Button x:Name="SearchForUpdatedFiles" 
+                                        Content="Search For Updated Files" 
+                                        Click="SearchForUpdatedFiles_Click" 
+                                        Style="{StaticResource MultiButtonStyle}"/>
+                            </StackPanel>
+
 
                             <ListView x:Name="UpdatedFilesDisplayed" 
                                         Style="{StaticResource ListViewStyle}"
