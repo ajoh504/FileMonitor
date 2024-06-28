@@ -12,6 +12,7 @@ using Services.Dto;
 using Services.Extensions;
 using Services.Helpers;
 using System.IO;
+using System.Windows.Forms;
 
 namespace FileMonitor
 {
@@ -45,7 +46,6 @@ namespace FileMonitor
             _viewModel = new MainWindowViewModel(
                 new ObservableCollection<BackupPathDto>(backupPathService.GetDirectories()),
                 new ObservableCollection<SourceFileDto>(sourceFileService.GetFiles()),
-                new ObservableCollection<SourceFileDto>(sourceFileService.GetModifiedFiles()),
                 new ObservableCollection<SourceFolderDto>(sourceFolderService.GetFolders()),
                 new ObservableCollection<SourceFileDto>(sourceFileService.GetMovedOrRenamedFiles()),
                 new ObservableCollection<BackupPathDto>(backupPathService.GetMovedOrRenamedPaths()),
@@ -73,7 +73,7 @@ namespace FileMonitor
             }
             catch(Exception ex)
             {
-                MessageBox.Show($"{ex}");
+                System.Windows.MessageBox.Show($"{ex}");
                 return;
             }
         }
@@ -103,7 +103,7 @@ namespace FileMonitor
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"{ex}");
+                System.Windows.MessageBox.Show($"{ex}");
                 return;
             }
         }
@@ -138,7 +138,7 @@ namespace FileMonitor
         {
             if(!_viewModel.BackupSelected)
             {
-                MessageBox.Show("Please add a backup path.");
+                System.Windows.MessageBox.Show("Please add a backup path.");
                 return;
             }
             foreach(BackupPathDto dto in _viewModel.BackupPaths)
@@ -149,7 +149,8 @@ namespace FileMonitor
                     backup.CopyAll(_viewModel.SourceFiles.Select(f => f.Path));
                 }
             }
-            MessageBox.Show("Backup complete.");
+
+                System.Windows.MessageBox.Show("Backup complete.");
         }
 
         // A button click event handler to copy only the files that have been updated or changed since the last backup.
@@ -157,7 +158,7 @@ namespace FileMonitor
         {
             if (!_viewModel.BackupSelected)
             {
-                MessageBox.Show("Please add a backup path.");
+                System.Windows.MessageBox.Show("Please add a backup path.");
                 return;
             }
             foreach (BackupPathDto dto in _viewModel.BackupPaths)
@@ -168,8 +169,10 @@ namespace FileMonitor
                     backup.CopyUpdated(_viewModel.UpdatedFiles.Select(f => f.Path));
                 }
             }
+
             _helper.ResetUpdatedFiles(_viewModel);
-            MessageBox.Show("Backup complete.");
+                System.Windows.MessageBox.Show("Backup complete.");
+            }
         }
 
         // A button click event handler for adding a backup folder path. 
@@ -202,6 +205,7 @@ namespace FileMonitor
             _helper.RefreshUpdatedFilesView(_viewModel);
             _helper.RefreshMonitoredFolders(_viewModel);
             _helper.RefreshMovedOrRenamedFiles(_viewModel);
+        }
         }
 
 
@@ -256,13 +260,13 @@ namespace FileMonitor
 
         private void OverwriteUpdatedFilesCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            CheckBox checkBox = (CheckBox)sender;
+            var checkBox = (System.Windows.Controls.CheckBox)sender;
             JsonSettingsHelper.OverwriteUpdatedFiles = (bool)checkBox.IsChecked;
         }
 
         private void IncludeAllSubfoldersCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            CheckBox checkBox = (CheckBox)sender;
+            var checkBox = (System.Windows.Controls.CheckBox)sender;
             JsonSettingsHelper.IncludeAllSubFolders = (bool)checkBox.IsChecked;
         }
 
