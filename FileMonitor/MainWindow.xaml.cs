@@ -11,8 +11,6 @@ using Services;
 using Services.Dto;
 using Services.Extensions;
 using Services.Helpers;
-using System.IO;
-using System.Windows.Forms;
 
 namespace FileMonitor
 {
@@ -73,7 +71,7 @@ namespace FileMonitor
             }
             catch(Exception ex)
             {
-                System.Windows.MessageBox.Show($"{ex}");
+                MessageBox.Show($"{ex}");
                 return;
             }
         }
@@ -103,7 +101,7 @@ namespace FileMonitor
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show($"{ex}");
+                MessageBox.Show($"{ex}");
                 return;
             }
         }
@@ -138,19 +136,37 @@ namespace FileMonitor
         {
             if(!_viewModel.BackupSelected)
             {
-                System.Windows.MessageBox.Show("Please add a backup path.");
+                MessageBox.Show("Please add a backup path.");
                 return;
             }
-            foreach(BackupPathDto dto in _viewModel.BackupPaths)
-            {
-                if(dto.IsSelected)
-                {
-                    Backup backup = new Backup(dto.Path);
-                    backup.CopyAll(_viewModel.SourceFiles.Select(f => f.Path));
-                }
-            }
 
-                System.Windows.MessageBox.Show("Backup complete.");
+            var userClick = MessageBox.Show(
+                "Do you wish to begin the backup process to copy all files? This operation may take some time.",
+                "Copy All Files",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question
+            );
+
+            if(userClick == MessageBoxResult.Yes)
+            {
+                MessageBox.Show(
+                    "Please wait. Do not close the application.",
+                    "Copying All Files",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation
+                );
+
+                foreach (BackupPathDto dto in _viewModel.BackupPaths)
+                {
+                    if(dto.IsSelected)
+                    {
+                        Backup backup = new Backup(dto.Path);
+                        backup.CopyAll(_viewModel.SourceFiles.Select(f => f.Path));
+                    }
+                }
+
+                MessageBox.Show("Backup complete.");
+            }
         }
 
         // A button click event handler to copy only the files that have been updated or changed since the last backup.
@@ -158,20 +174,37 @@ namespace FileMonitor
         {
             if (!_viewModel.BackupSelected)
             {
-                System.Windows.MessageBox.Show("Please add a backup path.");
+                MessageBox.Show("Please add a backup path.");
                 return;
             }
-            foreach (BackupPathDto dto in _viewModel.BackupPaths)
-            {
-                if (dto.IsSelected)
-                {
-                    Backup backup = new Backup(dto.Path);
-                    backup.CopyUpdated(_viewModel.UpdatedFiles.Select(f => f.Path));
-                }
-            }
 
-            _helper.ResetUpdatedFiles(_viewModel);
-                System.Windows.MessageBox.Show("Backup complete.");
+            var userClick = MessageBox.Show(
+                "Do you wish to begin the backup process to copy the updated files? This operation may take some time.",
+                "Copy Updated Files",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question
+            );
+
+            if(userClick == MessageBoxResult.Yes)
+            {
+                MessageBox.Show(
+                    "Please wait. Do not close the application.",
+                    "Copying Updated Files",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation
+                );
+
+                foreach (BackupPathDto dto in _viewModel.BackupPaths)
+                {
+                    if (dto.IsSelected)
+                    {
+                        Backup backup = new Backup(dto.Path);
+                        backup.CopyUpdated(_viewModel.UpdatedFiles.Select(f => f.Path));
+                    }
+                }
+
+                _helper.ResetUpdatedFiles(_viewModel);
+                MessageBox.Show("Backup complete.");
             }
         }
 
@@ -202,10 +235,28 @@ namespace FileMonitor
         // A button click event handler to refresh all ListViews in the UI.
         private void RefreshView_Click(object sender, RoutedEventArgs e)
         {
-            _helper.RefreshUpdatedFilesView(_viewModel);
-            _helper.RefreshMonitoredFolders(_viewModel);
-            _helper.RefreshMovedOrRenamedFiles(_viewModel);
-        }
+            var userClick = MessageBox.Show(
+                "Do you wish to refresh the window views? This operation may take some time.", 
+                "Refresh View", 
+                MessageBoxButton.YesNo, 
+                MessageBoxImage.Question
+            );
+
+            if (userClick == MessageBoxResult.Yes)
+            {
+                MessageBox.Show(
+                    "Please wait. Do not close the application.",
+                    "Refreshing Views",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation
+                );
+
+                _helper.RefreshUpdatedFilesView(_viewModel);
+                _helper.RefreshMonitoredFolders(_viewModel);
+                _helper.RefreshMovedOrRenamedFiles(_viewModel);
+
+                MessageBox.Show("Refresh complete.");
+            }
         }
 
 
@@ -344,6 +395,33 @@ namespace FileMonitor
             }
             ignorableFolderService.Remove(ids);
             _viewModel.IgnorableFolders.RemoveRange<IgnorableFolderDto>(ignorableFolders);
+        }
+
+        private void SearchForUpdatedFiles_Click(object sender, RoutedEventArgs e)
+        {
+            var userClick = MessageBox.Show(
+                "Do you wish to search for updated files? This operation may take some time.",
+                "Refresh View",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question
+            );
+
+            if (userClick == MessageBoxResult.Yes)
+            {
+                MessageBox.Show(
+                    "Please wait. Do not close the application.",
+                    "Finding Updated Files",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Exclamation
+                );
+
+                using SourceFileService sourceFileService = new SourceFileService(
+                    RepositoryHelper.CreateSourceFileRepositoryInstance());
+
+                sourceFileService.GetModifiedFiles();
+
+                MessageBox.Show("Search complete.");
+            }
         }
     }
 }
