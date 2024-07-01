@@ -44,6 +44,7 @@ namespace FileMonitor
             _viewModel = new MainWindowViewModel(
                 new ObservableCollection<BackupPathDto>(backupPathService.GetDirectories()),
                 new ObservableCollection<SourceFileDto>(sourceFileService.GetFiles()),
+                new ObservableCollection<SourceFileDto>(),
                 new ObservableCollection<SourceFolderDto>(sourceFolderService.GetFolders()),
                 new ObservableCollection<SourceFileDto>(sourceFileService.GetMovedOrRenamedFiles()),
                 new ObservableCollection<BackupPathDto>(backupPathService.GetMovedOrRenamedPaths()),
@@ -418,7 +419,8 @@ namespace FileMonitor
                 using SourceFileService sourceFileService = new SourceFileService(
                     RepositoryHelper.CreateSourceFileRepositoryInstance());
 
-                sourceFileService.GetModifiedFiles();
+                _helper = new MainWindowHelper();
+                _helper.RefreshUpdatedFilesView(_viewModel);
 
                 MessageBox.Show("Search complete.");
             }
