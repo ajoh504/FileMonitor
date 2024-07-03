@@ -150,12 +150,6 @@ namespace FileMonitor
 
             if(userClick == MessageBoxResult.Yes)
             {
-                MessageBox.Show(
-                    "Please wait. Do not close the application.",
-                    "Copying All Files",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Exclamation
-                );
 
                 foreach (BackupPathDto dto in _viewModel.BackupPaths)
                 {
@@ -188,13 +182,6 @@ namespace FileMonitor
 
             if(userClick == MessageBoxResult.Yes)
             {
-                MessageBox.Show(
-                    "Please wait. Do not close the application.",
-                    "Copying Updated Files",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Exclamation
-                );
-
                 foreach (BackupPathDto dto in _viewModel.BackupPaths)
                 {
                     if (dto.IsSelected)
@@ -245,13 +232,6 @@ namespace FileMonitor
 
             if (userClick == MessageBoxResult.Yes)
             {
-                MessageBox.Show(
-                    "Please wait. Do not close the application.",
-                    "Refreshing Views",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Exclamation
-                );
-
                 _helper.RefreshUpdatedFilesView(_viewModel);
                 _helper.RefreshMonitoredFolders(_viewModel);
                 _helper.RefreshMovedOrRenamedFiles(_viewModel);
