@@ -39,7 +39,13 @@
             <Setter Property="Height" Value="25" />
             <Setter Property="Margin" Value="10,53,0,10" />
         </Style>
-        
+
+        <Style x:Key="BorderStackPanelStyle" TargetType="StackPanel">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+        </Style>
+
         <Style x:Key="MultiButtonStyle" TargetType="Button">
             <Setter Property="Margin" Value="0,0,10,0"/>
             <Setter Property="Padding" Value="3"/>
@@ -52,7 +58,7 @@
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="HorizontalAlignment" Value="Left" />
         </Style>
-        
+
         <Style x:Key="ListViewStyle" TargetType="ListView">
             <Setter Property="Margin" Value="0,90,0,0" />
             <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -85,12 +91,13 @@
                             Grid.RowSpan="2">
                         
                         <Grid>
-                            
+
                             <Border Style="{StaticResource HeaderStyle}"
                                     Background="CadetBlue" >
 
-                                <TextBlock Text="Monitored Files:"
+                                <TextBlock Text="Monitored Files"
                                            Style="{StaticResource HeaderTextStyle}"/>
+
                             </Border>
 
                             <StackPanel Style="{StaticResource ButtonStackPanelStyle}">
@@ -120,6 +127,12 @@
                                         Content="Refresh View" 
                                         Click="RefreshView_Click"
                                         Style="{StaticResource MultiButtonStyle}"/>
+
+                                <ProgressBar x:Name="LeftColumnProgressBar"
+                                                 IsIndeterminate="True"
+                                                 Visibility="Hidden"
+                                                 Width="100"
+                                                 Height="15"/>
 
                             </StackPanel>
                             
@@ -156,7 +169,7 @@
                             <Border Style="{StaticResource HeaderStyle}"
                                     Background="CadetBlue" >
 
-                                <TextBlock Text="Monitored Folders:"
+                                <TextBlock Text="Monitored Folders"
                                            Style="{StaticResource HeaderTextStyle}"/>
                             </Border>
 
@@ -204,12 +217,12 @@
                             Grid.Row="0">
 
                         <Grid>
-                            
+
                             <Border Style="{StaticResource HeaderStyle}" 
                                     Background="CadetBlue" >
 
-                                <TextBlock Text="Updated Files:"
-                                           Style="{StaticResource HeaderTextStyle}"/>
+                                <TextBlock Text="Updated Files"
+                                            Style="{StaticResource HeaderTextStyle}"/>
                             </Border>
 
 
@@ -224,6 +237,12 @@
                                         Content="Search For Updated Files" 
                                         Click="SearchForUpdatedFiles_Click" 
                                         Style="{StaticResource MultiButtonStyle}"/>
+
+                                <ProgressBar x:Name="RightColumnProgressBar"
+                                                 IsIndeterminate="True"
+                                                 Visibility="Hidden"
+                                                 Width="100"
+                                                 Height="15"/>
                             </StackPanel>
 
 
@@ -256,7 +275,7 @@
                             <Border Style="{StaticResource HeaderStyle}"
                                     Background="CadetBlue" >
 
-                                <TextBlock Text="Backup Paths:"
+                                <TextBlock Text="Backup Paths"
                                            Style="{StaticResource HeaderTextStyle}"/>
                             </Border>
                             
@@ -336,7 +355,7 @@
                                 <Border Style="{StaticResource HeaderStyle}"
                                         Background="CadetBlue" >
 
-                                    <TextBlock Text="User Settings:"
+                                    <TextBlock Text="User Settings"
                                                Style="{StaticResource HeaderTextStyle}"/>
                                 </Border>
                                 
@@ -379,7 +398,7 @@
                                 <Border Style="{StaticResource HeaderStyle}"
                                         Background="CadetBlue" >
 
-                                    <TextBlock Text="Ignorable Folders:"
+                                    <TextBlock Text="Ignorable Folders"
                                                Style="{StaticResource HeaderTextStyle}"/>
                                 </Border>
                             
@@ -430,7 +449,7 @@
                                 <Border Style="{StaticResource HeaderStyle}"
                                         Background="CadetBlue" >
 
-                                    <TextBlock Text="Moved, Deleted, or Renamed Files:"
+                                    <TextBlock Text="Moved, Deleted, or Renamed Files"
                                                Style="{StaticResource HeaderTextStyle}"/>
                                 </Border>
                             
@@ -482,7 +501,7 @@
                                 <Border Style="{StaticResource HeaderStyle}"
                                         Background="CadetBlue" >
 
-                                    <TextBlock Text="Moved, Deleted, or Renamed Backup Paths:"
+                                    <TextBlock Text="Moved, Deleted, or Renamed Backup Paths"
                                                Style="{StaticResource HeaderTextStyle}"/>
                                 </Border>
 
