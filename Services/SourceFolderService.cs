@@ -147,11 +147,13 @@ namespace Services
             List<SourceFolderDto> folders = GetFolders();
             bool filesAddedToFolders = false;
             newFilesFromFolder = new List<SourceFileDto>();
+
             foreach (SourceFolderDto folder in folders)
             {
                 List<string> currentFiles = GetCurrentFilesFromFolder(folder);
                 List<string> storedFiles = GetPathsFromEntities(GetFileEntitiesFromFolder(folder.Id));
                 List<string> filesToMap = new List<string>();
+
                 foreach (string file in currentFiles)
                 {
                     if (storedFiles.Contains(file)) continue;
