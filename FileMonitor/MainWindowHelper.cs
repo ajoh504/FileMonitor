@@ -153,7 +153,12 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
             foreach (SourceFileDto sourceFileDto in sourceFileDtos)
             {
                 if (!_viewModel.UpdatedFiles.Contains(sourceFileDto))
-                    _viewModel.UpdatedFiles.Add(sourceFileDto);
+                {
+                    App.Current.Dispatcher.Invoke(() =>
+                    {
+                        _viewModel.UpdatedFiles.Add(sourceFileDto); 
+                    });
+                }    
             }
         }
 
@@ -175,9 +180,20 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
                 foreach (SourceFileDto file in newFilesFromFolder)
                 {
                     if (!_viewModel.SourceFiles.Contains(file))
-                        _viewModel.SourceFiles.Add(file);
+                    {
+                        App.Current.Dispatcher.Invoke(() =>
+                        {
+                            _viewModel.SourceFiles.Add(file);
+                        });
+                    }
+
                     if (!_viewModel.UpdatedFiles.Contains(file))
-                        _viewModel.UpdatedFiles.Add(file);
+                    {
+                        App.Current.Dispatcher.Invoke(() =>
+                        {
+                            _viewModel.UpdatedFiles.Add(file);
+                        });
+                    }
                 }
             }
         }
@@ -190,15 +206,34 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
         {
             using SourceFileService sourceFileService = new SourceFileService(
                 RepositoryHelper.CreateSourceFileRepositoryInstance());
+
             List<SourceFileDto> files = sourceFileService.GetMovedOrRenamedFiles();
+
             foreach (SourceFileDto file in files)
             {
                 if (!_viewModel.MovedOrRenamedFiles.Contains(file))
-                    _viewModel.MovedOrRenamedFiles.Add(file);
+                {
+                    App.Current.Dispatcher.Invoke(() =>
+                    {
+                        _viewModel.MovedOrRenamedFiles.Add(file);
+                    });
+                }
+
                 if (_viewModel.UpdatedFiles.Contains(file))
-                    _viewModel.UpdatedFiles.Remove(file);
+                {
+                    App.Current.Dispatcher.Invoke(() =>
+                    {
+                        _viewModel.UpdatedFiles.Remove(file);
+                    });
+                }
+
                 if (_viewModel.SourceFiles.Contains(file))
-                    _viewModel.SourceFiles.Remove(file);
+                {
+                    App.Current.Dispatcher.Invoke(() =>
+                    {
+                        _viewModel.SourceFiles.Remove(file);
+                    });
+                }
             }
         }
 
