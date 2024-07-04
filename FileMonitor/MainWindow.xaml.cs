@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Controls;
 using System;
 using FileMonitor.Dialogs;
 using FileMonitor.FileBackups;
@@ -11,6 +10,7 @@ using Services;
 using Services.Dto;
 using Services.Extensions;
 using Services.Helpers;
+using System.Threading.Tasks;
 
 namespace FileMonitor
 {
@@ -133,7 +133,7 @@ namespace FileMonitor
         // A button click event handler to create a full backup of all files monitored by the program. The full backup
         // copies every file to the backup location, and stores them in a unique directory. The name of the directory
         // uses the current date and time.
-        private void CopyAllFiles_Click(object sender, RoutedEventArgs e)
+        private async void CopyAllFiles_Click(object sender, RoutedEventArgs e)
         {
             if(!_viewModel.BackupSelected)
             {
@@ -151,6 +151,8 @@ namespace FileMonitor
             if(userClick == MessageBoxResult.Yes)
             {
 
+                await Task.Run(() =>
+                {
                 foreach (BackupPathDto dto in _viewModel.BackupPaths)
                 {
                     if(dto.IsSelected)
@@ -159,13 +161,14 @@ namespace FileMonitor
                         backup.CopyAll(_viewModel.SourceFiles.Select(f => f.Path));
                     }
                 }
+                });
 
                 MessageBox.Show("Backup complete.");
             }
         }
 
         // A button click event handler to copy only the files that have been updated or changed since the last backup.
-        private void CopyUpdatedFiles_Click(object sender, RoutedEventArgs e)
+        private async void CopyUpdatedFiles_Click(object sender, RoutedEventArgs e)
         {
             if (!_viewModel.BackupSelected)
             {
@@ -182,6 +185,7 @@ namespace FileMonitor
 
             if(userClick == MessageBoxResult.Yes)
             {
+                await Task.Run(() => {                 
                 foreach (BackupPathDto dto in _viewModel.BackupPaths)
                 {
                     if (dto.IsSelected)
@@ -190,6 +194,7 @@ namespace FileMonitor
                         backup.CopyUpdated(_viewModel.UpdatedFiles.Select(f => f.Path));
                     }
                 }
+                });
 
                 _helper.ResetUpdatedFiles(_viewModel);
                 MessageBox.Show("Backup complete.");
@@ -221,7 +226,7 @@ namespace FileMonitor
         }
 
         // A button click event handler to refresh all ListViews in the UI.
-        private void RefreshView_Click(object sender, RoutedEventArgs e)
+        private async void RefreshView_Click(object sender, RoutedEventArgs e)
         {
             var userClick = MessageBox.Show(
                 "Do you wish to refresh the window views? This operation may take some time.", 
@@ -232,9 +237,13 @@ namespace FileMonitor
 
             if (userClick == MessageBoxResult.Yes)
             {
+
+                await Task.Run(() =>
+                {
                 _helper.RefreshUpdatedFilesView(_viewModel);
                 _helper.RefreshMonitoredFolders(_viewModel);
                 _helper.RefreshMovedOrRenamedFiles(_viewModel);
+                });
 
                 MessageBox.Show("Refresh complete.");
             }
@@ -378,7 +387,7 @@ namespace FileMonitor
             _viewModel.IgnorableFolders.RemoveRange<IgnorableFolderDto>(ignorableFolders);
         }
 
-        private void SearchForUpdatedFiles_Click(object sender, RoutedEventArgs e)
+        private async void SearchForUpdatedFiles_Click(object sender, RoutedEventArgs e)
         {
             var userClick = MessageBox.Show(
                 "Do you wish to search for updated files? This operation may take some time.",
@@ -396,11 +405,14 @@ namespace FileMonitor
                     MessageBoxImage.Exclamation
                 );
 
+                await Task.Run(() =>
+                {
                 using SourceFileService sourceFileService = new SourceFileService(
                     RepositoryHelper.CreateSourceFileRepositoryInstance());
 
                 _helper = new MainWindowHelper();
                 _helper.RefreshUpdatedFilesView(_viewModel);
+                });
 
                 MessageBox.Show("Search complete.");
             }
