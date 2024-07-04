@@ -150,20 +150,22 @@ namespace FileMonitor
 
             if(userClick == MessageBoxResult.Yes)
             {
+                this.LeftColumnProgressBar.Visibility = Visibility.Visible;
 
                 await Task.Run(() =>
                 {
-                foreach (BackupPathDto dto in _viewModel.BackupPaths)
-                {
-                    if(dto.IsSelected)
+                    foreach (BackupPathDto dto in _viewModel.BackupPaths)
                     {
-                        Backup backup = new Backup(dto.Path);
-                        backup.CopyAll(_viewModel.SourceFiles.Select(f => f.Path));
+                        if(dto.IsSelected)
+                        {
+                            Backup backup = new Backup(dto.Path);
+                            backup.CopyAll(_viewModel.SourceFiles.Select(f => f.Path));
+                        }
                     }
-                }
                 });
 
                 MessageBox.Show("Backup complete.");
+                this.LeftColumnProgressBar.Visibility = Visibility.Hidden;
             }
         }
 
@@ -185,19 +187,22 @@ namespace FileMonitor
 
             if(userClick == MessageBoxResult.Yes)
             {
+                this.RightColumnProgressBar.Visibility = Visibility.Visible;
+
                 await Task.Run(() => {                 
-                foreach (BackupPathDto dto in _viewModel.BackupPaths)
-                {
-                    if (dto.IsSelected)
+                    foreach (BackupPathDto dto in _viewModel.BackupPaths)
                     {
-                        Backup backup = new Backup(dto.Path);
-                        backup.CopyUpdated(_viewModel.UpdatedFiles.Select(f => f.Path));
+                        if (dto.IsSelected)
+                        {
+                            Backup backup = new Backup(dto.Path);
+                            backup.CopyUpdated(_viewModel.UpdatedFiles.Select(f => f.Path));
+                        }
                     }
-                }
                 });
 
                 _helper.ResetUpdatedFiles(_viewModel);
                 MessageBox.Show("Backup complete.");
+                this.RightColumnProgressBar.Visibility = Visibility.Hidden;
             }
         }
 
@@ -237,15 +242,17 @@ namespace FileMonitor
 
             if (userClick == MessageBoxResult.Yes)
             {
+                this.LeftColumnProgressBar.Visibility = Visibility.Visible;
 
                 await Task.Run(() =>
                 {
-                _helper.RefreshUpdatedFilesView(_viewModel);
-                _helper.RefreshMonitoredFolders(_viewModel);
-                _helper.RefreshMovedOrRenamedFiles(_viewModel);
+                    _helper.RefreshUpdatedFilesView(_viewModel);
+                    _helper.RefreshMonitoredFolders(_viewModel);
+                    _helper.RefreshMovedOrRenamedFiles(_viewModel);
                 });
 
                 MessageBox.Show("Refresh complete.");
+                this.LeftColumnProgressBar.Visibility = Visibility.Hidden;
             }
         }
 
@@ -398,23 +405,19 @@ namespace FileMonitor
 
             if (userClick == MessageBoxResult.Yes)
             {
-                MessageBox.Show(
-                    "Please wait. Do not close the application.",
-                    "Finding Updated Files",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Exclamation
-                );
+                this.RightColumnProgressBar.Visibility = Visibility.Visible;
 
                 await Task.Run(() =>
                 {
-                using SourceFileService sourceFileService = new SourceFileService(
-                    RepositoryHelper.CreateSourceFileRepositoryInstance());
+                    using SourceFileService sourceFileService = new SourceFileService(
+                        RepositoryHelper.CreateSourceFileRepositoryInstance());
 
-                _helper = new MainWindowHelper();
-                _helper.RefreshUpdatedFilesView(_viewModel);
+                    _helper = new MainWindowHelper();
+                    _helper.RefreshUpdatedFilesView(_viewModel);
                 });
 
                 MessageBox.Show("Search complete.");
+                this.RightColumnProgressBar.Visibility = Visibility.Hidden;
             }
         }
     }
