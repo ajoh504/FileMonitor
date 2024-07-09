@@ -1,18 +1,18 @@
-﻿using System.Windows.Forms;
+﻿using Microsoft.Win32;
 
 namespace FileMonitor.Dialogs
 {
     internal static class FolderDialogWindow
     {
         /// <summary>
-        /// Open a FolderBrowserDialog for the user to select a folder.
+        /// Open a Folder Dialog for the user to select a folder.
         /// </summary>
         /// <returns> The full path to the folder. </returns>
         public static string GetPath()
         {
-            FolderBrowserDialog dialog = new FolderBrowserDialog();
+            OpenFolderDialog dialog = new OpenFolderDialog();
             dialog.ShowDialog();
-            return dialog.SelectedPath;
+            return dialog.FolderName;
         }
     }
 }
