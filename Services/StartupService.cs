@@ -2,7 +2,6 @@
 using System.ServiceProcess;
 using System.Diagnostics;
 using System.Timers;
-using Microsoft.Extensions.Logging;
 using System.Runtime.InteropServices;
 
 namespace Services
@@ -12,32 +11,30 @@ namespace Services
         private EventLog _eventLog;
         private int _eventId = 1;
 
-        public StartupService()
-        {
-            InitializeComponent();
-            _eventLog = new EventLog();
-
-            if (!EventLog.SourceExists("StartupServiceSource"))
-            {
-                EventLog.CreateEventSource("StartupServiceSource", "StartupServiceLog");
-            }
-
-            _eventLog.Source = "StartupServiceSource";
-            _eventLog.Log = "StartupServiceLog";
-        }
+        [DllImport("advapi32.dll", SetLastError = true)]
+        private static extern bool SetServiceStatus(nint handle, ref ServiceStatus serviceStatus);
 
         protected override void OnStart(string[] args)
         {
-            _eventLog.WriteEntry("Beginning FileMonitor StartupService");
+            // Update the service state to Start Pending.
+            var serviceStatus = new ServiceStatus();
+            serviceStatus.dwCurrentState = ServiceState.SERVICE_START_PENDING;
+            serviceStatus.dwWaitHint = 100000;
+            SetServiceStatus(this.ServiceHandle, ref serviceStatus);
+            _eventLog.WriteEntry("Beginning FileMonitor StartupService: Start Pending");
 
             // Set up a timer that triggers every minute.
             var timer = new System.Timers.Timer
             {
                 Interval = 60000 // 60 seconds
             };
-
             timer.Elapsed += new ElapsedEventHandler(this.OnTimer);
             timer.Start();
+
+            // Update the service state to Running.
+            serviceStatus.dwCurrentState = ServiceState.SERVICE_RUNNING;
+            SetServiceStatus(this.ServiceHandle, ref serviceStatus);
+            _eventLog.WriteEntry("FileMonitor StartupService: Service Running");
         }
 
         protected override void OnStop()
@@ -73,7 +70,19 @@ namespace Services
             public int dwWaitHint;
         };
 
-        [DllImport("advapi32.dll", SetLastError = true)]
-        private static extern bool SetServiceStatus(System.IntPtr handle, ref ServiceStatus serviceStatus);
+        public StartupService()
+        {
+            InitializeComponent();
+
+            _eventLog = new EventLog();
+
+            if (!EventLog.SourceExists("StartupServiceSource"))
+            {
+                EventLog.CreateEventSource("StartupServiceSource", "StartupServiceLog");
+            }
+
+            _eventLog.Source = "StartupServiceSource";
+            _eventLog.Log = "StartupServiceLog";
+        }
     }
 }
