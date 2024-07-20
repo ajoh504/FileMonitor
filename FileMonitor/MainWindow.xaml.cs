@@ -44,7 +44,7 @@ namespace FileMonitor
             _viewModel = new MainWindowViewModel(
                 new ObservableCollection<BackupPathDto>(backupPathService.GetDirectories()),
                 new ObservableCollection<SourceFileDto>(sourceFileService.GetFiles()),
-                new ObservableCollection<SourceFileDto>(),
+                new ObservableCollection<SourceFileDto>(sourceFileService.GetModifiedFiles()),
                 new ObservableCollection<SourceFolderDto>(sourceFolderService.GetFolders()),
                 new ObservableCollection<SourceFileDto>(sourceFileService.GetMovedOrRenamedFiles()),
                 new ObservableCollection<BackupPathDto>(backupPathService.GetMovedOrRenamedPaths()),
