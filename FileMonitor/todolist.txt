@@ -1,6 +1,8 @@
 Todo for enabling pagination:
 - Fix poor loading time on the following method calls: SourceFileService.GetFiles, SourceFileService.ModifiedFiles 
 - Add buttons to view for selecting the pages
+- Add a button to call "Check for Update Files / Modified Files"
+- Both backup operations plus "check for updated files": add a window to inform the user that the operation may take some time
 
 Todo:
 - Add multiple folders at once?
