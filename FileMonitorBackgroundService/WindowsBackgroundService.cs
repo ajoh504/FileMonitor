@@ -11,11 +11,17 @@ namespace FileMonitorBackgroundService
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
-                    fileMonitorBackgroundService.Run();
-
                     if (logger.IsEnabled(LogLevel.Information))
                     {
                         logger.LogInformation("FileMonitorBackgroundService running at: {time}", DateTimeOffset.Now);
+                    }
+
+                    fileMonitorBackgroundService.Run();
+                    var _changedFileCount = fileMonitorBackgroundService.ChangedFileCount;
+
+                    if (logger.IsEnabled(LogLevel.Information) && _changedFileCount > 0)
+                    {
+                        logger.LogInformation("FileMonitorBackgroundService changed files found: {count} running at: {time}", [_changedFileCount, DateTimeOffset.Now]);
                     }
 
                     await Task.Delay(300000, stoppingToken);
