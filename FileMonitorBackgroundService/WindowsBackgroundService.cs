@@ -1,21 +1,23 @@
 namespace FileMonitorBackgroundService
 {
     public sealed class WindowsBackgroundService(
-        FileMonitorBackgroundService service,
+        FileMonitorBackgroundService fileMonitorBackgroundService,
         ILogger<WindowsBackgroundService> logger) : BackgroundService
     {
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             try
             {
-                service.InitializeProjectData();
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
+                    fileMonitorBackgroundService.Run();
+
                     if (logger.IsEnabled(LogLevel.Information))
                     {
                         logger.LogInformation("FileMonitorBackgroundService running at: {time}", DateTimeOffset.Now);
                     }
+
                     await Task.Delay(300000, stoppingToken);
                 }
             }
