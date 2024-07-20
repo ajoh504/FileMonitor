@@ -368,4 +368,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Auto-generated from the Windows Service Control manager
 /qfailure
