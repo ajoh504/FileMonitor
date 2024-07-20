@@ -6,21 +6,36 @@ namespace FileMonitorBackgroundService
 
     public sealed class FileMonitorBackgroundService
     {
-        private readonly SourceFileService? _sourceFileService;
-        private readonly BackupPathService? _backupPathService;
-        private readonly SourceFolderService? _sourceFolderService;
-        private readonly IgnorableFolderService? _ignorableFolderService;
-
         private void FromDatabase()
         {
-            _backupPathService.GetDirectories();
-            _sourceFileService.GetFiles();
-            _sourceFolderService.GetFolders();
-            _ignorableFolderService.Get();
+            using var _sourceFileService = new SourceFileService(
+                RepositoryHelper.CreateSourceFileRepositoryInstance());
+
+            using var _backupPathService = new BackupPathService(
+                RepositoryHelper.CreateBackupPathRepositoryInstance());
+
+            using var _sourceFolderService = new SourceFolderService(
+                RepositoryHelper.CreateSourceFolderRepositoryInstance(),
+                RepositoryHelper.CreateFolderFileMappingInstance(),
+                RepositoryHelper.CreateSourceFileRepositoryInstance());
+
+            using var _ignorableFolderService = new IgnorableFolderService(
+                RepositoryHelper.CreateIgnorableFolderRepositoryInstance());
+
+            var _directories = _backupPathService.GetDirectories();
+            var _files = _sourceFileService.GetFiles();
+            var _folders = _sourceFolderService.GetFolders();
+            var _ignorableFolders = _ignorableFolderService.Get();
         }
 
         private void ComparedAgainstFileSystem()
         {
+            using var _sourceFileService = new SourceFileService(
+                RepositoryHelper.CreateSourceFileRepositoryInstance());
+
+            using var _backupPathService = new BackupPathService(
+                RepositoryHelper.CreateBackupPathRepositoryInstance());
+
             _sourceFileService.GetModifiedFiles();
             _sourceFileService.GetMovedOrRenamedFiles();
             _backupPathService.GetMovedOrRenamedPaths();
@@ -31,23 +46,6 @@ namespace FileMonitorBackgroundService
         {
             FromDatabase();
             ComparedAgainstFileSystem();
-        }
-
-        public FileMonitorBackgroundService()
-        {
-            using SourceFileService _sourceFileService = new SourceFileService(
-                RepositoryHelper.CreateSourceFileRepositoryInstance());
-
-            using BackupPathService _backupPathService = new BackupPathService(
-                RepositoryHelper.CreateBackupPathRepositoryInstance());
-
-            using SourceFolderService _sourceFolderService = new SourceFolderService(
-                RepositoryHelper.CreateSourceFolderRepositoryInstance(),
-                RepositoryHelper.CreateFolderFileMappingInstance(),
-                RepositoryHelper.CreateSourceFileRepositoryInstance());
-
-            using IgnorableFolderService _ignorableFolderService = new IgnorableFolderService(
-                RepositoryHelper.CreateIgnorableFolderRepositoryInstance());
         }
     }
 }
