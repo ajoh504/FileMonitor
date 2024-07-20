@@ -24,11 +24,11 @@ namespace Services
         }
 
         /// <summary>
-        /// Returns a paginated list of file paths from the database.
+        /// Returns all source file paths from the database.
         /// </summary>
         public List<SourceFileDto> GetFiles()
         {
-            List<SourceFileDto> result = _sourceFileRepository.GetRangePaginated(
+            List<SourceFileDto> result = _sourceFileRepository.GetRange(
                 s => true,
                 // Create a new Dto for each Entity, and assign the Dto property values from the Entity properties
                 s => new SourceFileDto
@@ -36,12 +36,8 @@ namespace Services
                     Id = s.Id,
                     Path = s.Path
                 },
-                _lastId
+                s => s.Path
             );
-
-            SourceFileDto last = result.Last();
-            _lastId = last.Id;
-
             return result;
         }
 
