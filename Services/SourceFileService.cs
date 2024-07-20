@@ -44,9 +44,11 @@ namespace Services
         /// <summary>
         /// Returns all source file paths from the database if the IsModified property is set to true.
         /// </summary>
+        /// <remarks>
+        /// To check if any files have been newly modified, call the 'CompareHashes' method.
+        /// </remarks>
         public List<SourceFileDto> GetModifiedFiles()
         {
-            RefreshModifiedFilePaths();
             List<SourceFileDto> result = _sourceFileRepository.GetRange(
                 s => s.IsModified == true,
                 s => new SourceFileDto
@@ -149,8 +151,11 @@ namespace Services
             return result;
         }
 
-        // If FileIsUpdated() returns true, then set IsModified to true, and call SaveChanges on the repository.
-        private void RefreshModifiedFilePaths()
+        /// <summary>
+        /// Compare the current file hash with the hash stored in the database. If the current hash is different, then 
+        /// set the 'IsModified' property to true.
+        /// </summary>
+        public void CompareHashes()
         {
             List<SourceFile> files = _sourceFileRepository.GetRange(s => true);
             foreach (SourceFile file in files) 

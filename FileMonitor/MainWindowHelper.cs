@@ -149,6 +149,7 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
             using SourceFileService sourceFileService = new SourceFileService(
                 RepositoryHelper.CreateSourceFileRepositoryInstance());
 
+            sourceFileService.CompareHashes();
             List<SourceFileDto> sourceFileDtos = sourceFileService.GetModifiedFiles();
             foreach (SourceFileDto sourceFileDto in sourceFileDtos)
             {

@@ -36,6 +36,7 @@ namespace FileMonitorBackgroundService
             using var _backupPathService = new BackupPathService(
                 RepositoryHelper.CreateBackupPathRepositoryInstance());
 
+            _sourceFileService.CompareHashes();
             _sourceFileService.GetModifiedFiles();
             _sourceFileService.GetMovedOrRenamedFiles();
             _backupPathService.GetMovedOrRenamedPaths();
