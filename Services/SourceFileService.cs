@@ -11,7 +11,14 @@ namespace Services
     public class SourceFileService : DisposableService
     {
         private ISourceFileRepository _sourceFileRepository;
-        private int _lastId;
+        private int _changedFileCount;
+
+        protected virtual void OnFilesChanged(FilesChangedEventArgs e)
+        {
+            FilesChanged?.Invoke(this, e);
+        }
+
+        public event EventHandler<FilesChangedEventArgs> FilesChanged;
 
         /// <summary>
         /// The <see cref="SourceFileService"/> class constructor. 
@@ -20,7 +27,7 @@ namespace Services
         public SourceFileService(ISourceFileRepository sourceFileRepository)
         {
             _sourceFileRepository = sourceFileRepository;
-            _lastId = -1;
+            _changedFileCount = 0;
         }
 
         /// <summary>
@@ -162,9 +169,17 @@ namespace Services
             {
                 if (FileIsUpdated(file.Path))
                 {
+                    _changedFileCount++;
                     file.IsModified = true;
                 }
             }
+
+            if (_changedFileCount > 0) 
+            {
+                var eventArgs = new FilesChangedEventArgs(_changedFileCount);
+                FilesChanged(this, eventArgs);
+            }
+
             _sourceFileRepository.SaveChanges();
         }
 
