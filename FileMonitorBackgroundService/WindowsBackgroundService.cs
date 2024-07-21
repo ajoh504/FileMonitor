@@ -8,12 +8,18 @@ namespace FileMonitorBackgroundService
         {
             try
             {
+                var eventLog = new System.Diagnostics.EventLog();
+                eventLog.BeginInit();
+                eventLog.Source = "FileMonitorBackgroundService";
+                eventLog.EndInit();
 
                 while (!stoppingToken.IsCancellationRequested)
                 {
                     if (logger.IsEnabled(LogLevel.Information))
                     {
-                        logger.LogInformation("FileMonitorBackgroundService running at: {time}", DateTimeOffset.Now);
+                        var message = $"FileMonitorBackgroundService running at: {DateTimeOffset.Now}";
+                        logger.LogInformation(message);
+                        eventLog.WriteEntry(message);
                     }
 
                     fileMonitorBackgroundService.Run();
@@ -21,7 +27,9 @@ namespace FileMonitorBackgroundService
 
                     if (logger.IsEnabled(LogLevel.Information) && _changedFileCount > 0)
                     {
-                        logger.LogInformation("FileMonitorBackgroundService changed files found: {count} running at: {time}", [_changedFileCount, DateTimeOffset.Now]);
+                        var message = $"FileMonitorBackgroundService, changed files found: {_changedFileCount}, running at: {DateTimeOffset.Now}";
+                        logger.LogInformation(message);
+                        eventLog.WriteEntry(message);
                     }
 
                     await Task.Delay(300000, stoppingToken);
