@@ -1,3 +1,7 @@
+using FileMonitorBackgroundService.Udp;
+using System.Net.Sockets;
+using System.Text;
+
 namespace FileMonitorBackgroundService
 {
     public sealed class WindowsBackgroundService(
@@ -25,13 +29,17 @@ namespace FileMonitorBackgroundService
                     fileMonitorBackgroundService.Run();
                     var _changedFileCount = fileMonitorBackgroundService.ChangedFileCount;
 
-                    if (logger.IsEnabled(LogLevel.Information) && _changedFileCount > 0)
+                    if (_changedFileCount > 0 && logger.IsEnabled(LogLevel.Information))
                     {
-                        var message = $"FileMonitorBackgroundService, changed files found: {_changedFileCount}, running at: {DateTimeOffset.Now}";
-                        logger.LogInformation(message);
-                        eventLog.WriteEntry(message);
+                        var portNumber = 9713;
+                        sendUdpMessage(new FilesChangedUdpMessage(_changedFileCount), portNumber);
+
+                        var logMessage = $"FileMonitorBackgroundService, changed files found: {_changedFileCount}, UDP packet sent on port {portNumber}, running at: {DateTimeOffset.Now}";
+                        logger.LogInformation(logMessage);
+                        eventLog.WriteEntry(logMessage);
                     }
 
+                    // Force a five minute timer before the service restarts
                     await Task.Delay(300000, stoppingToken);
                 }
             }
@@ -54,6 +62,23 @@ namespace FileMonitorBackgroundService
                 // recovery options, we need to terminate the process with a non-zero exit code.
                 Environment.Exit(1);
             }
+        }
+        
+        private void sendUdpMessage(IUdpMessage message, int portNumber, string hostName = "")
+        {
+            var udpClient = new UdpClient();
+            udpClient.Connect(hostName, portNumber);
+
+            var messageFormatted = message
+                .ChangedFileCount
+                .ToString()
+                .ToCharArray();
+
+            var bytes = Encoding
+                .Default
+                .GetBytes(messageFormatted);
+
+            udpClient.Send(bytes);
         }
     }
 }
