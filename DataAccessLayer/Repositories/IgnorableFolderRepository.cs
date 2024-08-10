@@ -6,7 +6,7 @@ namespace DataAccessLayer.Repositories
     /// A repository for the IgnorableFolder Entity. This class inherits from <see cref="RepositoryBase{TEntity}"/> and
     /// <see cref="IIgnorableFolderRepository"/>.
     /// </summary>
-    internal class IgnorableFolderRepository : RepositoryBase<IgnorableFolder>, IIgnorableFolderRepository
+    public class IgnorableFolderRepository : RepositoryBase<IgnorableFolder>, IIgnorableFolderRepository
     {
         /// <summary>
         /// Defines the <see cref="IgnorableFolderRepository"/> class constructor.
