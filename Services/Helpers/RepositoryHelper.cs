@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer;
 using DataAccessLayer.Repositories;
 using System.Configuration;
+using System.Diagnostics;
 
 namespace Services.Helpers
 {
@@ -43,7 +44,15 @@ namespace Services.Helpers
         // A private method to create an instance of the program's database context.
         // The database context is required for construction of a repository instance.
         private static FileMonitorDbContext CreateDbContextInstance()
-            => new FileMonitorDbContext(
-                ConfigurationManager.ConnectionStrings[nameof(FileMonitorDbContext)].ConnectionString);
+        {
+            var mainExe = Path.GetFullPath(Environment.ProcessPath);
+            var connectionString = ConfigurationManager
+                .OpenExeConfiguration(mainExe)
+                .ConnectionStrings
+                .ConnectionStrings[nameof(FileMonitorDbContext)]
+                .ConnectionString;
+
+            return new FileMonitorDbContext(connectionString);
+        }
     }
 }
