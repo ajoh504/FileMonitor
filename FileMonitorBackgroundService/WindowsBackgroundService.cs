@@ -1,4 +1,5 @@
 using FileMonitorBackgroundService.Udp;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -31,10 +32,11 @@ namespace FileMonitorBackgroundService
 
                     if (_changedFileCount > 0 && logger.IsEnabled(LogLevel.Information))
                     {
+                        var host = "127.0.0.1";
                         var portNumber = 9713;
-                        sendUdpMessage(new FilesChangedUdpMessage(_changedFileCount), portNumber);
+                        sendUdpMessage(new FilesChangedUdpMessage(_changedFileCount));
 
-                        var logMessage = $"FileMonitorBackgroundService, changed files found: {_changedFileCount}, UDP packet sent on port {portNumber}, running at: {DateTimeOffset.Now}";
+                        var logMessage = $"FileMonitorBackgroundService, changed files found: {_changedFileCount}, UDP packet sent to: {host}:{portNumber}, running at: {DateTimeOffset.Now}";
                         logger.LogInformation(logMessage);
                         eventLog.WriteEntry(logMessage);
                     }
@@ -64,10 +66,12 @@ namespace FileMonitorBackgroundService
             }
         }
         
-        private void sendUdpMessage(IUdpMessage message, int portNumber, string hostName = "")
+        private void sendUdpMessage(IUdpMessage message, string host = "127.0.0.1", int portNumber = 9713)
         {
+            var ip = IPAddress.Parse(host);
             var udpClient = new UdpClient();
-            udpClient.Connect(hostName, portNumber);
+
+            udpClient.Connect(ip, portNumber);
 
             var messageFormatted = message
                 .ChangedFileCount
