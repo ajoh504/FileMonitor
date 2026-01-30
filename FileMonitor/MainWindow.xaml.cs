@@ -11,6 +11,9 @@ using Services.Dto;
 using Services.Extensions;
 using Services.Helpers;
 using System.Threading.Tasks;
+using System.Net.Sockets;
+using System.Linq.Expressions;
+using FileMonitor.Udp;
 
 namespace FileMonitor
 {
@@ -56,6 +59,8 @@ namespace FileMonitor
             DataContext = _viewModel;
             _helper = new MainWindowHelper();
             _helper.RefreshMonitoredFolders(_viewModel);
+            var udpMessage = new UdpMessage();
+            udpMessage.Receive();
         }
 
 

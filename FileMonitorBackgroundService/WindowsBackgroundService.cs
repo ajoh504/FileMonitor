@@ -68,10 +68,13 @@ namespace FileMonitorBackgroundService
         
         private void sendUdpMessage(IUdpMessage message, string host = "127.0.0.1", int portNumber = 9713)
         {
-            var ip = IPAddress.Parse(host);
-            var udpClient = new UdpClient();
+            var ip = new IPEndPoint(IPAddress.Parse(host), portNumber);
+            using var tcpClient = new TcpClient();
+            tcpClient.Connect(ip);
+            var stream = tcpClient.GetStream();
 
-            udpClient.Connect(ip, portNumber);
+            //var udpClient = new UdpClient();
+            //udpClient.Connect(ip, portNumber);
 
             var messageFormatted = message
                 .ChangedFileCount
@@ -82,7 +85,8 @@ namespace FileMonitorBackgroundService
                 .Default
                 .GetBytes(messageFormatted);
 
-            udpClient.Send(bytes);
+            stream.Write(bytes, 0, bytes.Length);   
+            //udpClient.Send(bytes);
         }
     }
 }
