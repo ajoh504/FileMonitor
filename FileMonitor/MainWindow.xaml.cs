@@ -34,7 +34,6 @@ namespace FileMonitor
                 RepositoryHelper.CreateSourceFileRepositoryInstance());
             using BackupPathService backupPathService = new BackupPathService(
                 RepositoryHelper.CreateBackupPathRepositoryInstance());
-            using SourceFolderService sourceFolderService = new SourceFolderService(
                 RepositoryHelper.CreateSourceFolderRepositoryInstance(),
                 RepositoryHelper.CreateFolderFileMappingInstance(),
                 RepositoryHelper.CreateSourceFileRepositoryInstance());
