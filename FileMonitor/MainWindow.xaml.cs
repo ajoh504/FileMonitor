@@ -11,9 +11,6 @@ using Services.Dto;
 using Services.Extensions;
 using Services.Helpers;
 using System.Threading.Tasks;
-using System.Net.Sockets;
-using System.Linq.Expressions;
-using FileMonitor.Udp;
 
 namespace FileMonitor
 {
@@ -47,20 +44,12 @@ namespace FileMonitor
             _viewModel = new MainWindowViewModel(
                 new ObservableCollection<BackupPathDto>(backupPathService.GetDirectories()),
                 new ObservableCollection<SourceFileDto>(sourceFileService.GetFiles()),
-                new ObservableCollection<SourceFileDto>(sourceFileService.GetModifiedFiles()),
                 new ObservableCollection<SourceFolderDto>(sourceFolderService.GetFolders()),
-                new ObservableCollection<SourceFileDto>(sourceFileService.GetMovedOrRenamedFiles()),
-                new ObservableCollection<BackupPathDto>(backupPathService.GetMovedOrRenamedPaths()),
                 new ObservableCollection<IgnorableFolderDto>(ignorableFolderService.Get()),
                 JsonSettingsHelper.OverwriteUpdatedFiles,
                 JsonSettingsHelper.IncludeAllSubFolders
             );
-            _viewModel.RemovePossibleRenamedFiles();
             DataContext = _viewModel;
-            _helper = new MainWindowHelper();
-            _helper.RefreshMonitoredFolders(_viewModel);
-            var udpMessage = new UdpMessage();
-            udpMessage.Receive();
         }
 
 
@@ -131,7 +120,6 @@ namespace FileMonitor
                 }
                 sourceFileService.Remove(ids);
                 _viewModel.SourceFiles.RemoveRange<SourceFileDto>(selectedFiles);
-                _viewModel.UpdatedFiles.RemoveRange<SourceFileDto>(selectedFiles);
             }
         }
 
@@ -174,43 +162,6 @@ namespace FileMonitor
             }
         }
 
-        // A button click event handler to copy only the files that have been updated or changed since the last backup.
-        private async void CopyUpdatedFiles_Click(object sender, RoutedEventArgs e)
-        {
-            if (!_viewModel.BackupSelected)
-            {
-                MessageBox.Show("Please add a backup path.");
-                return;
-            }
-
-            var userClick = MessageBox.Show(
-                "Do you wish to begin the backup process to copy the updated files? This operation may take some time.",
-                "Copy Updated Files",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question
-            );
-
-            if(userClick == MessageBoxResult.Yes)
-            {
-                this.RightColumnProgressBar.Visibility = Visibility.Visible;
-
-                await Task.Run(() => {                 
-                    foreach (BackupPathDto dto in _viewModel.BackupPaths)
-                    {
-                        if (dto.IsSelected)
-                        {
-                            Backup backup = new Backup(dto.Path);
-                            backup.CopyUpdated(_viewModel.UpdatedFiles.Select(f => f.Path));
-                        }
-                    }
-                });
-
-                _helper.ResetUpdatedFiles(_viewModel);
-                MessageBox.Show("Backup complete.");
-                this.RightColumnProgressBar.Visibility = Visibility.Hidden;
-            }
-        }
-
         // A button click event handler for adding a backup folder path. 
         private void AddBackupPath_Click(object sender, RoutedEventArgs e)
         {
@@ -235,34 +186,8 @@ namespace FileMonitor
             _viewModel.BackupSelected = _viewModel.IsAnyBackupSelected();
         }
 
-        // A button click event handler to refresh all ListViews in the UI.
-        private async void RefreshView_Click(object sender, RoutedEventArgs e)
-        {
-            var userClick = MessageBox.Show(
-                "Do you wish to refresh the window views? This operation may take some time.", 
-                "Refresh View", 
-                MessageBoxButton.YesNo, 
-                MessageBoxImage.Question
-            );
 
-            if (userClick == MessageBoxResult.Yes)
-            {
-                this.LeftColumnProgressBar.Visibility = Visibility.Visible;
-
-                await Task.Run(() =>
-                {
-                    _helper.RefreshUpdatedFilesView(_viewModel);
-                    _helper.RefreshMonitoredFolders(_viewModel);
-                    _helper.RefreshMovedOrRenamedFiles(_viewModel);
-                });
-
-                MessageBox.Show("Refresh complete.");
-                this.LeftColumnProgressBar.Visibility = Visibility.Hidden;
-            }
-        }
-
-
-        // An asynchronous button click event handler to remove monitored folders from the program, along with any
+        // A button click event handler to remove monitored folders from the program, along with any
         // files contained within them.
         private void RemoveFolders_Click(object sender, RoutedEventArgs e)
         {
@@ -285,29 +210,9 @@ namespace FileMonitor
                     folderIds.Add(dto.Id);
                     filesToRemove = sourceFolderService.GetStoredFilesFromFolder(dto.Id);
                     _viewModel.SourceFiles.RemoveRange<SourceFileDto>(filesToRemove);
-                    _viewModel.UpdatedFiles.RemoveRange<SourceFileDto>(filesToRemove);
                 }
                 sourceFolderService.Remove(folderIds);
                 _viewModel.SourceFolders.RemoveRange<SourceFolderDto>(foldersToRemove);
-            }
-        }
-
-        private void RemovePossibleDeletedPaths_Click(object sender, RoutedEventArgs e)
-        {
-            if (_helper.ConfirmRemoveFiles())
-            {
-                using SourceFileService sourceFileService = new SourceFileService(
-                    RepositoryHelper.CreateSourceFileRepositoryInstance());
-                List<int> ids = new List<int>();
-                List<SourceFileDto> selectedFiles = new List<SourceFileDto>();
-                foreach (object item in MovedOrRenamedFilesDisplayed.SelectedItems)
-                {
-                    SourceFileDto dto = (SourceFileDto)item;
-                    selectedFiles.Add(dto);
-                    ids.Add(dto.Id);
-                }
-                sourceFileService.Remove(ids);
-                _viewModel.MovedOrRenamedFiles.RemoveRange<SourceFileDto>(selectedFiles);
             }
         }
 
@@ -344,26 +249,7 @@ namespace FileMonitor
             // Clear all ListViews when the mouse is clicked anywhere in the main window.
             FilesDisplayed.SelectedItems.Clear();
             FoldersDisplayed.SelectedItems.Clear();
-            UpdatedFilesDisplayed.SelectedItems.Clear();
             BackupPathsDisplayed.SelectedItems.Clear();
-            MovedOrRenamedBackupPathsDisplayed.SelectedItems.Clear();
-            MovedOrRenamedFilesDisplayed.SelectedItems.Clear();
-        }
-
-        private void RemovePossibleDeletedBackupPaths_Click(object sender, RoutedEventArgs e)
-        {
-            using BackupPathService backupPathService = new BackupPathService(
-                RepositoryHelper.CreateBackupPathRepositoryInstance());
-            List<int> ids = new List<int>();
-            List<BackupPathDto> selectedPaths = new List<BackupPathDto>();
-            foreach (object item in MovedOrRenamedBackupPathsDisplayed.SelectedItems)
-            {
-                BackupPathDto dto = (BackupPathDto)item;
-                selectedPaths.Add(dto);
-                ids.Add(dto.Id);
-            }
-            backupPathService.Remove(ids);
-            _viewModel.MovedOrRenamedBackupPaths.RemoveRange<BackupPathDto>(selectedPaths);
         }
 
         private void AddIgnorableFolder_Click(object sender, RoutedEventArgs e)
@@ -397,33 +283,6 @@ namespace FileMonitor
             }
             ignorableFolderService.Remove(ids);
             _viewModel.IgnorableFolders.RemoveRange<IgnorableFolderDto>(ignorableFolders);
-        }
-
-        private async void SearchForUpdatedFiles_Click(object sender, RoutedEventArgs e)
-        {
-            var userClick = MessageBox.Show(
-                "Do you wish to search for updated files? This operation may take some time.",
-                "Refresh View",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question
-            );
-
-            if (userClick == MessageBoxResult.Yes)
-            {
-                this.RightColumnProgressBar.Visibility = Visibility.Visible;
-
-                await Task.Run(() =>
-                {
-                    using SourceFileService sourceFileService = new SourceFileService(
-                        RepositoryHelper.CreateSourceFileRepositoryInstance());
-
-                    _helper = new MainWindowHelper();
-                    _helper.RefreshUpdatedFilesView(_viewModel);
-                });
-
-                MessageBox.Show("Search complete.");
-                this.RightColumnProgressBar.Visibility = Visibility.Hidden;
-            }
         }
     }
 }

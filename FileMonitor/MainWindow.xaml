@@ -123,10 +123,10 @@
                                         IsEnabled="{Binding BackupSelected}"
                                         Style="{StaticResource MultiButtonStyle}"/>
                                 
-                                <Button x:Name="RefreshView" 
+                                <!--<Button x:Name="RefreshView" 
                                         Content="Refresh View" 
                                         Click="RefreshView_Click"
-                                        Style="{StaticResource MultiButtonStyle}"/>
+                                        Style="{StaticResource MultiButtonStyle}"/>-->
 
                                 <ProgressBar x:Name="LeftColumnProgressBar"
                                                  IsIndeterminate="True"
@@ -158,14 +158,14 @@
 
                         </Grid>
                     </Border>
-                    
+
                     <Border Style="{StaticResource MainBorderStyle}"
                             Grid.Column="1"
                             Grid.Row="0"
                             Grid.RowSpan="2">
-                        
+
                         <Grid>
-                            
+
                             <Border Style="{StaticResource HeaderStyle}"
                                     Background="CadetBlue" >
 
@@ -189,7 +189,7 @@
                                             Converter={StaticResource 
                                             IntToBoolValueConverter}}" 
                                         Style="{StaticResource MultiButtonStyle}"/>
-                                
+
                             </StackPanel>
 
                             <ListView x:Name="FoldersDisplayed"  
@@ -214,61 +214,8 @@
 
                     <Border Style="{StaticResource MainBorderStyle}"
                             Grid.Column="2"
-                            Grid.Row="0">
-
-                        <Grid>
-
-                            <Border Style="{StaticResource HeaderStyle}" 
-                                    Background="CadetBlue" >
-
-                                <TextBlock Text="Updated Files"
-                                            Style="{StaticResource HeaderTextStyle}"/>
-                            </Border>
-
-
-                            <StackPanel Style="{StaticResource ButtonStackPanelStyle}">
-                                <Button x:Name="CopyUpdatedFiles" 
-                                        Content="Copy Updated Files" 
-                                        Click="CopyUpdatedFiles_Click" 
-                                        IsEnabled="{Binding BackupSelected}"
-                                        Style="{StaticResource MultiButtonStyle}"/>
-
-                                <Button x:Name="SearchForUpdatedFiles" 
-                                        Content="Search For Updated Files" 
-                                        Click="SearchForUpdatedFiles_Click" 
-                                        Style="{StaticResource MultiButtonStyle}"/>
-
-                                <ProgressBar x:Name="RightColumnProgressBar"
-                                                 IsIndeterminate="True"
-                                                 Visibility="Hidden"
-                                                 Width="100"
-                                                 Height="15"/>
-                            </StackPanel>
-
-
-                            <ListView x:Name="UpdatedFilesDisplayed" 
-                                        Style="{StaticResource ListViewStyle}"
-                                        ItemsSource="{Binding UpdatedFiles}" >
-
-                                <ListView.View>
-                                    <GridView AllowsColumnReorder="False">
-                                        <GridView.ColumnHeaderContainerStyle>
-                                            <Style TargetType="{x:Type GridViewColumnHeader}">
-                                                <Setter Property="Visibility" Value="Collapsed" />
-                                            </Style>
-                                        </GridView.ColumnHeaderContainerStyle>
-                                        <GridViewColumn 
-                                            DisplayMemberBinding="{Binding Path}" 
-                                            Width="{Binding ActualWidth, ElementName=UpdatedFilesDisplayed}"/>
-                                    </GridView>
-                                </ListView.View>
-                            </ListView>
-                        </Grid>
-                    </Border>
-
-                    <Border Style="{StaticResource MainBorderStyle}"
-                            Grid.Column="2"
-                            Grid.Row="1">
+                            Grid.Row="0"
+                            Grid.RowSpan="2">
                         
                         <Grid>
                             
@@ -443,26 +390,16 @@
                         <Border Style="{StaticResource MainBorderStyle}"
                                 Grid.Column="2"
                                 Grid.Row="0">
-                            
+
                             <Grid>
-                                
+
                                 <Border Style="{StaticResource HeaderStyle}"
                                         Background="CadetBlue" >
 
                                     <TextBlock Text="Moved, Deleted, or Renamed Files"
                                                Style="{StaticResource HeaderTextStyle}"/>
                                 </Border>
-                            
-                                <Button x:Name="RemovePossibleDeletedPaths" 
-                                        Content="Remove"
-                                        Click="RemovePossibleDeletedPaths_Click"
-                                        IsEnabled="{
-                                            Binding ElementName=MovedOrRenamedFilesDisplayed, 
-                                            Path=SelectedIndex, 
-                                            Converter={StaticResource 
-                                            IntToBoolValueConverter}}" 
-                                        Style="{StaticResource SingleButtonStyle}"/>
-                           
+
                                 <ListView x:Name="MovedOrRenamedFilesDisplayed"  
                                           Style="{StaticResource ListViewStyle}"
                                           ItemsSource="{Binding MovedOrRenamedFiles}"  >
@@ -480,58 +417,6 @@
                                                 "{Binding ActualWidth, ElementName=MovedOrRenamedFilesDisplayed}"/>
                                         </GridView>
                                     </ListView.View>
-                                </ListView>
-                            </Grid>
-                        </Border>
-                        
-                        <TreeView x:Name="testTreeView"
-                                  Width="Auto"
-                                  Grid.Column="2"
-                                  Grid.Row="1">
-                            
-                        </TreeView>
-                        
-                        
-                        <Border Style="{StaticResource MainBorderStyle}" 
-                                Grid.Column="2"
-                                Grid.Row="1">
-                            
-                            <Grid>
-                                
-                                <Border Style="{StaticResource HeaderStyle}"
-                                        Background="CadetBlue" >
-
-                                    <TextBlock Text="Moved, Deleted, or Renamed Backup Paths"
-                                               Style="{StaticResource HeaderTextStyle}"/>
-                                </Border>
-
-                                <Button x:Name="RemovePossibleDeletedBackupPaths" 
-                                        Content="Remove"
-                                        Click="RemovePossibleDeletedBackupPaths_Click"
-                                        IsEnabled="{
-                                            Binding ElementName=MovedOrRenamedBackupPathsDisplayed, 
-                                            Path=SelectedIndex, 
-                                            Converter={StaticResource 
-                                            IntToBoolValueConverter}}" 
-                                        Style="{StaticResource SingleButtonStyle}"/>
-       
-                                <ListView x:Name="MovedOrRenamedBackupPathsDisplayed"  
-                                          Style="{StaticResource ListViewStyle}"
-                                          ItemsSource="{Binding MovedOrRenamedBackupPaths}" >
-
-                                    <ListView.View>
-                                        <GridView AllowsColumnReorder="False">
-                                            <GridView.ColumnHeaderContainerStyle>
-                                                <Style TargetType="{x:Type GridViewColumnHeader}">
-                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                </Style>
-                                            </GridView.ColumnHeaderContainerStyle>
-                                            <GridViewColumn 
-                                                DisplayMemberBinding="{Binding Path}" 
-                                                Width="{Binding ActualWidth, ElementName=MovedOrRenamedBackupPaths}"/>
-                                        </GridView>
-                                    </ListView.View>
-                                    
                                 </ListView>
                             </Grid>
                         </Border>

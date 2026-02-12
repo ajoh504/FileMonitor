@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using FileMonitor.ViewModels;
 using System.Windows;
+using System;
+using System.Diagnostics;
 
 namespace FileMonitor
 {
@@ -32,7 +34,6 @@ namespace FileMonitor
                     continue;
                 SourceFileDto dto = sourceFileService.Add(path, fromSourceFolder);
                 _viewModel.SourceFiles.Add(dto);
-                _viewModel.UpdatedFiles.Add(dto);
             }
         }
 
@@ -116,125 +117,6 @@ The program will monitor {numberOfFiles} file(s) from {numberOfDirectories} subf
             MessageBoxButton button = MessageBoxButton.YesNo;
             MessageBoxImage image = MessageBoxImage.Warning;
             return MessageBox.Show(text, caption, button, image) == MessageBoxResult.Yes;
-        }
-
-        /// <summary>
-        /// Reset the collection of updated files, both in the UI and in the database.
-        /// </summary>
-        /// <param name="_viewModel"> An instance of the view model to update. </param>
-        /// <remarks>
-        /// Retrieve a list of Ids for each file in the UpdatedFiles collection. Then reset the IsModified checkbox 
-        /// to false. Doing so informs the program that the copied version of the file is effectively the most 
-        /// up-to-date version. Finally, update the hash for each file to the current hash. Doing so ensures that 
-        /// the next time hashes are compared, these files will be ignored because they represent the latest version
-        /// of the file.
-        /// </remarks>
-        internal void ResetUpdatedFiles(MainWindowViewModel _viewModel)
-        {
-            List<int> ids = new List<int>();
-            foreach (SourceFileDto dto in _viewModel.UpdatedFiles) ids.Add(dto.Id);
-            _viewModel.UpdatedFiles.Clear();
-            using SourceFileService sourceFileService = new SourceFileService(
-                RepositoryHelper.CreateSourceFileRepositoryInstance());
-            sourceFileService.ResetIsModifiedFlag(ids);
-            sourceFileService.UpdateHashesToCurrent(ids);
-        }
-
-        /// <summary>
-        /// Check for files that have changed since the last backup.
-        /// </summary>
-        /// <param name="_viewModel"> An instance of the view model to update. </param>
-        internal void RefreshUpdatedFilesView(MainWindowViewModel _viewModel)
-        {
-            using SourceFileService sourceFileService = new SourceFileService(
-                RepositoryHelper.CreateSourceFileRepositoryInstance());
-
-            List<SourceFileDto> sourceFileDtos = sourceFileService.GetModifiedFiles();
-            foreach (SourceFileDto sourceFileDto in sourceFileDtos)
-            {
-                if (!_viewModel.UpdatedFiles.Contains(sourceFileDto))
-                {
-                    App.Current.Dispatcher.Invoke(() =>
-                    {
-                        _viewModel.UpdatedFiles.Add(sourceFileDto); 
-                    });
-                }    
-            }
-        }
-
-        /// <summary>
-        /// Check for source folders that have newly added files since the last backup, and add them to the database.
-        /// </summary>
-        /// <param name="_viewModel"> An instance of the view model to update. </param>
-        internal void RefreshMonitoredFolders(MainWindowViewModel _viewModel)
-        {
-            using SourceFolderService sourceFolderService = new SourceFolderService(
-                RepositoryHelper.CreateSourceFolderRepositoryInstance(),
-                RepositoryHelper.CreateFolderFileMappingInstance(),
-                RepositoryHelper.CreateSourceFileRepositoryInstance()
-            );
-
-            if (sourceFolderService.FilesAddedToFolders(
-                out List<SourceFileDto>? newFilesFromFolder))
-            {
-                foreach (SourceFileDto file in newFilesFromFolder)
-                {
-                    if (!_viewModel.SourceFiles.Contains(file))
-                    {
-                        App.Current.Dispatcher.Invoke(() =>
-                        {
-                            _viewModel.SourceFiles.Add(file);
-                        });
-                    }
-
-                    if (!_viewModel.UpdatedFiles.Contains(file))
-                    {
-                        App.Current.Dispatcher.Invoke(() =>
-                        {
-                            _viewModel.UpdatedFiles.Add(file);
-                        });
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Check for files that have been moved, deleted, or renamed.
-        /// </summary>
-        /// <param name="_viewModel"> An instance of the view model to update. </param>
-        internal void RefreshMovedOrRenamedFiles(MainWindowViewModel _viewModel)
-        {
-            using SourceFileService sourceFileService = new SourceFileService(
-                RepositoryHelper.CreateSourceFileRepositoryInstance());
-
-            List<SourceFileDto> files = sourceFileService.GetMovedOrRenamedFiles();
-
-            foreach (SourceFileDto file in files)
-            {
-                if (!_viewModel.MovedOrRenamedFiles.Contains(file))
-                {
-                    App.Current.Dispatcher.Invoke(() =>
-                    {
-                        _viewModel.MovedOrRenamedFiles.Add(file);
-                    });
-                }
-
-                if (_viewModel.UpdatedFiles.Contains(file))
-                {
-                    App.Current.Dispatcher.Invoke(() =>
-                    {
-                        _viewModel.UpdatedFiles.Remove(file);
-                    });
-                }
-
-                if (_viewModel.SourceFiles.Contains(file))
-                {
-                    App.Current.Dispatcher.Invoke(() =>
-                    {
-                        _viewModel.SourceFiles.Remove(file);
-                    });
-                }
-            }
         }
 
         /// <summary>

@@ -105,20 +105,6 @@ namespace Services
         }
 
         /// <summary>
-        /// Get a list of all backup paths that have been moved, deleted, or renamed since being added to the database.
-        /// </summary>
-        public List<BackupPathDto> GetMovedOrRenamedPaths()
-        {
-            List<BackupPathDto> paths = GetDirectories();
-            List<BackupPathDto> result = new List<BackupPathDto>();
-            foreach (BackupPathDto path in paths)
-            {
-                if (!Directory.Exists(path.Path)) result.Add(path);
-            }
-            return result;
-        }
-
-        /// <summary>
         /// Ensures that the service object is properly disposed. Also calls <c>Dispose</c> on the repository object.
         /// </summary>
         /// <param name="disposing">

@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.4.33020.496
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11505.172 d18.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileMonitor", "FileMonitor\FileMonitor.csproj", "{0BBD02AB-F3DC-4C20-98DD-02AEB08E9DEE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccessLayer", "DataAccessLayer\DataAccessLayer.csproj", "{6BEE194A-5B8E-4A8C-BCA2-C0752A9C6210}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{DEACDA75-8BF8-4003-81E5-0E908CA81DA9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileMonitorBackgroundService", "FileMonitorBackgroundService\FileMonitorBackgroundService.csproj", "{6171029B-4A28-446D-B8F0-9985EE79FAA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +27,6 @@ Global
 		{DEACDA75-8BF8-4003-81E5-0E908CA81DA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEACDA75-8BF8-4003-81E5-0E908CA81DA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DEACDA75-8BF8-4003-81E5-0E908CA81DA9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6171029B-4A28-446D-B8F0-9985EE79FAA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6171029B-4A28-446D-B8F0-9985EE79FAA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6171029B-4A28-446D-B8F0-9985EE79FAA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6171029B-4A28-446D-B8F0-9985EE79FAA1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

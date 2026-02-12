@@ -36,21 +36,21 @@ namespace FileMonitor.FileBackups
             }
         }
 
-        /// <summary>
-        /// Copy files that have been changed or updated since the last backup.
-        /// </summary>
-        /// <param name="files"> A collection of file paths to copy. </param>
-        public void CopyUpdated(IEnumerable<string> files)
-        {
-            string backupLocation = $"{backupFolder}\\Backup\\";
-            foreach (string sourceFile in files)
-            {
-                string destination = GetFullDestinationPath(sourceFile, backupLocation);
-                CreateDirectory(destination);
-                destination = IncrementFileName(destination);
-                File.Copy(sourceFile, destination, true);
-            }
-        }
+        ///// <summary>
+        ///// Copy files that have been changed or updated since the last backup.
+        ///// </summary>
+        ///// <param name="files"> A collection of file paths to copy. </param>
+        //public void CopyUpdated(IEnumerable<string> files)
+        //{
+        //    string backupLocation = $"{backupFolder}\\Backup\\";
+        //    foreach (string sourceFile in files)
+        //    {
+        //        string destination = GetFullDestinationPath(sourceFile, backupLocation);
+        //        CreateDirectory(destination);
+        //        destination = IncrementFileName(destination);
+        //        File.Copy(sourceFile, destination, true);
+        //    }
+        //}
 
         // This method replaces the original path root with the backup destination root.
         private string GetFullDestinationPath(string? sourceFile, string backupFolderWithDateTime)

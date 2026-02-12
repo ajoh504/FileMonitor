@@ -134,65 +134,6 @@ namespace Services
             _sourceFolderRepository.SaveChanges();
         }
 
-        /// <summary>
-        /// Returns true if any monitored folder contains newly added files, false otherwise. If the method returns
-        /// true, it will add the files to the database and provide an out parameter containing any files that were
-        /// added to the database.
-        /// </summary>
-        /// <param name="newFilesFromFolder"> A list of data transfer objects for values. The values represent all
-        /// files that have been added to the monitored folder. </param>
-        public bool FilesAddedToFolders(
-            out List<SourceFileDto>? newFilesFromFolder)
-        {
-            List<SourceFolderDto> folders = GetFolders();
-            bool filesAddedToFolders = false;
-            newFilesFromFolder = new List<SourceFileDto>();
-
-            foreach (SourceFolderDto folder in folders)
-            {
-                List<string> currentFiles = GetCurrentFilesFromFolder(folder);
-                List<string> storedFiles = GetPathsFromEntities(GetFileEntitiesFromFolder(folder.Id));
-                List<string> filesToMap = new List<string>();
-
-                foreach (string file in currentFiles)
-                {
-                    if (storedFiles.Contains(file)) continue;
-                    else
-                    {
-                        SourceFileDto? sourceFile = AddFile(file, fromSourceFolder: true);
-                        filesToMap.Add(file);
-                        if (filesAddedToFolders == false) filesAddedToFolders = true;
-                        newFilesFromFolder.Add(sourceFile);
-                    }
-                }
-                if (filesToMap.Count == 0) continue;
-                AddFolderFileMapping(filesToMap, folder.Id);
-            }
-            return filesAddedToFolders;
-        }
-
-        private SourceFileDto? AddFile(string path, bool fromSourceFolder)
-        {
-            // Add the file Entity to the database.
-            _sourceFileRepository.Add(
-                new SourceFile
-                {
-                    Path = path,
-                    Hash = EncryptionHelper.GetHash(path),
-                    IsModified = true,
-                    FromSourceFolder = fromSourceFolder
-                });
-            _sourceFileRepository.SaveChanges();
-            // Return the file as a data transfer object.
-            return _sourceFileRepository.FirstOrDefault(
-                f => f.Path == path,
-                f => new SourceFileDto
-                {
-                    Path = f.Path,
-                    Id = f.Id
-                });
-        }
-
         // This method adds the appropriate mapping. It stores the id of the monitored folder (directoryId).
         // Then it stores the id for each file contained within that folder. The mapping can be used to know
         // the exact files contained within a folder during its first addition to the database. So if files
@@ -236,49 +177,6 @@ namespace Services
         // Get the directory id (folder id) from the given directory path.
         private int GetDirectoryId(string directoryPath) 
             => _sourceFolderRepository.FirstOrDefault(f => f.Path == directoryPath).Id;
-        
-
-        // Get all current files from the provided folder. Check the "MonitorAllSubDirectories" 
-        // property to determine if the program monitors the top directory only, or all sub directories.
-        private List<string> GetCurrentFilesFromFolder(SourceFolderDto folder)
-        {
-            List<string> fileSystemEntries = new List<string>();
-            using IgnorableFolderService ignorableFolderService = new IgnorableFolderService(
-                RepositoryHelper.CreateIgnorableFolderRepositoryInstance());
-
-            if (folder.MonitorAllSubDirectories)
-            {
-                fileSystemEntries = Directory.GetFileSystemEntries(folder.Path, "*", SearchOption.AllDirectories)
-                    .Where(fse => IgnorableFolderHelper.NotIgnorable(
-                            fse, 
-                            ignorableFolderService.Get())
-                    ).ToList();
-            }
-            else
-            {
-                fileSystemEntries = Directory.GetFileSystemEntries(folder.Path, "*", SearchOption.TopDirectoryOnly)
-                    .ToList();
-            }
-
-            List<string> result = new List<string>();   
-            foreach (string path in fileSystemEntries)
-            {
-                FileAttributes attributes = File.GetAttributes(path);
-                // If the path is a directory, do not add it to the result!
-                if (attributes.HasFlag(FileAttributes.Directory)) continue;
-                result.Add(path);
-            }
-            return result;
-        }
-
-
-        // Get a list of the specified file paths from a SourceFile list.
-        private static List<string> GetPathsFromEntities(List<SourceFile> files)
-        {
-            List<string> result = new List<string>();
-            foreach (SourceFile file in files) result.Add(file.Path);
-            return result;
-        }
 
         /// <summary>
         /// Ensures that the service objects are properly disposed. Also calls <c>Dispose</c> on the repository

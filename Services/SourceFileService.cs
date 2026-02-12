@@ -11,7 +11,6 @@ namespace Services
     public class SourceFileService : DisposableService
     {
         private ISourceFileRepository _sourceFileRepository;
-        private int _changedFileCount;
 
         protected virtual void OnFilesChanged(FilesChangedEventArgs e)
         {
@@ -27,7 +26,6 @@ namespace Services
         public SourceFileService(ISourceFileRepository sourceFileRepository)
         {
             _sourceFileRepository = sourceFileRepository;
-            _changedFileCount = 0;
         }
 
         /// <summary>
@@ -38,26 +36,6 @@ namespace Services
             List<SourceFileDto> result = _sourceFileRepository.GetRange(
                 s => true,
                 // Create a new Dto for each Entity, and assign the Dto property values from the Entity properties
-                s => new SourceFileDto
-                {
-                    Id = s.Id,
-                    Path = s.Path
-                },
-                s => s.Path
-            );
-            return result;
-        }
-
-        /// <summary>
-        /// Returns all source file paths from the database if the IsModified property is set to true.
-        /// </summary>
-        /// <remarks>
-        /// To check if any files have been newly modified, call the 'CompareHashes' method.
-        /// </remarks>
-        public List<SourceFileDto> GetModifiedFiles()
-        {
-            List<SourceFileDto> result = _sourceFileRepository.GetRange(
-                s => s.IsModified == true,
                 s => new SourceFileDto
                 {
                     Id = s.Id,
@@ -113,85 +91,11 @@ namespace Services
         }
 
         /// <summary>
-        /// Set the <see cref="SourceFile.IsModified"/> property to false on all the specified files. This class should be called when the files are first copied to a backup location.
-        /// </summary>
-        /// <param name="ids"> The Ids for each file where the <see cref="SourceFile.IsModified"/> property should be set to false. </param>
-        public void ResetIsModifiedFlag(IEnumerable<int> ids)
-        {
-            _sourceFileRepository.Update(
-                s => ids.Contains(s.Id), 
-                s => s.IsModified = false); 
-            _sourceFileRepository.SaveChanges();
-        }
-
-        /// <summary>
         /// Returns true if the path exists in the database, false otherwise.
         /// </summary>
         public bool PathExists(string path)
         {
             return _sourceFileRepository.Exists(s => s.Path == path);
-        }
-
-        /// <summary>
-        /// Updates the hash for all source files based on their Ids.
-        /// </summary>
-        /// <param name="ids"> A list of Ids for each file requiring an updated hash. </param>
-        public void UpdateHashesToCurrent(List<int> ids)
-        {
-            _sourceFileRepository.Update(
-                s => ids.Contains(s.Id),
-                s => s.Hash = EncryptionHelper.GetHash(s.Path));
-            _sourceFileRepository.SaveChanges();
-        }
-
-        /// <summary>
-        /// Get a list of all files that have been moved, deleted, or renamed since being added to the database.
-        /// </summary>
-        public List<SourceFileDto> GetMovedOrRenamedFiles()
-        {
-            List<SourceFileDto> files = GetFiles();
-            List<SourceFileDto> result = new List<SourceFileDto>();
-            foreach (SourceFileDto file in files)
-            {
-                if (!File.Exists(file.Path)) result.Add(file);
-            }
-            return result;
-        }
-
-        /// <summary>
-        /// Compare the current file hash with the hash stored in the database. If the current hash is different, then 
-        /// set the 'IsModified' property to true.
-        /// </summary>
-        public void CompareHashes()
-        {
-            List<SourceFile> files = _sourceFileRepository.GetRange(s => true);
-            foreach (SourceFile file in files) 
-            {
-                if (FileIsUpdated(file.Path))
-                {
-                    _changedFileCount++;
-                    file.IsModified = true;
-                }
-            }
-
-            if (_changedFileCount > 0) 
-            {
-                var eventArgs = new FilesChangedEventArgs(_changedFileCount);
-                FilesChanged(this, eventArgs);
-            }
-
-            _sourceFileRepository.SaveChanges();
-        }
-
-        // Return true if the stored hash is different from the current hash. Otherwise return false.
-        private bool FileIsUpdated(string path)
-        {
-            SourceFile? sourceFile = _sourceFileRepository.FirstOrDefault(s => s.Path == path);
-            if (sourceFile == null) return false;
-            // If file does not exist, it has been moved or renamed. Return false in this instance
-            // because VerifyMovedOrRenamed() will find those files and add them to the UI.
-            if (!File.Exists(sourceFile.Path)) return false;
-            return EncryptionHelper.GetHash(path) != sourceFile.Hash;
         }
 
         /// <summary>
