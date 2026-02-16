@@ -11,6 +11,7 @@
         WindowState="Maximized" 
         MouseDown="Window_MouseDown">
 
+    <!--Defines all resources-->
     <Window.Resources>
         <valueConverters:IntToBoolValueConverter x:Key="IntToBoolValueConverter" />
         
